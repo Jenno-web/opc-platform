@@ -1,0 +1,15 @@
+{
+  "name": "opc-platform",
+  "version": "0.0.1",
+  "private": true,
+  "workspaces": [
+    "apps/backend",
+    "apps/frontend"
+  ],
+  "scripts": {
+    "dev:backend": "npm run start:dev --workspace backend",
+    "dev:frontend": "npm run dev:h5 --workspace frontend",
+    "db:migrate": "npm run prisma:migrate --workspace backend",
+    "db:seed": "npm run prisma:seed --workspace backend"
+  }
+}

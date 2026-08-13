@@ -1,0 +1,320 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- 枚举 ----------
+
+enum ProjectStatus {
+  RECRUITING
+  IN_PROGRESS
+  PENDING_CONFIRM
+  COMPLETED
+  ARCHIVED
+}
+
+enum ApplicationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+enum ConversationType {
+  PROJECT
+  PRIVATE
+  SYSTEM
+  APPLICATION
+  CHANNEL
+}
+
+enum PublishTier {
+  STANDARD // 认证发布
+  BOOSTED  // 付费优先
+  BOUNTY   // 悬赏任务
+}
+
+enum ProjectKind {
+  DEMAND // 需求：我有需求，找人/找资源
+  SUPPLY // 供给：我能提供服务/能力
+  MUTUAL // 互助：资源置换、非货币合作
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  FILE
+  PROJECT_CARD
+}
+
+enum AICapability {
+  RECOMMEND
+  GENERATE
+  SUMMARIZE
+  ANALYZE
+  EXTRACT
+  WORKFLOW
+}
+
+enum AIUserAction {
+  PENDING
+  ACCEPTED
+  EDITED
+  REJECTED
+}
+
+// ---------- 核心实体 ----------
+
+model User {
+  id                    String   @id @default(cuid())
+  phone                 String   @unique
+  nickname              String
+  avatarUrl             String?
+  professionalIdentity  String?
+  bio                   String?
+  ratingAvg             Float    @default(0)
+  ratingCount           Int      @default(0)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  skillTags             SkillTag[]        @relation("UserSkillTags")
+  publishedProjects     Project[]         @relation("ProjectPublisher")
+  applications          Application[]
+  projectMemberships    ProjectMember[]
+  assignedTasks         Task[]
+  sentMessages          ChatMessage[]
+  conversations         ConversationParticipant[]
+  todos                 Todo[]
+  reviewsGiven          Review[]          @relation("ReviewFrom")
+  reviewsReceived       Review[]          @relation("ReviewTo")
+  portfolioItems        Portfolio[]
+  knowledgeEntries      KnowledgeEntry[]
+  notifications         Notification[]
+  aiInteractionLogs     AIInteractionLog[]
+}
+
+model SkillTag {
+  id    String @id @default(cuid())
+  name  String @unique
+
+  users          User[]        @relation("UserSkillTags")
+  projects       Project[]     @relation("ProjectSkillTags")
+  projectRoles   ProjectRole[] @relation("ProjectRoleSkillTags")
+}
+
+model Project {
+  id                  String        @id @default(cuid())
+  publisherId         String
+  publisher           User          @relation("ProjectPublisher", fields: [publisherId], references: [id])
+  title               String
+  background          String
+  goal                String
+  coreFeatures         String
+  deliverables        String
+  acceptanceCriteria  String
+  budgetMin           Int
+  budgetMax           Int
+  cycleWeeks          Int
+  status              ProjectStatus @default(RECRUITING)
+  publishTier         PublishTier   @default(STANDARD)
+  kind                ProjectKind   @default(DEMAND)
+  coverImageUrl       String?
+  heat                Int           @default(0)
+  aiGeneratedDraft    Boolean       @default(false)
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  skillTags     SkillTag[]      @relation("ProjectSkillTags")
+  roles         ProjectRole[]
+  applications  Application[]
+  members       ProjectMember[]
+  tasks         Task[]
+  conversations Conversation[]
+  reviews       Review[]
+  knowledgeEntries KnowledgeEntry[]
+  portfolioItems   Portfolio[]
+}
+
+model ProjectRole {
+  id            String   @id @default(cuid())
+  projectId     String
+  project       Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  roleName      String
+  headcount     Int      @default(1)
+  filledCount   Int      @default(0)
+
+  requiredSkills SkillTag[] @relation("ProjectRoleSkillTags")
+  applications   Application[]
+}
+
+model Application {
+  id           String             @id @default(cuid())
+  projectId    String
+  project      Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  applicantId  String
+  applicant    User               @relation(fields: [applicantId], references: [id])
+  roleId       String?
+  role         ProjectRole?       @relation(fields: [roleId], references: [id])
+  status       ApplicationStatus  @default(PENDING)
+  content      String
+  aiGenerated  Boolean            @default(false)
+  createdAt    DateTime           @default(now())
+}
+
+model ProjectMember {
+  id         String   @id @default(cuid())
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  role       String
+  joinedAt   DateTime @default(now())
+
+  @@unique([projectId, userId])
+}
+
+model Task {
+  id            String     @id @default(cuid())
+  projectId     String
+  project       Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title         String
+  assigneeId    String?
+  assignee      User?      @relation(fields: [assigneeId], references: [id])
+  dueDate       DateTime?
+  status        TaskStatus @default(TODO)
+  parentTaskId  String?
+  parentTask    Task?      @relation("SubTasks", fields: [parentTaskId], references: [id])
+  subTasks      Task[]     @relation("SubTasks")
+  aiGenerated   Boolean    @default(false)
+  createdAt     DateTime   @default(now())
+}
+
+model Conversation {
+  id             String            @id @default(cuid())
+  type           ConversationType
+  projectId      String?
+  project        Project?          @relation(fields: [projectId], references: [id])
+  title          String
+  lastMessageAt  DateTime          @default(now())
+  // 以下两个字段只对 type=CHANNEL 的会话有意义（频道浏览页按 category 分组展示）
+  category       String?
+  isVoiceRoom    Boolean           @default(false)
+
+  participants   ConversationParticipant[]
+  messages       ChatMessage[]
+  todos          Todo[]
+}
+
+model ConversationParticipant {
+  id              String        @id @default(cuid())
+  conversationId  String
+  conversation    Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  unreadCount     Int           @default(0)
+  // 语音房"谁在场"——只做在场状态广播，不涉及真实音视频流
+  inVoiceRoom     Boolean       @default(false)
+
+  @@unique([conversationId, userId])
+}
+
+model ChatMessage {
+  id              String        @id @default(cuid())
+  conversationId  String
+  conversation    Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderId        String
+  sender          User          @relation(fields: [senderId], references: [id])
+  content         String
+  type            MessageType   @default(TEXT)
+  createdAt       DateTime      @default(now())
+
+  todos           Todo[]
+}
+
+model Todo {
+  id                 String        @id @default(cuid())
+  userId             String
+  user               User          @relation(fields: [userId], references: [id])
+  conversationId     String?
+  conversation       Conversation? @relation(fields: [conversationId], references: [id])
+  sourceMessageId    String?
+  sourceMessage      ChatMessage?  @relation(fields: [sourceMessageId], references: [id])
+  content            String
+  assignee           String?
+  dueDate            DateTime?
+  status             TaskStatus    @default(TODO)
+  aiExtracted        Boolean       @default(false)
+  confirmedByUser    Boolean       @default(false)
+  createdAt          DateTime      @default(now())
+}
+
+model Review {
+  id          String   @id @default(cuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  fromUserId  String
+  fromUser    User     @relation("ReviewFrom", fields: [fromUserId], references: [id])
+  toUserId    String
+  toUser      User     @relation("ReviewTo", fields: [toUserId], references: [id])
+  rating      Int
+  content     String
+  createdAt   DateTime @default(now())
+}
+
+model Portfolio {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  projectRefId String?
+  projectRef   Project? @relation(fields: [projectRefId], references: [id])
+  title        String
+  description  String
+  aiGenerated  Boolean  @default(false)
+  createdAt    DateTime @default(now())
+}
+
+model KnowledgeEntry {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id])
+  projectId      String?
+  project        Project? @relation(fields: [projectId], references: [id])
+  summary        String
+  lessonsLearned String
+  aiGenerated    Boolean  @default(false)
+  editedByUser   Boolean  @default(false)
+  createdAt      DateTime @default(now())
+}
+
+model Notification {
+  id               String    @id @default(cuid())
+  userId           String
+  user             User      @relation(fields: [userId], references: [id])
+  type             String
+  content          String
+  relatedEntityId  String?
+  readAt           DateTime?
+  createdAt        DateTime  @default(now())
+}
+
+// AI 可追溯记录：对应风险矩阵"每类 AI 能力保留依据、可追溯、用户确认"的治理要求
+model AIInteractionLog {
+  id                String        @id @default(cuid())
+  userId            String
+  user              User          @relation(fields: [userId], references: [id])
+  capability        AICapability
+  inputRef          String
+  outputRaw         String
+  sourceContentRef  String?
+  userAction        AIUserAction  @default(PENDING)
+  createdAt         DateTime      @default(now())
+}

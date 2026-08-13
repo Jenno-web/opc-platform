@@ -1,0 +1,289 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
+import AiHint from '@/components/AiHint.vue'
+import { fetchProjectDetail } from '@/api/projects'
+import type { ProjectDetail } from '@/types'
+
+const detail = ref<ProjectDetail | null>(null)
+const loading = ref(true)
+
+const kindLabel: Record<string, string> = { DEMAND: '需求', SUPPLY: '供给', MUTUAL: '互助' }
+const statusLabel: Record<string, string> = {
+  RECRUITING: '待响应',
+  IN_PROGRESS: '进行中',
+  PENDING_CONFIRM: '待确认',
+  COMPLETED: '已完成',
+  ARCHIVED: '已归档',
+}
+
+onLoad(async (query) => {
+  const id = query?.id as string
+  if (!id) return
+  loading.value = true
+  try {
+    detail.value = await fetchProjectDetail(id)
+  } finally {
+    loading.value = false
+  }
+})
+
+function goRespond(mode: 'question' | 'respond') {
+  if (!detail.value) return
+  uni.navigateTo({
+    url: `/pages/project/respond?projectId=${detail.value.id}&publisherId=${detail.value.publisher.id}&mode=${mode}`,
+  })
+}
+</script>
+
+<template>
+  <view class="detail">
+    <view v-if="loading" class="detail__loading">加载中...</view>
+
+    <template v-else-if="detail">
+      <view class="detail__badges">
+        <text class="detail__kind">{{ kindLabel[detail.kind] }}</text>
+        <text v-if="detail.publishTier === 'BOUNTY'" class="detail__bounty">悬赏</text>
+        <text class="detail__status">{{ statusLabel[detail.status] }}</text>
+      </view>
+
+      <view class="detail__title">{{ detail.title }}</view>
+      <text class="detail__background">{{ detail.background }}</text>
+
+      <view class="detail__tags">
+        <text v-for="tag in detail.skillTags" :key="tag.id" class="detail__tag">{{ tag.name }}</text>
+      </view>
+
+      <view class="detail__meta">
+        <text>预算 {{ detail.budgetMin }}-{{ detail.budgetMax }} 元</text>
+        <text>截止 {{ detail.cycleWeeks }} 周内</text>
+        <text>{{ detail.kind === 'SUPPLY' ? '供给' : '合作' }}方式：远程</text>
+      </view>
+
+      <AiHint v-if="detail.aiSummary" label="AI 摘要" :text="detail.aiSummary" />
+
+      <AiHint
+        v-if="detail.aiMatch"
+        label="AI 匹配"
+        :text="detail.aiMatch.reason"
+        :emphasis="`匹配度 ${detail.aiMatch.score}%`"
+      />
+
+      <view class="detail__section">
+        <view class="detail__section-title">项目目标</view>
+        <text class="detail__section-body">{{ detail.goal }}</text>
+      </view>
+      <view class="detail__section">
+        <view class="detail__section-title">核心功能</view>
+        <text class="detail__section-body">{{ detail.coreFeatures }}</text>
+      </view>
+      <view class="detail__section">
+        <view class="detail__section-title">交付内容</view>
+        <text class="detail__section-body">{{ detail.deliverables }}</text>
+      </view>
+      <view class="detail__section">
+        <view class="detail__section-title">验收标准</view>
+        <text class="detail__section-body">{{ detail.acceptanceCriteria }}</text>
+      </view>
+
+      <view v-if="detail.roles.length" class="detail__section">
+        <view class="detail__section-title">正在招募</view>
+        <view v-for="role in detail.roles" :key="role.id" class="detail__role">
+          <text class="detail__role-name">{{ role.roleName }}</text>
+          <text class="detail__role-count">{{ role.filledCount }}/{{ role.headcount }} 人</text>
+        </view>
+      </view>
+
+      <view class="detail__publisher">
+        <view class="detail__publisher-avatar">{{ detail.publisher.nickname.slice(0, 1) }}</view>
+        <view class="detail__publisher-info">
+          <text class="detail__publisher-name">{{ detail.publisher.nickname }}</text>
+          <text class="detail__publisher-meta">
+            {{ detail.publisher.professionalIdentity }} · 入驻 {{ detail.publisher.daysSinceJoin }} 天 ·
+            {{ detail.publisher.collaborationCount }} 次合作
+          </text>
+        </view>
+        <text class="detail__publisher-rating">★ {{ detail.publisher.ratingAvg.toFixed(1) }}</text>
+      </view>
+
+      <view class="detail__actions">
+        <button class="detail__question-btn" @click="goRespond('question')">提问</button>
+        <button class="detail__respond-btn" @click="goRespond('respond')">我想响应</button>
+      </view>
+    </template>
+  </view>
+</template>
+
+<style scoped lang="scss">
+@import '@/styles/tokens.scss';
+
+.detail {
+  padding: $opc-spacing;
+  padding-bottom: 160rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+
+  &__loading {
+    text-align: center;
+    color: $opc-color-text-secondary;
+    padding: 80rpx 0;
+  }
+
+  &__badges {
+    display: flex;
+    gap: 10rpx;
+  }
+
+  &__kind {
+    font-size: 20rpx;
+    font-weight: 600;
+    color: $opc-color-text;
+    background: $opc-bg-subtle;
+    border: 1px solid $opc-border-color;
+    padding: 2rpx 14rpx;
+    border-radius: $opc-radius-tag;
+  }
+
+  &__bounty {
+    font-size: 20rpx;
+    font-weight: 700;
+    color: #fff;
+    background: $opc-color-primary;
+    padding: 2rpx 14rpx;
+    border-radius: $opc-radius-tag;
+  }
+
+  &__status {
+    font-size: 20rpx;
+    color: $opc-color-text-secondary;
+    padding: 2rpx 14rpx;
+    border-radius: $opc-radius-tag;
+    background: $opc-bg-subtle;
+  }
+
+  &__title {
+    font-size: 34rpx;
+    font-weight: 700;
+  }
+
+  &__background {
+    font-size: 26rpx;
+    color: $opc-color-text-secondary;
+    line-height: 1.6;
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12rpx;
+  }
+
+  &__tag {
+    font-size: 22rpx;
+    color: $opc-color-text-secondary;
+    background: $opc-bg-subtle;
+    padding: 6rpx 16rpx;
+    border-radius: $opc-radius-tag;
+  }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16rpx 24rpx;
+    font-size: 22rpx;
+    color: $opc-color-text-secondary;
+  }
+
+  &__section-title {
+    font-size: 26rpx;
+    font-weight: 600;
+    margin-bottom: 10rpx;
+  }
+
+  &__section-body {
+    font-size: 26rpx;
+    color: $opc-color-text-secondary;
+    line-height: 1.6;
+  }
+
+  &__role {
+    display: flex;
+    justify-content: space-between;
+    padding: 16rpx 20rpx;
+    background: $opc-bg-subtle;
+    border-radius: 16rpx;
+    margin-bottom: 12rpx;
+    font-size: 24rpx;
+  }
+
+  &__publisher {
+    display: flex;
+    align-items: center;
+    gap: 16rpx;
+    padding: 20rpx;
+    background: $opc-bg-subtle;
+    border-radius: $opc-radius-card;
+  }
+
+  &__publisher-avatar {
+    width: 72rpx;
+    height: 72rpx;
+    border-radius: 50%;
+    background: $opc-bg-card;
+    border: 1px solid $opc-border-color;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+  }
+
+  &__publisher-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4rpx;
+  }
+
+  &__publisher-name {
+    font-size: 26rpx;
+    font-weight: 600;
+  }
+
+  &__publisher-meta {
+    font-size: 20rpx;
+    color: $opc-color-text-secondary;
+  }
+
+  &__publisher-rating {
+    font-size: 22rpx;
+    font-weight: 600;
+  }
+
+  &__actions {
+    position: fixed;
+    left: $opc-spacing;
+    right: $opc-spacing;
+    bottom: 32rpx;
+    display: flex;
+    gap: 16rpx;
+  }
+
+  &__question-btn {
+    flex: 1;
+    background: $opc-bg-card;
+    border: 1px solid $opc-color-text;
+    color: $opc-color-text;
+    border-radius: $opc-radius-tag;
+    font-size: 28rpx;
+  }
+
+  &__respond-btn {
+    flex: 2;
+    background: $opc-color-primary;
+    color: #fff;
+    border-radius: $opc-radius-tag;
+    font-size: 28rpx;
+  }
+}
+</style>

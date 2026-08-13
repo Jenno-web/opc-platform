@@ -1,0 +1,299 @@
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue'
+import PublishFab from '@/components/PublishFab.vue'
+import { confirmTodo, fetchConversations, fetchTodos } from '@/api/messages'
+import { getSocket } from '@/utils/socket'
+import type { ConversationItem, TodoItem } from '@/types'
+
+const conversations = ref<ConversationItem[]>([])
+const todos = ref<TodoItem[]>([])
+const loading = ref(false)
+
+async function load() {
+  loading.value = true
+  try {
+    const [c, t] = await Promise.all([fetchConversations(), fetchTodos()])
+    conversations.value = c
+    todos.value = t
+  } finally {
+    loading.value = false
+  }
+}
+
+const typeLabel: Record<string, string> = {
+  PROJECT: '项目群',
+  PRIVATE: '私信',
+  SYSTEM: '系统通知',
+  APPLICATION: '申请通知',
+}
+
+async function handleConfirmTodo(todo: TodoItem) {
+  const updated = await confirmTodo(todo.id)
+  const index = todos.value.findIndex((t) => t.id === todo.id)
+  if (index !== -1) todos.value[index] = updated
+}
+
+function openConversation(conversation: ConversationItem) {
+  uni.navigateTo({
+    url: `/pages/message/chat?id=${conversation.id}&title=${encodeURIComponent(conversation.title)}`,
+  })
+}
+
+function openChannels() {
+  uni.navigateTo({ url: '/pages/message/channels' })
+}
+
+function handleRealtimeRefresh() {
+  load()
+}
+
+onMounted(() => {
+  load()
+  const socket = getSocket()
+  socket?.on('message:new', handleRealtimeRefresh)
+  socket?.on('todos:extracted', handleRealtimeRefresh)
+})
+
+onUnmounted(() => {
+  const socket = getSocket()
+  socket?.off('message:new', handleRealtimeRefresh)
+  socket?.off('todos:extracted', handleRealtimeRefresh)
+})
+</script>
+
+<template>
+  <view class="message">
+    <view class="message__stats">
+      <view class="message__stat-item">
+        <text class="message__stat-num">{{ todos.filter((t) => !t.confirmedByUser).length }}</text>
+        <text class="message__stat-label">待办事项</text>
+      </view>
+      <view class="message__stat-item">
+        <text class="message__stat-num">{{ conversations.reduce((s, c) => s + c.unreadCount, 0) }}</text>
+        <text class="message__stat-label">未读消息</text>
+      </view>
+    </view>
+
+    <view class="message__server-entry" @click="openChannels">
+      <text class="message__server-icon">官</text>
+      <view class="message__server-info">
+        <text class="message__server-name">培风社官方</text>
+        <text class="message__server-desc">频道浏览 · 公告 / 休息室 / 项目群聊...</text>
+      </view>
+      <text class="message__server-arrow">›</text>
+    </view>
+
+    <view v-if="todos.length" class="message__section">
+      <view class="message__section-title">AI 待办提取</view>
+      <view v-for="todo in todos" :key="todo.id" class="message__todo">
+        <text class="message__todo-content">{{ todo.content }}</text>
+        <view class="message__todo-meta">
+          <text v-if="todo.assignee">负责人：{{ todo.assignee }}</text>
+          <text v-if="todo.dueDate">{{ todo.dueDate }} 截止</text>
+          <text
+            v-if="todo.aiExtracted && !todo.confirmedByUser"
+            class="message__todo-confirm"
+            @click="handleConfirmTodo(todo)"
+          >
+            待确认 · 点击确认
+          </text>
+          <text v-else-if="todo.confirmedByUser" class="message__todo-done">已确认</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="message__section">
+      <view class="message__section-title">会话</view>
+      <view
+        v-for="c in conversations"
+        :key="c.id"
+        class="message__conversation"
+        @click="openConversation(c)"
+      >
+        <view class="message__conversation-header">
+          <text class="message__conversation-title">{{ c.title }}</text>
+          <text class="message__conversation-type">{{ typeLabel[c.type] }}</text>
+        </view>
+        <text class="message__conversation-last">{{ c.lastMessage }}</text>
+        <text v-if="c.unreadCount" class="message__conversation-badge">{{ c.unreadCount }}</text>
+      </view>
+      <view v-if="!loading && conversations.length === 0" class="message__empty">暂无会话</view>
+    </view>
+
+    <PublishFab />
+  </view>
+</template>
+
+<style scoped lang="scss">
+@import '@/styles/tokens.scss';
+
+.message {
+  padding: $opc-spacing;
+  padding-bottom: 160rpx;
+
+  &__stats {
+    display: flex;
+    background: $opc-bg-subtle;
+    border: 1px solid $opc-border-color;
+    border-radius: $opc-radius-card;
+    padding: $opc-spacing 0;
+    margin-bottom: 24rpx;
+  }
+
+  &__stat-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6rpx;
+  }
+
+  &__stat-num {
+    font-size: 32rpx;
+    font-weight: 700;
+    color: $opc-color-text;
+  }
+
+  &__stat-label {
+    font-size: 22rpx;
+    color: $opc-color-text-secondary;
+  }
+
+  &__server-entry {
+    display: flex;
+    align-items: center;
+    gap: 16rpx;
+    background: $opc-bg-card;
+    border: 1px solid $opc-border-color;
+    border-radius: $opc-radius-card;
+    padding: 20rpx;
+    margin-bottom: 32rpx;
+  }
+
+  &__server-icon {
+    width: 64rpx;
+    height: 64rpx;
+    border-radius: 16rpx;
+    background: $opc-bg-subtle;
+    border: 1px solid $opc-border-color;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+  }
+
+  &__server-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4rpx;
+  }
+
+  &__server-name {
+    font-size: 26rpx;
+    font-weight: 600;
+  }
+
+  &__server-desc {
+    font-size: 20rpx;
+    color: $opc-color-text-secondary;
+  }
+
+  &__server-arrow {
+    color: $opc-color-text-placeholder;
+  }
+
+  &__section {
+    margin-bottom: 32rpx;
+  }
+
+  &__section-title {
+    font-size: 26rpx;
+    font-weight: 700;
+    margin-bottom: 16rpx;
+  }
+
+  &__todo {
+    background: $opc-bg-card;
+    border: 1px solid $opc-border-color;
+    border-radius: 16rpx;
+    padding: 20rpx;
+    margin-bottom: 12rpx;
+  }
+
+  &__todo-content {
+    font-size: 26rpx;
+    display: block;
+    margin-bottom: 10rpx;
+  }
+
+  &__todo-meta {
+    display: flex;
+    gap: 16rpx;
+    font-size: 20rpx;
+    color: $opc-color-text-secondary;
+  }
+
+  &__todo-confirm {
+    color: $opc-color-text;
+    font-weight: 600;
+    text-decoration: underline;
+  }
+
+  &__todo-done {
+    color: $opc-color-success;
+  }
+
+  &__conversation {
+    position: relative;
+    background: $opc-bg-card;
+    border: 1px solid $opc-border-color;
+    border-radius: 16rpx;
+    padding: 20rpx;
+    margin-bottom: 12rpx;
+  }
+
+  &__conversation-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6rpx;
+    padding-right: 40rpx;
+  }
+
+  &__conversation-title {
+    font-size: 26rpx;
+    font-weight: 600;
+  }
+
+  &__conversation-type {
+    font-size: 20rpx;
+    color: $opc-color-text-secondary;
+  }
+
+  &__conversation-last {
+    font-size: 22rpx;
+    color: $opc-color-text-secondary;
+  }
+
+  &__conversation-badge {
+    position: absolute;
+    top: 20rpx;
+    right: 20rpx;
+    background: $opc-color-primary;
+    color: #fff;
+    font-size: 18rpx;
+    min-width: 32rpx;
+    height: 32rpx;
+    line-height: 32rpx;
+    text-align: center;
+    border-radius: 50%;
+  }
+
+  &__empty {
+    text-align: center;
+    color: $opc-color-text-secondary;
+    font-size: 24rpx;
+    padding: 40rpx 0;
+  }
+}
+</style>

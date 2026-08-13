@@ -1,0 +1,27 @@
+/* OPC 设计 token：直接从 Figma 低保真源文件（101:1438 画布）用 API 读出来的真实取值，
+   不是靠截图估的。真实设计是纯黑白灰，没有强调色——AI 相关内容靠图标/加粗区分，不是靠颜色。 */
+$opc-color-primary: #111111; // 主要按钮/强调文字，对应 Figma 里的黑色实心按钮
+$opc-color-primary-soft: #f5f5f3; // 浅灰底（标签、次要按钮背景）
+$opc-color-ai: #111111; // 沿用主色：真实设计没有单独的 AI 强调色，靠"AI"字样+图标区分，不是靠色彩
+
+// 以下三个状态色（成功/警告/危险）Figma 低保真稿里没有定义——线框图阶段不需要传达这类状态色。
+// 保留是因为产品真实运行时需要区分"已完成/临期/错误"这类状态，属于低保真之外的产品判断，
+// 选用了和黑白灰整体氛围接近的低饱和度色，而不是之前那种鲜艳蓝紫风格。
+$opc-color-success: #4a7c59;
+$opc-color-warning: #a8763e;
+$opc-color-danger: #b3453f;
+
+$opc-color-text: #111111;
+$opc-color-text-secondary: #777777;
+$opc-color-text-placeholder: #9a9a9a;
+
+$opc-bg-page: #ffffff;
+$opc-bg-card: #ffffff;
+$opc-bg-subtle: #f5f5f3; // 分组/卡片的浅灰底，对应 Figma 里的 #f5f5f3 / #ededeb
+$opc-border-color: #ededeb;
+
+$opc-font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', 'Helvetica Neue', sans-serif;
+
+$opc-radius-card: 16rpx;
+$opc-radius-tag: 999rpx;
+$opc-spacing: 24rpx;
