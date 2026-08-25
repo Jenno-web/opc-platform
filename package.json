@@ -10,6 +10,8 @@
     "dev:backend": "npm run start:dev --workspace backend",
     "dev:frontend": "npm run dev:h5 --workspace frontend",
     "db:migrate": "npm run prisma:migrate --workspace backend",
-    "db:seed": "npm run prisma:seed --workspace backend"
+    "db:seed": "npm run prisma:seed --workspace backend",
+    "build": "npm run build --workspace backend",
+    "start": "npm run deploy:start --workspace backend"
   }
 }
