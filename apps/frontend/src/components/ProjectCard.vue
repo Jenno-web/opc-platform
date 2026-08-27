@@ -28,7 +28,7 @@ function handleClick() {
 </script>
 
 <template>
-  <view class="project-card" @click="handleClick">
+  <view class="project-card" hover-class="opc-hover" @click="handleClick">
     <view class="project-card__header">
       <view class="project-card__badges">
         <text class="project-card__kind">{{ kindLabel[project.kind] }}</text>
@@ -66,15 +66,17 @@ function handleClick() {
 <style scoped lang="scss">
 @import '@/styles/tokens.scss';
 
+// 间距/字号取值来自 Figma「01 发现&机会信息流」画板里 Section 卡片的 Auto Layout 实测值
+// （itemSpacing≈30rpx、padding≈31rpx、标题字号 35rpx、正文 28rpx），不是随手写的
 .project-card {
   background: $opc-bg-card;
   border: 1px solid $opc-border-color;
   border-radius: $opc-radius-card;
-  padding: $opc-spacing;
-  margin-bottom: 20rpx;
+  padding: $opc-spacing-md;
+  margin-bottom: $opc-spacing-sm;
   display: flex;
   flex-direction: column;
-  gap: 10rpx;
+  gap: $opc-spacing-md;
 
   &__header {
     display: flex;
@@ -84,11 +86,11 @@ function handleClick() {
 
   &__badges {
     display: flex;
-    gap: 10rpx;
+    gap: $opc-spacing-xxs;
   }
 
   &__kind {
-    font-size: 20rpx;
+    font-size: $opc-font-xs;
     font-weight: 600;
     color: $opc-color-text;
     background: $opc-bg-subtle;
@@ -98,7 +100,7 @@ function handleClick() {
   }
 
   &__bounty {
-    font-size: 20rpx;
+    font-size: $opc-font-xs;
     font-weight: 700;
     color: #ffffff;
     background: $opc-color-primary;
@@ -107,7 +109,7 @@ function handleClick() {
   }
 
   &__status {
-    font-size: 20rpx;
+    font-size: $opc-font-xs;
     padding: 4rpx 14rpx;
     border-radius: $opc-radius-tag;
     background: $opc-bg-subtle;
@@ -120,13 +122,13 @@ function handleClick() {
   }
 
   &__title {
-    font-size: 30rpx;
-    font-weight: 600;
+    font-size: $opc-font-xl;
+    font-weight: 500;
     color: $opc-color-text;
   }
 
   &__desc {
-    font-size: 24rpx;
+    font-size: $opc-font-base;
     color: $opc-color-text-secondary;
     line-height: 1.5;
   }
@@ -134,11 +136,11 @@ function handleClick() {
   &__tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 10rpx;
+    gap: $opc-spacing-xxs;
   }
 
   &__tag {
-    font-size: 20rpx;
+    font-size: $opc-font-xs;
     color: $opc-color-text-secondary;
     background: $opc-bg-subtle;
     padding: 4rpx 12rpx;
@@ -148,8 +150,8 @@ function handleClick() {
   &__match {
     display: flex;
     align-items: center;
-    gap: 10rpx;
-    font-size: 22rpx;
+    gap: $opc-spacing-xxs;
+    font-size: $opc-font-sm;
   }
 
   &__match-score {
@@ -165,7 +167,7 @@ function handleClick() {
   &__footer {
     display: flex;
     justify-content: space-between;
-    font-size: 20rpx;
+    font-size: $opc-font-xs;
     color: $opc-color-text-secondary;
   }
 }

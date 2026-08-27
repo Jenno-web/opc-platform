@@ -2,6 +2,8 @@
 import { ref, onMounted } from 'vue'
 import PublishFab from '@/components/PublishFab.vue'
 import ProjectCard from '@/components/ProjectCard.vue'
+import SkeletonBlock from '@/components/SkeletonBlock.vue'
+import EmptyState from '@/components/EmptyState.vue'
 import { fetchHotProjects, fetchProjectList, fetchRecommendations } from '@/api/projects'
 import type { ProjectKind, ProjectListItem, PublishTier, RecommendationResult } from '@/types'
 
@@ -71,23 +73,29 @@ onMounted(() => loadByChip('recommend'))
   <view class="discover">
     <view class="discover__header">
       <text class="discover__brand">培风社 OPC</text>
-      <text class="discover__search-icon" @click="goSearch">🔍</text>
+      <view class="discover__search-icon" hover-class="opc-hover" @click="goSearch">🔍</view>
     </view>
+    <text class="discover__title">发现机会</text>
 
     <view class="discover__chips">
-      <text
+      <view
         v-for="chip in chips"
         :key="chip.value"
         class="discover__chip"
+        hover-class="opc-hover"
         :class="{ 'is-active': activeChip === chip.value }"
         @click="switchChip(chip.value)"
       >
-        {{ chip.label }}
-      </text>
+        <text>{{ chip.label }}</text>
+      </view>
     </view>
 
-    <template v-if="activeChip === 'recommend'">
-      <view v-if="recommendations.length" class="discover__banner">
+    <template v-if="loading">
+      <SkeletonBlock v-for="i in 3" :key="i" :rows="2" />
+    </template>
+
+    <template v-else-if="activeChip === 'recommend'">
+      <view v-if="recommendations.length" class="discover__banner opc-fade-in">
         <text class="discover__banner-title">今日匹配</text>
         <text class="discover__banner-desc">{{ recommendations.length }} 条机会与你的方向相关</text>
       </view>
@@ -95,15 +103,16 @@ onMounted(() => loadByChip('recommend'))
       <ProjectCard
         v-for="r in recommendations"
         :key="r.project.id"
+        class="opc-fade-in"
         :project="{ ...r.project, matchScore: r.matchScore, matchReason: r.reason }"
         @click="goDetail"
       />
-      <view v-if="!loading && recommendations.length === 0" class="discover__empty">暂无推荐，去搜索页看看全部机会</view>
+      <EmptyState v-if="recommendations.length === 0" text="暂无推荐" hint="去搜索页看看全部机会" />
     </template>
 
     <template v-else>
-      <ProjectCard v-for="p in listItems" :key="p.id" :project="p" @click="goDetail" />
-      <view v-if="!loading && listItems.length === 0" class="discover__empty">这个分类下暂无内容</view>
+      <ProjectCard v-for="p in listItems" :key="p.id" class="opc-fade-in" :project="p" @click="goDetail" />
+      <EmptyState v-if="listItems.length === 0" text="这个分类下暂无内容" />
     </template>
 
     <PublishFab />
@@ -122,30 +131,43 @@ onMounted(() => loadByChip('recommend'))
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24rpx;
+    margin-bottom: $opc-spacing-xxs;
   }
 
+  // Figma 里"培风社 OPC"是大标题上方的小 kicker（21rpx/700/#666），不是页面主标题
   &__brand {
-    font-size: 34rpx;
+    font-size: $opc-font-sm;
     font-weight: 700;
-    color: $opc-color-text;
+    color: $opc-color-text-secondary;
   }
 
   &__search-icon {
     font-size: 32rpx;
+    padding: $opc-spacing-xxs;
+    border-radius: 50%;
+  }
+
+  // 页面主标题，对应画板里的 Heading 1「发现机会」，56rpx/860
+  &__title {
+    display: block;
+    font-size: $opc-font-display;
+    font-weight: 800;
+    color: $opc-color-text;
+    margin-bottom: $opc-spacing-sm;
   }
 
   &__chips {
     display: flex;
-    gap: 16rpx;
+    gap: $opc-spacing-xxs;
     overflow-x: auto;
     white-space: nowrap;
-    margin-bottom: 28rpx;
+    margin-bottom: $opc-spacing-lg;
   }
 
   &__chip {
-    font-size: 24rpx;
-    padding: 12rpx 26rpx;
+    display: inline-block;
+    font-size: $opc-font-sm;
+    padding: $opc-spacing-xxs $opc-spacing-sm;
     border-radius: $opc-radius-tag;
     background: $opc-bg-card;
     border: 1px solid $opc-border-color;
@@ -163,29 +185,22 @@ onMounted(() => loadByChip('recommend'))
     background: $opc-bg-subtle;
     border: 1px solid $opc-border-color;
     border-radius: $opc-radius-card;
-    padding: 20rpx 24rpx;
-    margin-bottom: 24rpx;
+    padding: $opc-spacing-sm;
+    margin-bottom: $opc-spacing-sm;
     display: flex;
     flex-direction: column;
     gap: 4rpx;
   }
 
   &__banner-title {
-    font-size: 24rpx;
+    font-size: $opc-font-sm;
     font-weight: 700;
     color: $opc-color-text;
   }
 
   &__banner-desc {
-    font-size: 22rpx;
+    font-size: $opc-font-sm;
     color: $opc-color-text-secondary;
-  }
-
-  &__empty {
-    text-align: center;
-    color: $opc-color-text-secondary;
-    font-size: 24rpx;
-    padding: 60rpx 0;
   }
 }
 </style>

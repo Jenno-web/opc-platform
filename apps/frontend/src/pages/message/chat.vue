@@ -10,6 +10,8 @@ import {
 } from '@/api/messages'
 import { useUserStore } from '@/store/user'
 import { getSocket } from '@/utils/socket'
+import SkeletonBlock from '@/components/SkeletonBlock.vue'
+import EmptyState from '@/components/EmptyState.vue'
 import type { ChatMessageItem } from '@/types'
 
 const userStore = useUserStore()
@@ -119,28 +121,38 @@ onUnmounted(() => {
       <text class="chat__summary-text">{{ aiSummary }}</text>
     </view>
 
-    <view class="chat__messages">
+    <view v-if="loading" class="chat__messages">
+      <SkeletonBlock :rows="1" avatar />
+      <SkeletonBlock :rows="1" avatar />
+    </view>
+    <view v-else class="chat__messages">
       <view
         v-for="message in messages"
         :key="message.id"
-        class="chat__bubble-row"
+        class="chat__bubble-row opc-fade-in"
         :class="{ 'is-mine': message.senderId === userStore.currentUser?.id }"
       >
         <text class="chat__sender">{{ message.sender.nickname }}</text>
         <view class="chat__bubble">{{ message.content }}</view>
       </view>
-      <view v-if="!loading && messages.length === 0" class="chat__empty">暂无消息</view>
+      <EmptyState v-if="messages.length === 0" text="暂无消息" />
     </view>
 
     <view class="chat__ai-bar">
-      <text class="chat__ai-btn" :class="{ 'is-disabled': aiWorking }" @click="handleSummarize">对话总结</text>
-      <text class="chat__ai-btn" :class="{ 'is-disabled': aiWorking }" @click="handleExtractTodos">提取待办</text>
-      <text class="chat__ai-btn" :class="{ 'is-disabled': aiWorking }" @click="handleSuggestReply">回复建议</text>
+      <view class="chat__ai-btn" hover-class="opc-hover" :class="{ 'is-disabled': aiWorking }" @click="handleSummarize">
+        <text>对话总结</text>
+      </view>
+      <view class="chat__ai-btn" hover-class="opc-hover" :class="{ 'is-disabled': aiWorking }" @click="handleExtractTodos">
+        <text>提取待办</text>
+      </view>
+      <view class="chat__ai-btn" hover-class="opc-hover" :class="{ 'is-disabled': aiWorking }" @click="handleSuggestReply">
+        <text>回复建议</text>
+      </view>
     </view>
 
     <view class="chat__input-bar">
       <input v-model="inputText" class="chat__input" placeholder="输入消息..." confirm-type="send" @confirm="handleSend" />
-      <button class="chat__send-btn" size="mini" @click="handleSend">发送</button>
+      <button class="chat__send-btn" hover-class="opc-hover" size="mini" @click="handleSend">发送</button>
     </view>
   </view>
 </template>
@@ -156,22 +168,22 @@ onUnmounted(() => {
 
   &__summary {
     margin: $opc-spacing $opc-spacing 0;
-    padding: 16rpx 20rpx;
+    padding: $opc-spacing-xs $opc-spacing-sm;
     background: $opc-color-primary-soft;
-    border-radius: 16rpx;
+    border-radius: $opc-radius-card-sm;
     display: flex;
     flex-direction: column;
     gap: 6rpx;
   }
 
   &__summary-label {
-    font-size: 20rpx;
+    font-size: $opc-font-xs;
     font-weight: 600;
     color: $opc-color-ai;
   }
 
   &__summary-text {
-    font-size: 24rpx;
+    font-size: $opc-font-base;
     color: $opc-color-text;
   }
 
@@ -180,7 +192,7 @@ onUnmounted(() => {
     padding: $opc-spacing;
     display: flex;
     flex-direction: column;
-    gap: 20rpx;
+    gap: $opc-spacing-sm;
   }
 
   &__bubble-row {
@@ -199,7 +211,7 @@ onUnmounted(() => {
   }
 
   &__sender {
-    font-size: 20rpx;
+    font-size: $opc-font-xs;
     color: $opc-color-text-secondary;
     margin-bottom: 6rpx;
   }
@@ -208,17 +220,10 @@ onUnmounted(() => {
     max-width: 70%;
     background: $opc-bg-card;
     color: $opc-color-text;
-    padding: 16rpx 24rpx;
-    border-radius: 20rpx;
-    font-size: 26rpx;
+    padding: $opc-spacing-xs $opc-spacing-sm;
+    border-radius: $opc-radius-card-sm;
+    font-size: $opc-font-base;
     line-height: 1.5;
-  }
-
-  &__empty {
-    text-align: center;
-    color: $opc-color-text-secondary;
-    font-size: 24rpx;
-    padding: 60rpx 0;
   }
 
   &__ai-bar {
@@ -227,16 +232,17 @@ onUnmounted(() => {
     right: 0;
     bottom: 100rpx;
     display: flex;
-    gap: 16rpx;
-    padding: 12rpx $opc-spacing;
+    gap: $opc-spacing-xs;
+    padding: $opc-spacing-xxs $opc-spacing;
     background: $opc-bg-page;
   }
 
   &__ai-btn {
-    font-size: 22rpx;
+    display: inline-block;
+    font-size: $opc-font-sm;
     color: $opc-color-ai;
     background: $opc-color-primary-soft;
-    padding: 10rpx 20rpx;
+    padding: $opc-spacing-xxs $opc-spacing-sm;
     border-radius: $opc-radius-tag;
 
     &.is-disabled {
@@ -251,8 +257,8 @@ onUnmounted(() => {
     bottom: 0;
     display: flex;
     align-items: center;
-    gap: 16rpx;
-    padding: 16rpx $opc-spacing;
+    gap: $opc-spacing-xs;
+    padding: $opc-spacing-xs $opc-spacing;
     background: $opc-bg-card;
     border-top: 1px solid $opc-bg-page;
   }
@@ -261,15 +267,15 @@ onUnmounted(() => {
     flex: 1;
     background: $opc-bg-page;
     border-radius: $opc-radius-tag;
-    padding: 16rpx 24rpx;
-    font-size: 26rpx;
+    padding: $opc-spacing-xs $opc-spacing-sm;
+    font-size: $opc-font-base;
   }
 
   &__send-btn {
     background: $opc-color-primary;
     color: #fff;
     border-radius: $opc-radius-tag;
-    font-size: 24rpx;
+    font-size: $opc-font-sm;
   }
 }
 </style>

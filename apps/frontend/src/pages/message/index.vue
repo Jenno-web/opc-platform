@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import PublishFab from '@/components/PublishFab.vue'
+import SkeletonBlock from '@/components/SkeletonBlock.vue'
+import EmptyState from '@/components/EmptyState.vue'
 import { confirmTodo, fetchConversations, fetchTodos } from '@/api/messages'
 import { getSocket } from '@/utils/socket'
 import type { ConversationItem, TodoItem } from '@/types'
@@ -74,7 +76,7 @@ onUnmounted(() => {
       </view>
     </view>
 
-    <view class="message__server-entry" @click="openChannels">
+    <view class="message__server-entry" hover-class="opc-hover" @click="openChannels">
       <text class="message__server-icon">官</text>
       <view class="message__server-info">
         <text class="message__server-name">培风社官方</text>
@@ -83,42 +85,52 @@ onUnmounted(() => {
       <text class="message__server-arrow">›</text>
     </view>
 
-    <view v-if="todos.length" class="message__section">
-      <view class="message__section-title">AI 待办提取</view>
-      <view v-for="todo in todos" :key="todo.id" class="message__todo">
-        <text class="message__todo-content">{{ todo.content }}</text>
-        <view class="message__todo-meta">
-          <text v-if="todo.assignee">负责人：{{ todo.assignee }}</text>
-          <text v-if="todo.dueDate">{{ todo.dueDate }} 截止</text>
-          <text
-            v-if="todo.aiExtracted && !todo.confirmedByUser"
-            class="message__todo-confirm"
-            @click="handleConfirmTodo(todo)"
-          >
-            待确认 · 点击确认
-          </text>
-          <text v-else-if="todo.confirmedByUser" class="message__todo-done">已确认</text>
-        </view>
-      </view>
-    </view>
+    <template v-if="loading">
+      <SkeletonBlock :rows="2" />
+      <SkeletonBlock :rows="2" avatar />
+      <SkeletonBlock :rows="2" avatar />
+    </template>
 
-    <view class="message__section">
-      <view class="message__section-title">会话</view>
-      <view
-        v-for="c in conversations"
-        :key="c.id"
-        class="message__conversation"
-        @click="openConversation(c)"
-      >
-        <view class="message__conversation-header">
-          <text class="message__conversation-title">{{ c.title }}</text>
-          <text class="message__conversation-type">{{ typeLabel[c.type] }}</text>
+    <template v-else>
+      <view v-if="todos.length" class="message__section">
+        <view class="message__section-title">AI 待办提取</view>
+        <view v-for="todo in todos" :key="todo.id" class="message__todo opc-fade-in">
+          <text class="message__todo-content">{{ todo.content }}</text>
+          <view class="message__todo-meta">
+            <text v-if="todo.assignee">负责人：{{ todo.assignee }}</text>
+            <text v-if="todo.dueDate">{{ todo.dueDate }} 截止</text>
+            <text
+              v-if="todo.aiExtracted && !todo.confirmedByUser"
+              class="message__todo-confirm"
+              hover-class="opc-hover"
+              @click="handleConfirmTodo(todo)"
+            >
+              待确认 · 点击确认
+            </text>
+            <text v-else-if="todo.confirmedByUser" class="message__todo-done">已确认</text>
+          </view>
         </view>
-        <text class="message__conversation-last">{{ c.lastMessage }}</text>
-        <text v-if="c.unreadCount" class="message__conversation-badge">{{ c.unreadCount }}</text>
       </view>
-      <view v-if="!loading && conversations.length === 0" class="message__empty">暂无会话</view>
-    </view>
+
+      <view class="message__section">
+        <view class="message__section-title">会话</view>
+        <view
+          v-for="c in conversations"
+          :key="c.id"
+          class="message__conversation opc-fade-in"
+          hover-class="opc-hover"
+          @click="openConversation(c)"
+        >
+          <view class="message__conversation-header">
+            <text class="message__conversation-title">{{ c.title }}</text>
+            <text class="message__conversation-type">{{ typeLabel[c.type] }}</text>
+          </view>
+          <text class="message__conversation-last">{{ c.lastMessage }}</text>
+          <text v-if="c.unreadCount" class="message__conversation-badge">{{ c.unreadCount }}</text>
+        </view>
+        <EmptyState v-if="conversations.length === 0" text="暂无会话" />
+      </view>
+    </template>
 
     <PublishFab />
   </view>
@@ -137,7 +149,7 @@ onUnmounted(() => {
     border: 1px solid $opc-border-color;
     border-radius: $opc-radius-card;
     padding: $opc-spacing 0;
-    margin-bottom: 24rpx;
+    margin-bottom: $opc-spacing-sm;
   }
 
   &__stat-item {
@@ -149,31 +161,31 @@ onUnmounted(() => {
   }
 
   &__stat-num {
-    font-size: 32rpx;
+    font-size: $opc-font-lg;
     font-weight: 700;
     color: $opc-color-text;
   }
 
   &__stat-label {
-    font-size: 22rpx;
+    font-size: $opc-font-sm;
     color: $opc-color-text-secondary;
   }
 
   &__server-entry {
     display: flex;
     align-items: center;
-    gap: 16rpx;
+    gap: $opc-spacing-xs;
     background: $opc-bg-card;
     border: 1px solid $opc-border-color;
     border-radius: $opc-radius-card;
-    padding: 20rpx;
-    margin-bottom: 32rpx;
+    padding: $opc-spacing-sm;
+    margin-bottom: $opc-spacing-lg;
   }
 
   &__server-icon {
     width: 64rpx;
     height: 64rpx;
-    border-radius: 16rpx;
+    border-radius: $opc-radius-card-sm;
     background: $opc-bg-subtle;
     border: 1px solid $opc-border-color;
     display: flex;
@@ -190,12 +202,12 @@ onUnmounted(() => {
   }
 
   &__server-name {
-    font-size: 26rpx;
+    font-size: $opc-font-base;
     font-weight: 600;
   }
 
   &__server-desc {
-    font-size: 20rpx;
+    font-size: $opc-font-xs;
     color: $opc-color-text-secondary;
   }
 
@@ -204,33 +216,33 @@ onUnmounted(() => {
   }
 
   &__section {
-    margin-bottom: 32rpx;
+    margin-bottom: $opc-spacing-lg;
   }
 
   &__section-title {
-    font-size: 26rpx;
+    font-size: $opc-font-base;
     font-weight: 700;
-    margin-bottom: 16rpx;
+    margin-bottom: $opc-spacing-xs;
   }
 
   &__todo {
     background: $opc-bg-card;
     border: 1px solid $opc-border-color;
-    border-radius: 16rpx;
-    padding: 20rpx;
-    margin-bottom: 12rpx;
+    border-radius: $opc-radius-card-sm;
+    padding: $opc-spacing-sm;
+    margin-bottom: $opc-spacing-xxs;
   }
 
   &__todo-content {
-    font-size: 26rpx;
+    font-size: $opc-font-base;
     display: block;
-    margin-bottom: 10rpx;
+    margin-bottom: $opc-spacing-xxs;
   }
 
   &__todo-meta {
     display: flex;
-    gap: 16rpx;
-    font-size: 20rpx;
+    gap: $opc-spacing-xs;
+    font-size: $opc-font-xs;
     color: $opc-color-text-secondary;
   }
 
@@ -248,9 +260,9 @@ onUnmounted(() => {
     position: relative;
     background: $opc-bg-card;
     border: 1px solid $opc-border-color;
-    border-radius: 16rpx;
-    padding: 20rpx;
-    margin-bottom: 12rpx;
+    border-radius: $opc-radius-card-sm;
+    padding: $opc-spacing-sm;
+    margin-bottom: $opc-spacing-xxs;
   }
 
   &__conversation-header {
@@ -261,17 +273,17 @@ onUnmounted(() => {
   }
 
   &__conversation-title {
-    font-size: 26rpx;
+    font-size: $opc-font-base;
     font-weight: 600;
   }
 
   &__conversation-type {
-    font-size: 20rpx;
+    font-size: $opc-font-xs;
     color: $opc-color-text-secondary;
   }
 
   &__conversation-last {
-    font-size: 22rpx;
+    font-size: $opc-font-sm;
     color: $opc-color-text-secondary;
   }
 
@@ -287,13 +299,6 @@ onUnmounted(() => {
     line-height: 32rpx;
     text-align: center;
     border-radius: 50%;
-  }
-
-  &__empty {
-    text-align: center;
-    color: $opc-color-text-secondary;
-    font-size: 24rpx;
-    padding: 40rpx 0;
   }
 }
 </style>

@@ -2,6 +2,8 @@
 import { ref, onMounted } from 'vue'
 import PublishFab from '@/components/PublishFab.vue'
 import ProjectCard from '@/components/ProjectCard.vue'
+import SkeletonBlock from '@/components/SkeletonBlock.vue'
+import EmptyState from '@/components/EmptyState.vue'
 import { fetchMyProjectStats, fetchMyProjects, updateProjectStatus } from '@/api/projects'
 import { useUserStore } from '@/store/user'
 import type { ProjectListItem, ProjectStatus } from '@/types'
@@ -88,38 +90,44 @@ onMounted(async () => {
     </view>
 
     <view class="task-board__tabs">
-      <text
+      <view
         v-for="tab in tabs"
         :key="tab.value"
         class="task-board__tab"
+        hover-class="opc-hover"
         :class="{ 'is-active': activeTab === tab.value }"
         @click="switchTab(tab.value)"
       >
-        {{ tab.label }}
-      </text>
+        <text>{{ tab.label }}</text>
+      </view>
     </view>
 
-    <view class="task-board__list">
-      <view v-for="p in list" :key="p.id" class="task-board__item">
+    <view v-if="loading" class="task-board__list">
+      <SkeletonBlock v-for="i in 3" :key="i" :rows="2" />
+    </view>
+    <view v-else class="task-board__list">
+      <view v-for="p in list" :key="p.id" class="task-board__item opc-fade-in">
         <ProjectCard :project="p" @click="goDetail" />
         <view v-if="isMine(p)" class="task-board__actions">
-          <text
+          <view
             v-if="p.status !== 'COMPLETED'"
             class="task-board__action"
+            hover-class="opc-hover"
             @click.stop="handleComplete(p)"
           >
-            标记解决
-          </text>
-          <text
+            <text>标记解决</text>
+          </view>
+          <view
             v-if="p.status !== 'ARCHIVED'"
             class="task-board__action is-danger"
+            hover-class="opc-hover"
             @click.stop="handleArchive(p)"
           >
-            下架
-          </text>
+            <text>下架</text>
+          </view>
         </view>
       </view>
-      <view v-if="!loading && list.length === 0" class="task-board__empty">当前分类下暂无内容</view>
+      <EmptyState v-if="list.length === 0" text="当前分类下暂无内容" />
     </view>
 
     <PublishFab />
@@ -137,17 +145,17 @@ onMounted(async () => {
   &__header {
     display: flex;
     align-items: baseline;
-    gap: 12rpx;
-    margin-bottom: 24rpx;
+    gap: $opc-spacing-xxs;
+    margin-bottom: $opc-spacing-sm;
   }
 
   &__title {
-    font-size: 34rpx;
+    font-size: $opc-font-xl;
     font-weight: 700;
   }
 
   &__subtitle {
-    font-size: 22rpx;
+    font-size: $opc-font-sm;
     color: $opc-color-text-secondary;
   }
 
@@ -157,7 +165,7 @@ onMounted(async () => {
     border: 1px solid $opc-border-color;
     border-radius: $opc-radius-card;
     padding: $opc-spacing 0;
-    margin-bottom: 24rpx;
+    margin-bottom: $opc-spacing-sm;
   }
 
   &__stat {
@@ -169,26 +177,27 @@ onMounted(async () => {
   }
 
   &__stat-num {
-    font-size: 32rpx;
+    font-size: $opc-font-lg;
     font-weight: 700;
   }
 
   &__stat-label {
-    font-size: 20rpx;
+    font-size: $opc-font-xs;
     color: $opc-color-text-secondary;
   }
 
   &__tabs {
     display: flex;
-    gap: 16rpx;
-    margin-bottom: 24rpx;
+    gap: $opc-spacing-xxs;
+    margin-bottom: $opc-spacing-sm;
     overflow-x: auto;
     white-space: nowrap;
   }
 
   &__tab {
-    font-size: 24rpx;
-    padding: 12rpx 28rpx;
+    display: inline-block;
+    font-size: $opc-font-sm;
+    padding: $opc-spacing-xxs $opc-spacing-sm;
     border-radius: $opc-radius-tag;
     background: $opc-bg-card;
     border: 1px solid $opc-border-color;
@@ -203,33 +212,27 @@ onMounted(async () => {
   }
 
   &__item {
-    margin-bottom: 8rpx;
+    margin-bottom: $opc-spacing-xxs;
   }
 
   &__actions {
     display: flex;
-    gap: 16rpx;
-    margin: -8rpx 0 20rpx;
+    gap: $opc-spacing-xs;
+    margin: -8rpx 0 $opc-spacing-sm;
   }
 
   &__action {
-    font-size: 22rpx;
+    display: inline-block;
+    font-size: $opc-font-sm;
     color: $opc-color-text;
     background: $opc-bg-subtle;
     border: 1px solid $opc-border-color;
-    padding: 8rpx 20rpx;
+    padding: $opc-spacing-xxs $opc-spacing-xs;
     border-radius: $opc-radius-tag;
 
     &.is-danger {
       color: $opc-color-danger;
     }
-  }
-
-  &__empty {
-    text-align: center;
-    color: $opc-color-text-secondary;
-    font-size: 24rpx;
-    padding: 60rpx 0;
   }
 }
 </style>

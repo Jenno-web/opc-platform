@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { fetchChannels } from '@/api/messages'
+import SkeletonBlock from '@/components/SkeletonBlock.vue'
+import EmptyState from '@/components/EmptyState.vue'
 import type { ChannelItem } from '@/types'
 
 // 对应"11 消息&服务器频道浏览"画板。全平台目前只有"培风社官方"一个社区，
@@ -54,16 +56,27 @@ onMounted(async () => {
 
     <text class="channels__section-title">浏览频道</text>
 
-    <view v-for="[category, items] in grouped" :key="category" class="channels__group">
-      <text class="channels__group-title">{{ category }}</text>
-      <view v-for="c in items" :key="c.id" class="channels__item" @click="openChannel(c)">
-        <text class="channels__item-icon">{{ c.isVoiceRoom ? '🎙' : '#' }}</text>
-        <text class="channels__item-title">{{ c.title }}</text>
-        <text v-if="c.unreadCount" class="channels__item-badge">{{ c.unreadCount }}</text>
+    <template v-if="loading">
+      <SkeletonBlock v-for="i in 4" :key="i" :rows="1" />
+    </template>
+    <template v-else>
+      <view v-for="[category, items] in grouped" :key="category" class="channels__group">
+        <text class="channels__group-title">{{ category }}</text>
+        <view
+          v-for="c in items"
+          :key="c.id"
+          class="channels__item"
+          hover-class="opc-hover"
+          @click="openChannel(c)"
+        >
+          <text class="channels__item-icon">{{ c.isVoiceRoom ? '🎙' : '#' }}</text>
+          <text class="channels__item-title">{{ c.title }}</text>
+          <text v-if="c.unreadCount" class="channels__item-badge">{{ c.unreadCount }}</text>
+        </view>
       </view>
-    </view>
 
-    <view v-if="!loading && grouped.length === 0" class="channels__empty">没有找到相关频道</view>
+      <EmptyState v-if="grouped.length === 0" text="没有找到相关频道" />
+    </template>
   </view>
 </template>
 
@@ -74,17 +87,17 @@ onMounted(async () => {
   padding: $opc-spacing;
 
   &__header {
-    margin-bottom: 20rpx;
+    margin-bottom: $opc-spacing-sm;
   }
 
   &__name {
-    font-size: 32rpx;
+    font-size: $opc-font-lg;
     font-weight: 700;
     display: block;
   }
 
   &__meta {
-    font-size: 20rpx;
+    font-size: $opc-font-xs;
     color: $opc-color-text-secondary;
   }
 
@@ -92,24 +105,24 @@ onMounted(async () => {
     background: $opc-bg-subtle;
     border: 1px solid $opc-border-color;
     border-radius: $opc-radius-tag;
-    padding: 14rpx 24rpx;
-    font-size: 24rpx;
-    margin-bottom: 28rpx;
+    padding: $opc-spacing-xs $opc-spacing-sm;
+    font-size: $opc-font-base;
+    margin-bottom: $opc-spacing-lg;
   }
 
   &__section-title {
-    font-size: 22rpx;
+    font-size: $opc-font-sm;
     color: $opc-color-text-secondary;
-    margin-bottom: 12rpx;
+    margin-bottom: $opc-spacing-xxs;
     display: block;
   }
 
   &__group {
-    margin-bottom: 24rpx;
+    margin-bottom: $opc-spacing-sm;
   }
 
   &__group-title {
-    font-size: 20rpx;
+    font-size: $opc-font-xs;
     color: $opc-color-text-placeholder;
     text-transform: uppercase;
     margin-bottom: 8rpx;
@@ -119,8 +132,8 @@ onMounted(async () => {
   &__item {
     display: flex;
     align-items: center;
-    gap: 16rpx;
-    padding: 18rpx 12rpx;
+    gap: $opc-spacing-xs;
+    padding: $opc-spacing-xs $opc-spacing-xxs;
     border-bottom: 1px solid $opc-border-color;
   }
 
@@ -128,12 +141,12 @@ onMounted(async () => {
     width: 40rpx;
     text-align: center;
     color: $opc-color-text-secondary;
-    font-size: 24rpx;
+    font-size: $opc-font-base;
   }
 
   &__item-title {
     flex: 1;
-    font-size: 26rpx;
+    font-size: $opc-font-base;
   }
 
   &__item-badge {
@@ -145,13 +158,6 @@ onMounted(async () => {
     line-height: 32rpx;
     text-align: center;
     border-radius: 50%;
-  }
-
-  &__empty {
-    text-align: center;
-    color: $opc-color-text-secondary;
-    font-size: 24rpx;
-    padding: 60rpx 0;
   }
 }
 </style>

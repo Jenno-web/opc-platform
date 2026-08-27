@@ -61,7 +61,15 @@ async function handleSubmit() {
     </view>
 
     <view class="respond__templates">
-      <text v-for="t in templates" :key="t" class="respond__template" @click="applyTemplate(t)">{{ t }}</text>
+      <view
+        v-for="t in templates"
+        :key="t"
+        class="respond__template"
+        hover-class="opc-hover"
+        @click="applyTemplate(t)"
+      >
+        <text>{{ t }}</text>
+      </view>
     </view>
 
     <view class="respond__field">
@@ -69,7 +77,12 @@ async function handleSubmit() {
       <textarea v-model="draft" class="respond__textarea" placeholder="可以直接点上面的快捷语，也可以自己写" />
     </view>
 
-    <button class="respond__submit-btn" :loading="submitting" @click="handleSubmit">
+    <button
+      class="respond__submit-btn"
+      hover-class="opc-hover"
+      :loading="submitting"
+      @click="handleSubmit"
+    >
       {{ mode === 'respond' ? '发送响应' : '发送提问' }}
     </button>
   </view>
@@ -82,16 +95,16 @@ async function handleSubmit() {
   padding: $opc-spacing;
   display: flex;
   flex-direction: column;
-  gap: 24rpx;
+  gap: $opc-spacing-sm;
 
   &__title {
-    font-size: 32rpx;
+    font-size: $opc-font-lg;
     font-weight: 700;
     display: block;
   }
 
   &__project {
-    font-size: 22rpx;
+    font-size: $opc-font-sm;
     color: $opc-color-text-secondary;
     margin-top: 6rpx;
     display: block;
@@ -100,21 +113,21 @@ async function handleSubmit() {
   &__templates {
     display: flex;
     flex-direction: column;
-    gap: 12rpx;
+    gap: $opc-spacing-xxs;
   }
 
   &__template {
-    font-size: 24rpx;
-    padding: 18rpx 20rpx;
+    font-size: $opc-font-base;
+    padding: $opc-spacing-xs $opc-spacing-sm;
     background: $opc-bg-subtle;
     border: 1px solid $opc-border-color;
-    border-radius: 16rpx;
+    border-radius: $opc-radius-card-sm;
   }
 
   &__field-label {
-    font-size: 22rpx;
+    font-size: $opc-font-sm;
     color: $opc-color-text-secondary;
-    margin-bottom: 10rpx;
+    margin-bottom: $opc-spacing-xxs;
     display: block;
   }
 
@@ -123,9 +136,9 @@ async function handleSubmit() {
     min-height: 200rpx;
     background: $opc-bg-card;
     border: 1px solid $opc-border-color;
-    border-radius: 16rpx;
-    padding: 16rpx;
-    font-size: 26rpx;
+    border-radius: $opc-radius-card-sm;
+    padding: $opc-spacing-xs;
+    font-size: $opc-font-base;
     box-sizing: border-box;
   }
 
@@ -133,7 +146,7 @@ async function handleSubmit() {
     background: $opc-color-primary;
     color: #fff;
     border-radius: $opc-radius-tag;
-    font-size: 28rpx;
+    font-size: $opc-font-base;
   }
 }
 </style>

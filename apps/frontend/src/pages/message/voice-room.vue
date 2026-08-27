@@ -4,6 +4,7 @@ import { onLoad } from '@dcloudio/uni-app'
 import { fetchVoiceRoomParticipants, joinVoiceRoom, leaveVoiceRoom } from '@/api/messages'
 import { getSocket } from '@/utils/socket'
 import { useUserStore } from '@/store/user'
+import EmptyState from '@/components/EmptyState.vue'
 
 // 对应"14 消息&休息室语音房"画板。
 // 重要边界：这里只做"谁在场"的实时状态广播（复用已有 WebSocket 网关），不做真实语音通话——
@@ -75,14 +76,22 @@ onUnmounted(() => {
     <text class="voice-room__subtitle">让小组知道你来了</text>
 
     <view class="voice-room__grid">
-      <view v-for="p in participants" :key="p.id" class="voice-room__member">
-        <view class="voice-room__avatar">{{ p.nickname.slice(0, 1) }}</view>
+      <view v-for="p in participants" :key="p.id" class="voice-room__member opc-fade-in">
+        <view class="voice-room__avatar">
+          <text>{{ p.nickname.slice(0, 1) }}</text>
+          <view class="voice-room__live-dot opc-pulse" />
+        </view>
         <text class="voice-room__name">{{ p.nickname }}</text>
       </view>
-      <view v-if="!loading && participants.length === 0" class="voice-room__empty">还没有人在这里</view>
+      <EmptyState v-if="!loading && participants.length === 0" text="还没有人在这里" />
     </view>
 
-    <button class="voice-room__join-btn" :class="{ 'is-joined': joined }" @click="toggleJoin">
+    <button
+      class="voice-room__join-btn"
+      hover-class="opc-hover"
+      :class="{ 'is-joined': joined }"
+      @click="toggleJoin"
+    >
       {{ joined ? '离开语音' : '添加成员到语音聊天' }}
     </button>
   </view>
@@ -95,33 +104,33 @@ onUnmounted(() => {
   padding: $opc-spacing;
   display: flex;
   flex-direction: column;
-  gap: 20rpx;
+  gap: $opc-spacing-sm;
 
   &__notice {
-    font-size: 20rpx;
+    font-size: $opc-font-xs;
     color: $opc-color-text-secondary;
     background: $opc-bg-subtle;
     border: 1px solid $opc-border-color;
-    border-radius: 12rpx;
-    padding: 14rpx 18rpx;
+    border-radius: $opc-radius-card-sm;
+    padding: $opc-spacing-xs;
   }
 
   &__title {
-    font-size: 32rpx;
+    font-size: $opc-font-lg;
     font-weight: 700;
     display: block;
   }
 
   &__subtitle {
-    font-size: 22rpx;
+    font-size: $opc-font-sm;
     color: $opc-color-text-secondary;
   }
 
   &__grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 24rpx;
-    padding: 24rpx 0;
+    gap: $opc-spacing-sm;
+    padding: $opc-spacing-sm 0;
   }
 
   &__member {
@@ -133,6 +142,7 @@ onUnmounted(() => {
   }
 
   &__avatar {
+    position: relative;
     width: 88rpx;
     height: 88rpx;
     border-radius: 50%;
@@ -144,22 +154,29 @@ onUnmounted(() => {
     font-weight: 700;
   }
 
-  &__name {
-    font-size: 20rpx;
-    color: $opc-color-text-secondary;
-    text-align: center;
+  // 在场提示：房间是实时状态展示，不是真实语音通话，靠这个绿点强调"人在线"而不是"正在说话"
+  &__live-dot {
+    position: absolute;
+    right: -2rpx;
+    bottom: -2rpx;
+    width: 20rpx;
+    height: 20rpx;
+    border-radius: 50%;
+    background: $opc-color-success;
+    border: 3rpx solid $opc-bg-page;
   }
 
-  &__empty {
-    font-size: 24rpx;
+  &__name {
+    font-size: $opc-font-xs;
     color: $opc-color-text-secondary;
+    text-align: center;
   }
 
   &__join-btn {
     background: $opc-color-primary;
     color: #fff;
     border-radius: $opc-radius-tag;
-    font-size: 28rpx;
+    font-size: $opc-font-base;
     margin-top: auto;
 
     &.is-joined {

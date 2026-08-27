@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import AiHint from '@/components/AiHint.vue'
+import SkeletonBlock from '@/components/SkeletonBlock.vue'
 import { fetchProjectDetail } from '@/api/projects'
 import type { ProjectDetail } from '@/types'
 
@@ -38,7 +39,11 @@ function goRespond(mode: 'question' | 'respond') {
 
 <template>
   <view class="detail">
-    <view v-if="loading" class="detail__loading">加载中...</view>
+    <view v-if="loading" class="detail__loading">
+      <SkeletonBlock :rows="2" avatar />
+      <SkeletonBlock :rows="4" />
+      <SkeletonBlock :rows="3" />
+    </view>
 
     <template v-else-if="detail">
       <view class="detail__badges">
@@ -107,8 +112,8 @@ function goRespond(mode: 'question' | 'respond') {
       </view>
 
       <view class="detail__actions">
-        <button class="detail__question-btn" @click="goRespond('question')">提问</button>
-        <button class="detail__respond-btn" @click="goRespond('respond')">我想响应</button>
+        <button class="detail__question-btn" hover-class="opc-hover" @click="goRespond('question')">提问</button>
+        <button class="detail__respond-btn" hover-class="opc-hover" @click="goRespond('respond')">我想响应</button>
       </view>
     </template>
   </view>
@@ -122,21 +127,21 @@ function goRespond(mode: 'question' | 'respond') {
   padding-bottom: 160rpx;
   display: flex;
   flex-direction: column;
-  gap: 24rpx;
+  gap: $opc-spacing-sm;
 
   &__loading {
-    text-align: center;
-    color: $opc-color-text-secondary;
-    padding: 80rpx 0;
+    display: flex;
+    flex-direction: column;
+    gap: $opc-spacing-sm;
   }
 
   &__badges {
     display: flex;
-    gap: 10rpx;
+    gap: $opc-spacing-xxs;
   }
 
   &__kind {
-    font-size: 20rpx;
+    font-size: $opc-font-xs;
     font-weight: 600;
     color: $opc-color-text;
     background: $opc-bg-subtle;
@@ -146,7 +151,7 @@ function goRespond(mode: 'question' | 'respond') {
   }
 
   &__bounty {
-    font-size: 20rpx;
+    font-size: $opc-font-xs;
     font-weight: 700;
     color: #fff;
     background: $opc-color-primary;
@@ -155,7 +160,7 @@ function goRespond(mode: 'question' | 'respond') {
   }
 
   &__status {
-    font-size: 20rpx;
+    font-size: $opc-font-xs;
     color: $opc-color-text-secondary;
     padding: 2rpx 14rpx;
     border-radius: $opc-radius-tag;
@@ -163,12 +168,12 @@ function goRespond(mode: 'question' | 'respond') {
   }
 
   &__title {
-    font-size: 34rpx;
+    font-size: $opc-font-xl;
     font-weight: 700;
   }
 
   &__background {
-    font-size: 26rpx;
+    font-size: $opc-font-base;
     color: $opc-color-text-secondary;
     line-height: 1.6;
   }
@@ -176,11 +181,11 @@ function goRespond(mode: 'question' | 'respond') {
   &__tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 12rpx;
+    gap: $opc-spacing-xxs;
   }
 
   &__tag {
-    font-size: 22rpx;
+    font-size: $opc-font-sm;
     color: $opc-color-text-secondary;
     background: $opc-bg-subtle;
     padding: 6rpx 16rpx;
@@ -190,19 +195,19 @@ function goRespond(mode: 'question' | 'respond') {
   &__meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 16rpx 24rpx;
-    font-size: 22rpx;
+    gap: $opc-spacing-xxs $opc-spacing-sm;
+    font-size: $opc-font-sm;
     color: $opc-color-text-secondary;
   }
 
   &__section-title {
-    font-size: 26rpx;
+    font-size: $opc-font-base;
     font-weight: 600;
-    margin-bottom: 10rpx;
+    margin-bottom: $opc-spacing-xxs;
   }
 
   &__section-body {
-    font-size: 26rpx;
+    font-size: $opc-font-base;
     color: $opc-color-text-secondary;
     line-height: 1.6;
   }
@@ -210,18 +215,18 @@ function goRespond(mode: 'question' | 'respond') {
   &__role {
     display: flex;
     justify-content: space-between;
-    padding: 16rpx 20rpx;
+    padding: $opc-spacing-xs $opc-spacing-sm;
     background: $opc-bg-subtle;
-    border-radius: 16rpx;
-    margin-bottom: 12rpx;
-    font-size: 24rpx;
+    border-radius: $opc-radius-card-sm;
+    margin-bottom: $opc-spacing-xxs;
+    font-size: $opc-font-base;
   }
 
   &__publisher {
     display: flex;
     align-items: center;
-    gap: 16rpx;
-    padding: 20rpx;
+    gap: $opc-spacing-xs;
+    padding: $opc-spacing-sm;
     background: $opc-bg-subtle;
     border-radius: $opc-radius-card;
   }
@@ -246,17 +251,17 @@ function goRespond(mode: 'question' | 'respond') {
   }
 
   &__publisher-name {
-    font-size: 26rpx;
+    font-size: $opc-font-base;
     font-weight: 600;
   }
 
   &__publisher-meta {
-    font-size: 20rpx;
+    font-size: $opc-font-xs;
     color: $opc-color-text-secondary;
   }
 
   &__publisher-rating {
-    font-size: 22rpx;
+    font-size: $opc-font-sm;
     font-weight: 600;
   }
 
@@ -266,7 +271,7 @@ function goRespond(mode: 'question' | 'respond') {
     right: $opc-spacing;
     bottom: 32rpx;
     display: flex;
-    gap: 16rpx;
+    gap: $opc-spacing-xs;
   }
 
   &__question-btn {
@@ -275,7 +280,7 @@ function goRespond(mode: 'question' | 'respond') {
     border: 1px solid $opc-color-text;
     color: $opc-color-text;
     border-radius: $opc-radius-tag;
-    font-size: 28rpx;
+    font-size: $opc-font-base;
   }
 
   &__respond-btn {
@@ -283,7 +288,7 @@ function goRespond(mode: 'question' | 'respond') {
     background: $opc-color-primary;
     color: #fff;
     border-radius: $opc-radius-tag;
-    font-size: 28rpx;
+    font-size: $opc-font-base;
   }
 }
 </style>

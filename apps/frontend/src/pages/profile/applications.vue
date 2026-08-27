@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { fetchMyApplications } from '@/api/applications'
+import SkeletonBlock from '@/components/SkeletonBlock.vue'
+import EmptyState from '@/components/EmptyState.vue'
 import type { ApplicationItem } from '@/types'
 
 const applications = ref<ApplicationItem[]>([])
@@ -24,17 +26,22 @@ onMounted(async () => {
 
 <template>
   <view class="applications">
-    <view v-for="app in applications" :key="app.id" class="applications__item">
-      <view class="applications__header">
-        <text class="applications__title">{{ app.project.title }}</text>
-        <text class="applications__status" :class="`is-${app.status.toLowerCase()}`">
-          {{ statusLabel[app.status] }}
-        </text>
+    <template v-if="loading">
+      <SkeletonBlock v-for="i in 3" :key="i" :rows="2" />
+    </template>
+    <template v-else>
+      <view v-for="app in applications" :key="app.id" class="applications__item opc-fade-in">
+        <view class="applications__header">
+          <text class="applications__title">{{ app.project.title }}</text>
+          <text class="applications__status" :class="`is-${app.status.toLowerCase()}`">
+            {{ statusLabel[app.status] }}
+          </text>
+        </view>
+        <text v-if="app.aiGenerated" class="applications__ai-tag">AI 生成申请文案</text>
+        <text class="applications__content">{{ app.content }}</text>
       </view>
-      <text v-if="app.aiGenerated" class="applications__ai-tag">AI 生成申请文案</text>
-      <text class="applications__content">{{ app.content }}</text>
-    </view>
-    <view v-if="!loading && applications.length === 0" class="applications__empty">暂无申请记录</view>
+      <EmptyState v-if="applications.length === 0" text="暂无申请记录" />
+    </template>
   </view>
 </template>
 
@@ -46,24 +53,25 @@ onMounted(async () => {
 
   &__item {
     background: $opc-bg-card;
+    border: 1px solid $opc-border-color;
     border-radius: $opc-radius-card;
     padding: $opc-spacing;
-    margin-bottom: 20rpx;
+    margin-bottom: $opc-spacing-sm;
   }
 
   &__header {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 12rpx;
+    margin-bottom: $opc-spacing-xxs;
   }
 
   &__title {
-    font-size: 28rpx;
+    font-size: $opc-font-base;
     font-weight: 600;
   }
 
   &__status {
-    font-size: 20rpx;
+    font-size: $opc-font-xs;
     padding: 4rpx 16rpx;
     border-radius: $opc-radius-tag;
     background: $opc-color-primary-soft;
@@ -86,21 +94,14 @@ onMounted(async () => {
     background: $opc-color-primary-soft;
     padding: 4rpx 12rpx;
     border-radius: $opc-radius-tag;
-    margin-bottom: 10rpx;
+    margin-bottom: $opc-spacing-xxs;
   }
 
   &__content {
     display: block;
-    font-size: 24rpx;
+    font-size: $opc-font-base;
     color: $opc-color-text-secondary;
     line-height: 1.6;
-  }
-
-  &__empty {
-    text-align: center;
-    color: $opc-color-text-secondary;
-    font-size: 24rpx;
-    padding: 80rpx 0;
   }
 }
 </style>

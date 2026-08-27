@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import ProjectCard from '@/components/ProjectCard.vue'
+import SkeletonBlock from '@/components/SkeletonBlock.vue'
+import EmptyState from '@/components/EmptyState.vue'
 import { searchProjects } from '@/api/projects'
 import type { ProjectKind, SearchResult } from '@/types'
 
@@ -79,30 +81,32 @@ onMounted(runSearch)
     <view class="search__group">
       <text class="search__group-title">供需类型</text>
       <view class="search__chips">
-        <text
+        <view
           v-for="opt in kindOptions"
           :key="opt.value"
           class="search__chip"
+          hover-class="opc-hover"
           :class="{ 'is-active': activeKind === opt.value }"
           @click="toggleKind(opt.value); runSearch()"
         >
-          {{ opt.label }}
-        </text>
+          <text>{{ opt.label }}</text>
+        </view>
       </view>
     </view>
 
     <view class="search__group">
       <text class="search__group-title">能力领域（可多选）</text>
       <view class="search__chips">
-        <text
+        <view
           v-for="skill in skillOptions"
           :key="skill"
           class="search__chip"
+          hover-class="opc-hover"
           :class="{ 'is-active': activeSkills.includes(skill) }"
           @click="toggleSkill(skill); runSearch()"
         >
-          {{ skill }}
-        </text>
+          <text>{{ skill }}</text>
+        </view>
       </view>
     </view>
 
@@ -129,17 +133,23 @@ onMounted(runSearch)
     </view>
 
     <view class="search__toolbar">
-      <text class="search__clear" @click="clearFilters">清除</text>
+      <text class="search__clear" hover-class="opc-hover" @click="clearFilters">清除</text>
       <text class="search__count">共 {{ results.length }} 条结果</text>
     </view>
 
-    <ProjectCard
-      v-for="r in results"
-      :key="r.project.id"
-      :project="{ ...r.project, matchScore: r.matchScore, matchReason: r.matchReason }"
-      @click="goDetail"
-    />
-    <view v-if="!loading && results.length === 0" class="search__empty">没有找到匹配的机会，试试调整筛选条件</view>
+    <template v-if="loading">
+      <SkeletonBlock v-for="i in 3" :key="i" :rows="2" />
+    </template>
+    <template v-else>
+      <ProjectCard
+        v-for="r in results"
+        :key="r.project.id"
+        class="opc-fade-in"
+        :project="{ ...r.project, matchScore: r.matchScore, matchReason: r.matchReason }"
+        @click="goDetail"
+      />
+      <EmptyState v-if="results.length === 0" text="没有找到匹配的机会" hint="试试调整筛选条件" />
+    </template>
   </view>
 </template>
 
@@ -154,31 +164,31 @@ onMounted(runSearch)
     background: $opc-bg-subtle;
     border: 1px solid $opc-border-color;
     border-radius: $opc-radius-tag;
-    padding: 16rpx 28rpx;
-    font-size: 26rpx;
-    margin-bottom: 28rpx;
+    padding: $opc-spacing-xs $opc-spacing-sm;
+    font-size: $opc-font-base;
+    margin-bottom: $opc-spacing-lg;
   }
 
   &__group {
-    margin-bottom: 28rpx;
+    margin-bottom: $opc-spacing-lg;
   }
 
   &__group-title {
-    font-size: 22rpx;
+    font-size: $opc-font-sm;
     color: $opc-color-text-secondary;
-    margin-bottom: 14rpx;
+    margin-bottom: $opc-spacing-xxs;
     display: block;
   }
 
   &__chips {
     display: flex;
     flex-wrap: wrap;
-    gap: 14rpx;
+    gap: $opc-spacing-xxs;
   }
 
   &__chip {
-    font-size: 22rpx;
-    padding: 10rpx 24rpx;
+    font-size: $opc-font-sm;
+    padding: $opc-spacing-xxs $opc-spacing-sm;
     border-radius: $opc-radius-tag;
     background: $opc-bg-card;
     border: 1px solid $opc-border-color;
@@ -200,17 +210,17 @@ onMounted(runSearch)
   &__budget-row {
     display: flex;
     align-items: center;
-    gap: 12rpx;
-    margin-bottom: 14rpx;
+    gap: $opc-spacing-xxs;
+    margin-bottom: $opc-spacing-xxs;
   }
 
   &__budget-input {
     flex: 1;
     background: $opc-bg-card;
     border: 1px solid $opc-border-color;
-    border-radius: 12rpx;
-    padding: 12rpx 16rpx;
-    font-size: 24rpx;
+    border-radius: $opc-radius-card-sm;
+    padding: $opc-spacing-xxs $opc-spacing-xs;
+    font-size: $opc-font-base;
   }
 
   &__budget-sep {
@@ -218,7 +228,7 @@ onMounted(runSearch)
   }
 
   &__unit {
-    font-size: 22rpx;
+    font-size: $opc-font-sm;
     color: $opc-color-text-secondary;
   }
 
@@ -226,26 +236,21 @@ onMounted(runSearch)
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 20rpx 0 24rpx;
-    padding-top: 20rpx;
+    margin: $opc-spacing-sm 0 $opc-spacing-sm;
+    padding-top: $opc-spacing-sm;
     border-top: 1px solid $opc-border-color;
   }
 
   &__clear {
-    font-size: 22rpx;
+    display: inline-block;
+    font-size: $opc-font-sm;
     color: $opc-color-text-secondary;
+    padding: $opc-spacing-xxs;
   }
 
   &__count {
-    font-size: 22rpx;
+    font-size: $opc-font-sm;
     font-weight: 600;
-  }
-
-  &__empty {
-    text-align: center;
-    color: $opc-color-text-secondary;
-    font-size: 24rpx;
-    padding: 60rpx 0;
   }
 }
 </style>

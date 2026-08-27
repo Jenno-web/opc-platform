@@ -77,14 +77,20 @@ async function handleLogin() {
 
     <view class="login__field login__field--code">
       <input v-model="code" class="login__input" type="number" maxlength="6" placeholder="请输入验证码" />
-      <button class="login__code-btn" :disabled="countdown > 0" :loading="sending" @click="handleSendCode">
+      <button
+        class="login__code-btn"
+        hover-class="opc-hover"
+        :disabled="countdown > 0"
+        :loading="sending"
+        @click="handleSendCode"
+      >
         {{ countdown > 0 ? `${countdown}s 后重试` : '获取验证码' }}
       </button>
     </view>
 
     <view v-if="devCode" class="login__dev-hint">开发态验证码：{{ devCode }}</view>
 
-    <button class="login__submit-btn" :loading="verifying" @click="handleLogin">登录</button>
+    <button class="login__submit-btn" hover-class="opc-hover" :loading="verifying" @click="handleLogin">登录</button>
   </view>
 </template>
 
@@ -97,21 +103,22 @@ async function handleLogin() {
   &__title {
     font-size: 40rpx;
     font-weight: 700;
-    margin-bottom: 12rpx;
+    margin-bottom: $opc-spacing-xxs;
   }
 
   &__subtitle {
-    font-size: 22rpx;
+    font-size: $opc-font-sm;
     color: $opc-color-text-secondary;
-    margin-bottom: 48rpx;
+    margin-bottom: $opc-spacing-xl;
     line-height: 1.6;
   }
 
   &__field {
     background: $opc-bg-card;
+    border: 1px solid $opc-border-color;
     border-radius: $opc-radius-card;
-    padding: 20rpx 24rpx;
-    margin-bottom: 24rpx;
+    padding: $opc-spacing-sm;
+    margin-bottom: $opc-spacing-sm;
     display: flex;
     align-items: center;
 
@@ -122,36 +129,36 @@ async function handleLogin() {
 
   &__input {
     flex: 1;
-    font-size: 28rpx;
+    font-size: $opc-font-base;
   }
 
   &__code-btn {
     flex-shrink: 0;
-    font-size: 22rpx;
+    font-size: $opc-font-sm;
     background: $opc-color-primary-soft;
     color: $opc-color-primary;
     border-radius: $opc-radius-tag;
-    padding: 0 20rpx;
+    padding: 0 $opc-spacing-sm;
     line-height: 56rpx;
     height: 56rpx;
   }
 
   &__dev-hint {
     display: block;
-    font-size: 22rpx;
+    font-size: $opc-font-sm;
     color: $opc-color-ai;
     background: $opc-color-primary-soft;
-    padding: 12rpx 20rpx;
-    border-radius: 12rpx;
-    margin-bottom: 24rpx;
+    padding: $opc-spacing-xxs $opc-spacing-sm;
+    border-radius: $opc-radius-card-sm;
+    margin-bottom: $opc-spacing-sm;
   }
 
   &__submit-btn {
     background: $opc-color-primary;
     color: #fff;
     border-radius: $opc-radius-tag;
-    font-size: 28rpx;
-    margin-top: 20rpx;
+    font-size: $opc-font-base;
+    margin-top: $opc-spacing-xxs;
   }
 }
 </style>

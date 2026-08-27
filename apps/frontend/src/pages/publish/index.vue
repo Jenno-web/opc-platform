@@ -127,6 +127,7 @@ async function handlePublish() {
         v-for="opt in intentOptions"
         :key="opt.value"
         class="publish__intent-card"
+        hover-class="opc-hover"
         :class="{ 'is-active': selectedIntent === opt.value }"
         @click="selectedIntent = opt.value"
       >
@@ -134,7 +135,14 @@ async function handlePublish() {
         <text class="publish__intent-desc">{{ opt.desc }}</text>
       </view>
 
-      <button class="publish__next-btn" :disabled="!selectedIntent" @click="step = 2">下一步</button>
+      <button
+        class="publish__next-btn"
+        hover-class="opc-hover"
+        :disabled="!selectedIntent"
+        @click="step = 2"
+      >
+        下一步
+      </button>
     </template>
 
     <!-- 第 2 步：自然表达 -->
@@ -151,15 +159,24 @@ async function handlePublish() {
         />
         <view
           class="publish__voice-btn"
+          hover-class="opc-hover"
           :class="{ 'is-listening': listening, 'is-disabled': !voiceSupported }"
           @click="handleVoiceInput"
         >
-          {{ listening ? '● 录音中' : '🎤' }}
+          <view v-if="listening" class="publish__voice-dot opc-pulse" />
+          <text>{{ listening ? '录音中' : '🎤' }}</text>
         </view>
       </view>
       <view class="publish__count">{{ idea.length }} / 500</view>
 
-      <button class="publish__next-btn" :loading="generating" @click="generateAndGoStep3">让 AI 整理</button>
+      <button
+        class="publish__next-btn"
+        hover-class="opc-hover"
+        :loading="generating"
+        @click="generateAndGoStep3"
+      >
+        让 AI 整理
+      </button>
     </template>
 
     <!-- 第 3 步：AI 解析确认 -->
@@ -191,15 +208,16 @@ async function handlePublish() {
 
         <text class="publish__field-label">标签</text>
         <view class="publish__chips">
-          <text
+          <view
             v-for="skill in skillOptions"
             :key="skill"
             class="publish__chip"
+            hover-class="opc-hover"
             :class="{ 'is-active': selectedSkills.includes(skill) }"
             @click="toggleSkill(skill)"
           >
-            {{ skill }}
-          </text>
+            <text>{{ skill }}</text>
+          </view>
         </view>
 
         <view v-if="draft.missingFields.length" class="publish__missing">
@@ -209,8 +227,8 @@ async function handlePublish() {
       </view>
 
       <view class="publish__actions">
-        <button class="publish__secondary-btn" @click="step = 2">重整</button>
-        <button class="publish__next-btn" @click="goStep4">确认</button>
+        <button class="publish__secondary-btn" hover-class="opc-hover" @click="step = 2">重整</button>
+        <button class="publish__next-btn" hover-class="opc-hover" @click="goStep4">确认</button>
       </view>
     </template>
 
@@ -223,6 +241,7 @@ async function handlePublish() {
         v-for="opt in tierOptions"
         :key="opt.value"
         class="publish__intent-card"
+        hover-class="opc-hover"
         :class="{ 'is-active': selectedTier === opt.value }"
         @click="selectedTier = opt.value"
       >
@@ -234,7 +253,14 @@ async function handlePublish() {
         <text class="publish__tier-fit">{{ opt.fit }}</text>
       </view>
 
-      <button class="publish__next-btn" :loading="submitting" @click="handlePublish">发布到供需广场</button>
+      <button
+        class="publish__next-btn"
+        hover-class="opc-hover"
+        :loading="submitting"
+        @click="handlePublish"
+      >
+        发布到供需广场
+      </button>
     </template>
   </view>
 </template>
@@ -247,20 +273,20 @@ async function handlePublish() {
   padding-bottom: 80rpx;
 
   &__step {
-    font-size: 20rpx;
+    font-size: $opc-font-xs;
     color: $opc-color-text-secondary;
   }
 
   &__hero-title {
-    font-size: 34rpx;
+    font-size: $opc-font-xl;
     font-weight: 700;
-    margin: 12rpx 0 8rpx;
+    margin: $opc-spacing-xxs 0 8rpx;
   }
 
   &__hero-subtitle {
-    font-size: 24rpx;
+    font-size: $opc-font-base;
     color: $opc-color-text-secondary;
-    margin-bottom: 32rpx;
+    margin-bottom: $opc-spacing-lg;
   }
 
   &__intent-card {
@@ -268,10 +294,11 @@ async function handlePublish() {
     border: 1px solid $opc-border-color;
     border-radius: $opc-radius-card;
     padding: $opc-spacing;
-    margin-bottom: 20rpx;
+    margin-bottom: $opc-spacing-sm;
     display: flex;
     flex-direction: column;
     gap: 6rpx;
+    transition: border-color 0.15s ease;
 
     &.is-active {
       border-color: $opc-color-primary;
@@ -280,19 +307,19 @@ async function handlePublish() {
   }
 
   &__intent-title {
-    font-size: 28rpx;
+    font-size: $opc-font-base;
     font-weight: 700;
   }
 
   &__intent-desc {
-    font-size: 22rpx;
+    font-size: $opc-font-sm;
     color: $opc-color-text-secondary;
   }
 
   &__tier-header {
     display: flex;
     align-items: center;
-    gap: 12rpx;
+    gap: $opc-spacing-xxs;
   }
 
   &__tier-badge {
@@ -304,7 +331,7 @@ async function handlePublish() {
   }
 
   &__tier-fit {
-    font-size: 20rpx;
+    font-size: $opc-font-xs;
     color: $opc-color-text-placeholder;
   }
 
@@ -315,11 +342,11 @@ async function handlePublish() {
   &__textarea {
     width: 100%;
     min-height: 200rpx;
-    font-size: 26rpx;
+    font-size: $opc-font-base;
     background: $opc-bg-card;
     border: 1px solid $opc-border-color;
-    border-radius: 16rpx;
-    padding: 16rpx;
+    border-radius: $opc-radius-card-sm;
+    padding: $opc-spacing-xs;
     padding-right: 72rpx;
     box-sizing: border-box;
   }
@@ -335,13 +362,18 @@ async function handlePublish() {
     border-radius: 50%;
     background: $opc-bg-subtle;
     font-size: 28rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8rpx;
 
     &.is-listening {
       background: $opc-color-danger;
       color: #fff;
       width: auto;
-      padding: 0 16rpx;
-      font-size: 20rpx;
+      height: auto;
+      padding: $opc-spacing-xxs $opc-spacing-sm;
+      font-size: $opc-font-xs;
       border-radius: $opc-radius-tag;
     }
 
@@ -350,11 +382,18 @@ async function handlePublish() {
     }
   }
 
+  &__voice-dot {
+    width: 12rpx;
+    height: 12rpx;
+    border-radius: 50%;
+    background: #fff;
+  }
+
   &__count {
     text-align: right;
-    font-size: 20rpx;
+    font-size: $opc-font-xs;
     color: $opc-color-text-placeholder;
-    margin: 12rpx 0 24rpx;
+    margin: $opc-spacing-xxs 0 $opc-spacing-sm;
   }
 
   &__card {
@@ -362,52 +401,53 @@ async function handlePublish() {
     border: 1px solid $opc-border-color;
     border-radius: $opc-radius-card;
     padding: $opc-spacing;
-    margin-bottom: 24rpx;
+    margin-bottom: $opc-spacing-sm;
     display: flex;
     flex-direction: column;
-    gap: 16rpx;
+    gap: $opc-spacing-xs;
   }
 
   &__field {
     display: flex;
     flex-direction: column;
     gap: 6rpx;
-    padding-bottom: 14rpx;
+    padding-bottom: $opc-spacing-xxs;
     border-bottom: 1px solid $opc-border-color;
 
     &--input {
       flex-direction: row;
       align-items: center;
-      gap: 12rpx;
+      gap: $opc-spacing-xxs;
     }
   }
 
   &__field-label {
-    font-size: 20rpx;
+    font-size: $opc-font-xs;
     color: $opc-color-text-secondary;
   }
 
   &__field-value {
-    font-size: 24rpx;
+    font-size: $opc-font-base;
   }
 
   &__number-input {
     width: 120rpx;
     background: $opc-bg-subtle;
     border-radius: 8rpx;
-    padding: 8rpx 12rpx;
-    font-size: 24rpx;
+    padding: 8rpx $opc-spacing-xxs;
+    font-size: $opc-font-base;
   }
 
   &__chips {
     display: flex;
     flex-wrap: wrap;
-    gap: 12rpx;
+    gap: $opc-spacing-xxs;
   }
 
   &__chip {
-    font-size: 22rpx;
-    padding: 8rpx 20rpx;
+    display: inline-block;
+    font-size: $opc-font-sm;
+    padding: 8rpx $opc-spacing-sm;
     border-radius: $opc-radius-tag;
     background: $opc-bg-subtle;
     border: 1px solid $opc-border-color;
@@ -424,25 +464,25 @@ async function handlePublish() {
     display: flex;
     flex-direction: column;
     gap: 6rpx;
-    padding: 16rpx 20rpx;
+    padding: $opc-spacing-xs $opc-spacing-sm;
     background: $opc-bg-subtle;
-    border-radius: 16rpx;
+    border-radius: $opc-radius-card-sm;
   }
 
   &__missing-title {
     color: $opc-color-warning;
-    font-size: 22rpx;
+    font-size: $opc-font-sm;
     font-weight: 600;
   }
 
   &__missing-list {
     color: $opc-color-text-secondary;
-    font-size: 22rpx;
+    font-size: $opc-font-sm;
   }
 
   &__actions {
     display: flex;
-    gap: 16rpx;
+    gap: $opc-spacing-xs;
   }
 
   &__secondary-btn {
@@ -451,7 +491,7 @@ async function handlePublish() {
     border: 1px solid $opc-border-color;
     color: $opc-color-text;
     border-radius: $opc-radius-tag;
-    font-size: 26rpx;
+    font-size: $opc-font-sm;
   }
 
   &__next-btn {
@@ -459,7 +499,7 @@ async function handlePublish() {
     background: $opc-color-primary;
     color: #fff;
     border-radius: $opc-radius-tag;
-    font-size: 28rpx;
+    font-size: $opc-font-base;
 
     &[disabled] {
       opacity: 0.4;

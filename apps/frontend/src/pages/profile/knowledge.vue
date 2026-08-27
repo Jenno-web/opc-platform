@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { fetchKnowledgeEntries, updateKnowledgeEntry } from '@/api/knowledge'
+import SkeletonBlock from '@/components/SkeletonBlock.vue'
+import EmptyState from '@/components/EmptyState.vue'
 import type { KnowledgeEntryItem } from '@/types'
 
 const entries = ref<KnowledgeEntryItem[]>([])
@@ -32,31 +34,36 @@ async function saveEdit(entry: KnowledgeEntryItem) {
 
 <template>
   <view class="knowledge">
-    <view v-for="entry in entries" :key="entry.id" class="knowledge__item">
-      <view class="knowledge__header">
-        <text class="knowledge__project">{{ entry.project?.title ?? '通用经验' }}</text>
-        <text v-if="entry.aiGenerated" class="knowledge__ai-tag">
-          AI 生成{{ entry.editedByUser ? ' · 已编辑' : '' }}
-        </text>
-      </view>
-
-      <text class="knowledge__label">复盘总结</text>
-      <text class="knowledge__summary">{{ entry.summary }}</text>
-
-      <text class="knowledge__label">经验沉淀</text>
-      <template v-if="editingId === entry.id">
-        <textarea v-model="draftText" class="knowledge__textarea" />
-        <view class="knowledge__actions">
-          <text class="knowledge__action" @click="saveEdit(entry)">保存</text>
-          <text class="knowledge__action is-secondary" @click="editingId = ''">取消</text>
+    <template v-if="loading">
+      <SkeletonBlock v-for="i in 3" :key="i" :rows="3" />
+    </template>
+    <template v-else>
+      <view v-for="entry in entries" :key="entry.id" class="knowledge__item opc-fade-in">
+        <view class="knowledge__header">
+          <text class="knowledge__project">{{ entry.project?.title ?? '通用经验' }}</text>
+          <text v-if="entry.aiGenerated" class="knowledge__ai-tag">
+            AI 生成{{ entry.editedByUser ? ' · 已编辑' : '' }}
+          </text>
         </view>
-      </template>
-      <template v-else>
-        <text class="knowledge__lessons">{{ entry.lessonsLearned }}</text>
-        <text class="knowledge__action" @click="startEdit(entry)">编辑</text>
-      </template>
-    </view>
-    <view v-if="!loading && entries.length === 0" class="knowledge__empty">暂无知识库沉淀</view>
+
+        <text class="knowledge__label">复盘总结</text>
+        <text class="knowledge__summary">{{ entry.summary }}</text>
+
+        <text class="knowledge__label">经验沉淀</text>
+        <template v-if="editingId === entry.id">
+          <textarea v-model="draftText" class="knowledge__textarea" />
+          <view class="knowledge__actions">
+            <text class="knowledge__action" hover-class="opc-hover" @click="saveEdit(entry)">保存</text>
+            <text class="knowledge__action is-secondary" hover-class="opc-hover" @click="editingId = ''">取消</text>
+          </view>
+        </template>
+        <template v-else>
+          <text class="knowledge__lessons">{{ entry.lessonsLearned }}</text>
+          <text class="knowledge__action" hover-class="opc-hover" @click="startEdit(entry)">编辑</text>
+        </template>
+      </view>
+      <EmptyState v-if="entries.length === 0" text="暂无知识库沉淀" />
+    </template>
   </view>
 </template>
 
@@ -68,20 +75,21 @@ async function saveEdit(entry: KnowledgeEntryItem) {
 
   &__item {
     background: $opc-bg-card;
+    border: 1px solid $opc-border-color;
     border-radius: $opc-radius-card;
     padding: $opc-spacing;
-    margin-bottom: 20rpx;
+    margin-bottom: $opc-spacing-sm;
   }
 
   &__header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12rpx;
+    margin-bottom: $opc-spacing-xxs;
   }
 
   &__project {
-    font-size: 26rpx;
+    font-size: $opc-font-base;
     font-weight: 600;
   }
 
@@ -95,49 +103,42 @@ async function saveEdit(entry: KnowledgeEntryItem) {
 
   &__label {
     display: block;
-    font-size: 20rpx;
+    font-size: $opc-font-xs;
     color: $opc-color-text-secondary;
-    margin: 16rpx 0 6rpx;
+    margin: $opc-spacing-xs 0 6rpx;
   }
 
   &__summary,
   &__lessons {
     display: block;
-    font-size: 24rpx;
+    font-size: $opc-font-base;
     line-height: 1.6;
   }
 
   &__textarea {
     width: 100%;
     min-height: 120rpx;
-    font-size: 24rpx;
+    font-size: $opc-font-base;
     background: $opc-bg-page;
     border-radius: 12rpx;
-    padding: 12rpx;
+    padding: $opc-spacing-xxs;
   }
 
   &__actions {
     display: flex;
-    gap: 20rpx;
-    margin-top: 12rpx;
+    gap: $opc-spacing-sm;
+    margin-top: $opc-spacing-xxs;
   }
 
   &__action {
-    font-size: 22rpx;
+    font-size: $opc-font-sm;
     color: $opc-color-primary;
-    margin-top: 12rpx;
+    margin-top: $opc-spacing-xxs;
     display: inline-block;
 
     &.is-secondary {
       color: $opc-color-text-secondary;
     }
-  }
-
-  &__empty {
-    text-align: center;
-    color: $opc-color-text-secondary;
-    font-size: 24rpx;
-    padding: 80rpx 0;
   }
 }
 </style>

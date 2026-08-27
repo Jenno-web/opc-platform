@@ -21,16 +21,16 @@ defineProps<{
 .ai-hint {
   display: flex;
   align-items: flex-start;
-  gap: 12rpx;
-  padding: 16rpx 20rpx;
+  gap: $opc-spacing-xxs;
+  padding: $opc-spacing-xs $opc-spacing-sm;
   background: $opc-bg-subtle;
   border: 1px solid $opc-border-color;
-  border-radius: 16rpx;
+  border-radius: $opc-radius-card-sm;
 
   &__label {
     flex-shrink: 0;
     color: $opc-color-text;
-    font-size: 20rpx;
+    font-size: $opc-font-xs;
     font-weight: 700;
     background: $opc-bg-card;
     border: 1px solid $opc-border-color;
@@ -41,13 +41,13 @@ defineProps<{
   &__text {
     flex: 1;
     color: $opc-color-text;
-    font-size: 24rpx;
+    font-size: $opc-font-sm;
   }
 
   &__emphasis {
     color: $opc-color-text;
     font-weight: 700;
-    font-size: 24rpx;
+    font-size: $opc-font-sm;
   }
 }
 </style>

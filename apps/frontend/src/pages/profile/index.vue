@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import PublishFab from '@/components/PublishFab.vue'
+import SkeletonBlock from '@/components/SkeletonBlock.vue'
 import { useUserStore } from '@/store/user'
 
 const userStore = useUserStore()
@@ -59,29 +60,44 @@ onMounted(() => {
 
       <view v-if="userStore.currentUser.portfolio.length" class="profile__section">
         <view class="profile__section-title">近期案例</view>
-        <view v-for="item in userStore.currentUser.portfolio" :key="item.id" class="profile__case">
+        <view v-for="item in userStore.currentUser.portfolio" :key="item.id" class="profile__case opc-fade-in">
           <text class="profile__case-title">{{ item.title }}</text>
           <text class="profile__case-desc">{{ item.description }}</text>
         </view>
       </view>
 
       <view class="profile__menu">
-        <view class="profile__menu-item" @click="uni.navigateTo({ url: '/pages/profile/applications' })">
+        <view
+          class="profile__menu-item"
+          hover-class="opc-hover"
+          @click="uni.navigateTo({ url: '/pages/profile/applications' })"
+        >
           <text>项目申请</text>
           <text class="profile__menu-arrow">›</text>
         </view>
-        <view class="profile__menu-item" @click="uni.navigateTo({ url: '/pages/profile/knowledge' })">
+        <view
+          class="profile__menu-item"
+          hover-class="opc-hover"
+          @click="uni.navigateTo({ url: '/pages/profile/knowledge' })"
+        >
           <text>知识库</text>
           <text class="profile__menu-arrow">›</text>
         </view>
-        <view class="profile__menu-item" @click="uni.navigateTo({ url: '/pages/login/index' })">
+        <view
+          class="profile__menu-item"
+          hover-class="opc-hover"
+          @click="uni.navigateTo({ url: '/pages/login/index' })"
+        >
           <text>切换账号（手机号登录）</text>
           <text class="profile__menu-arrow">›</text>
         </view>
       </view>
     </template>
 
-    <view v-else-if="userStore.loading" class="profile__loading">加载中...</view>
+    <view v-else-if="userStore.loading" class="profile__loading">
+      <SkeletonBlock :rows="2" avatar />
+      <SkeletonBlock :rows="3" />
+    </view>
 
     <PublishFab />
   </view>
@@ -97,8 +113,8 @@ onMounted(() => {
   &__header {
     display: flex;
     align-items: center;
-    gap: 24rpx;
-    margin-bottom: 32rpx;
+    gap: $opc-spacing-sm;
+    margin-bottom: $opc-spacing-lg;
   }
 
   &__avatar {
@@ -119,13 +135,13 @@ onMounted(() => {
   }
 
   &__nickname {
-    font-size: 32rpx;
+    font-size: $opc-font-lg;
     font-weight: 700;
     display: block;
   }
 
   &__role {
-    font-size: 22rpx;
+    font-size: $opc-font-sm;
     color: $opc-color-text-secondary;
   }
 
@@ -135,7 +151,7 @@ onMounted(() => {
     border: 1px solid $opc-border-color;
     border-radius: $opc-radius-card;
     padding: $opc-spacing 0;
-    margin-bottom: 32rpx;
+    margin-bottom: $opc-spacing-lg;
   }
 
   &__stat {
@@ -147,28 +163,28 @@ onMounted(() => {
   }
 
   &__stat-num {
-    font-size: 32rpx;
+    font-size: $opc-font-lg;
     font-weight: 700;
     color: $opc-color-text;
   }
 
   &__stat-label {
-    font-size: 22rpx;
+    font-size: $opc-font-sm;
     color: $opc-color-text-secondary;
   }
 
   &__section {
-    margin-bottom: 32rpx;
+    margin-bottom: $opc-spacing-lg;
   }
 
   &__section-title {
-    font-size: 26rpx;
+    font-size: $opc-font-base;
     font-weight: 700;
-    margin-bottom: 16rpx;
+    margin-bottom: $opc-spacing-xs;
   }
 
   &__bio {
-    font-size: 24rpx;
+    font-size: $opc-font-base;
     color: $opc-color-text-secondary;
     line-height: 1.6;
   }
@@ -176,36 +192,36 @@ onMounted(() => {
   &__tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 12rpx;
+    gap: $opc-spacing-xxs;
   }
 
   &__tag {
-    font-size: 22rpx;
+    font-size: $opc-font-sm;
     color: $opc-color-text;
     background: $opc-bg-subtle;
     border: 1px solid $opc-border-color;
-    padding: 8rpx 20rpx;
+    padding: 8rpx $opc-spacing-sm;
     border-radius: $opc-radius-tag;
   }
 
   &__case {
     background: $opc-bg-subtle;
     border: 1px solid $opc-border-color;
-    border-radius: 16rpx;
-    padding: 18rpx 20rpx;
-    margin-bottom: 12rpx;
+    border-radius: $opc-radius-card-sm;
+    padding: $opc-spacing-xs $opc-spacing-sm;
+    margin-bottom: $opc-spacing-xxs;
     display: flex;
     flex-direction: column;
     gap: 6rpx;
   }
 
   &__case-title {
-    font-size: 24rpx;
+    font-size: $opc-font-base;
     font-weight: 600;
   }
 
   &__case-desc {
-    font-size: 20rpx;
+    font-size: $opc-font-xs;
     color: $opc-color-text-secondary;
   }
 
@@ -219,8 +235,8 @@ onMounted(() => {
   &__menu-item {
     display: flex;
     justify-content: space-between;
-    padding: 28rpx $opc-spacing;
-    font-size: 26rpx;
+    padding: $opc-spacing-lg $opc-spacing;
+    font-size: $opc-font-base;
     border-bottom: 1px solid $opc-border-color;
 
     &:last-child {
@@ -233,9 +249,9 @@ onMounted(() => {
   }
 
   &__loading {
-    text-align: center;
-    color: $opc-color-text-secondary;
-    padding: 80rpx 0;
+    display: flex;
+    flex-direction: column;
+    gap: $opc-spacing-sm;
   }
 }
 </style>

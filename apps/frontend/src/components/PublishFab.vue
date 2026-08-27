@@ -7,7 +7,7 @@ function goPublish() {
 </script>
 
 <template>
-  <view class="publish-fab" @click="goPublish">
+  <view class="publish-fab" hover-class="publish-fab--pressed" @click="goPublish">
     <text class="publish-fab__icon">+</text>
   </view>
 </template>
@@ -29,6 +29,11 @@ function goPublish() {
   justify-content: center;
   box-shadow: 0 8rpx 24rpx rgba(17, 17, 17, 0.25);
   z-index: 999;
+  transition: transform 0.15s ease;
+
+  &--pressed {
+    transform: translateX(-50%) scale(0.9);
+  }
 
   &__icon {
     color: #ffffff;

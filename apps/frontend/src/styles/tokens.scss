@@ -22,6 +22,28 @@ $opc-border-color: #ededeb;
 
 $opc-font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', 'Helvetica Neue', sans-serif;
 
-$opc-radius-card: 16rpx;
-$opc-radius-tag: 999rpx;
-$opc-spacing: 24rpx;
+// 圆角：之前 $opc-radius-card 直接把 Figma 的 16px 当 16rpx 用，比例是错的。
+// uni-app 的 rpx 单位是"750rpx = 一屏宽度"，Figma 画板宽度是 402pt（代表一屏），
+// 正确换算比例是 750/402 ≈ 1.866，不是 1:1。这里的值是用真实比例重新换算的。
+$opc-radius-card: 34rpx; // 主卡片圆角（画板里出现频率最高的卡片圆角，对应 Figma ~18pt）
+$opc-radius-card-sm: 16rpx; // 次级/嵌套小卡片圆角
+$opc-radius-tag: 999rpx; // 胶囊按钮/标签：Figma 里也是设的一个远大于自身高度的数（如 999pt），
+// 目的就是让四角完全变圆，不需要跟着比例换算，999rpx 本身已经比任何标签的高度都大
+
+// 间距刻度：从 18 个画板里所有 Auto Layout 的 itemSpacing / padding 实测值统计出的高频聚类，
+// 按 ×1.866 换算后取整，不是随手定的数字
+$opc-spacing-xxs: 11rpx;
+$opc-spacing-xs: 15rpx;
+$opc-spacing-sm: 22rpx;
+$opc-spacing: 24rpx; // 页面级内边距，沿用原值（与 22-25rpx 聚类基本吻合）
+$opc-spacing-md: 30rpx;
+$opc-spacing-lg: 41rpx;
+$opc-spacing-xl: 45rpx;
+
+// 字号刻度：同样从画板文本节点的真实 fontSize 统计出的高频值换算而来
+$opc-font-xs: 19rpx; // Tab 文字、时间戳等辅助信息
+$opc-font-sm: 22rpx; // 标签/次要文字
+$opc-font-base: 28rpx; // 正文（与 App.vue 里 page 的全局 28rpx 一致）
+$opc-font-lg: 32rpx;
+$opc-font-xl: 35rpx; // 卡片标题
+$opc-font-display: 56rpx; // 页面大标题（如"发现机会"）
