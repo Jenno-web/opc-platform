@@ -114,9 +114,10 @@ onMounted(async () => {
     projectTitle.value = detail.projectTitle
   } finally {
     loading.value = false
+    // 放在 finally 里而不是 try 后面：如果上面任何一个请求失败抛错，try 后面的代码不会
+    // 执行，会导致这次跳转直接被跳过；放 finally 保证不管成功失败都会尝试滚到底部
+    scrollToBottom()
   }
-  // 进页面直接跳到最新一条，跟真实聊天软件的习惯一致
-  scrollToBottom()
 
   const socket = getSocket()
   if (socket) {
