@@ -43,7 +43,12 @@ async function handleSend() {
   if (!content) return
   inputText.value = ''
   const message = await sendChatMessage(conversationId.value, content)
-  messages.value.push(message)
+  // 发送成功后端也会把这条消息通过 WebSocket 广播给会话里所有人（包括自己），
+  // 如果广播先一步到达（跟这个 HTTP 响应之间没有先后保证），handleIncomingMessage
+  // 会先把它塞进列表；这里必须跟那边一样做去重检查，不然一条消息会显示两次
+  if (!messages.value.some((m) => m.id === message.id)) {
+    messages.value.push(message)
+  }
   scrollToBottom()
 }
 
