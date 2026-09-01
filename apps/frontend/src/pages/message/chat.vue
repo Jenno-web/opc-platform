@@ -31,7 +31,9 @@ function handleIncomingMessage(message: ChatMessageItem) {
   if (message.conversationId !== conversationId.value) return
   if (messages.value.some((m) => m.id === message.id)) return
   messages.value.push(message)
-  scrollToBottom()
+  // 对方发来的新消息：只有我本来就贴在底部（说明在看最新消息）才跟着滚下去；
+  // 如果我正往上翻历史记录，不该被一条新消息打断、强行拽回底部
+  if (isAtBottom.value) scrollToBottom()
 }
 
 async function loadMessages() {
@@ -49,6 +51,8 @@ async function handleSend() {
   if (!messages.value.some((m) => m.id === message.id)) {
     messages.value.push(message)
   }
+  // 自己发的消息，不管之前在不在底部都强制跟过去——这是我主动发起的动作
+  isAtBottom.value = true
   scrollToBottom()
 }
 
@@ -93,6 +97,20 @@ function scrollToBottom() {
     // 所以在两个足够大的数之间来回切换（数值本身超过实际内容高度会被自动钳制到底部）
     scrollTop.value = scrollTop.value === 999999 ? 999998 : 999999
   })
+}
+
+// 是否贴在底部：进页面默认贴底（因为一进来就会自动滚到最新）。scroll-view 自带的
+// scrolltolower 事件专门用来判断"滚到底了没"，不用自己拿 scrollHeight/clientHeight 算；
+// 用户往上滑（新的 scrollTop 比上一次小）就标记成"不在底部"，避免被新消息强行拽走
+const isAtBottom = ref(true)
+let lastScrollTop = 0
+function handleReachBottom() {
+  isAtBottom.value = true
+}
+function handleScroll(e: { detail: { scrollTop: number } }) {
+  const top = e.detail.scrollTop
+  if (top < lastScrollTop) isAtBottom.value = false
+  lastScrollTop = top
 }
 
 onLoad((query) => {
@@ -148,7 +166,16 @@ onUnmounted(() => {
       <SkeletonBlock :rows="1" avatar />
       <SkeletonBlock :rows="1" avatar />
     </view>
-    <scroll-view v-else scroll-y scroll-with-animation :scroll-top="scrollTop" class="chat__messages">
+    <scroll-view
+      v-else
+      scroll-y
+      scroll-with-animation
+      :scroll-top="scrollTop"
+      lower-threshold="80"
+      class="chat__messages"
+      @scrolltolower="handleReachBottom"
+      @scroll="handleScroll"
+    >
       <view
         v-for="message in messages"
         :key="message.id"
