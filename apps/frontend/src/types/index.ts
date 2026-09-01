@@ -151,6 +151,16 @@ export interface ApplicationItem {
   project: { id: string; title: string; status: ProjectStatus }
 }
 
+// 对应任务页统计条"响应"数字的详情——我收到的申请，能看到是谁、通过哪个项目申请的
+export interface ReceivedApplicationItem {
+  id: string
+  content: string
+  status: 'PENDING' | 'ACCEPTED' | 'REJECTED'
+  createdAt: string
+  applicant: { id: string; nickname: string; avatarUrl: string | null; professionalIdentity: string }
+  project: { id: string; title: string; status: ProjectStatus }
+}
+
 export interface KnowledgeEntryItem {
   id: string
   summary: string

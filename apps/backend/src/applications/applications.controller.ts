@@ -19,6 +19,12 @@ export class ApplicationsController {
     return this.applicationsService.listMine(user.sub);
   }
 
+  @Get('received')
+  @ApiOperation({ summary: '我收到的申请列表（对应任务页统计条"响应"数字的详情）' })
+  listReceived(@CurrentUser() user: AuthPayload) {
+    return this.applicationsService.listReceived(user.sub);
+  }
+
   @Post()
   @ApiOperation({ summary: '提交项目申请（对应项目详情页"申请加入"）' })
   create(@CurrentUser() user: AuthPayload, @Body() dto: CreateApplicationDto) {

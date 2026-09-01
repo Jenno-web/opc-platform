@@ -4,6 +4,7 @@ import PublishFab from '@/components/PublishFab.vue'
 import ProjectCard from '@/components/ProjectCard.vue'
 import SkeletonBlock from '@/components/SkeletonBlock.vue'
 import EmptyState from '@/components/EmptyState.vue'
+import Icon from '@/components/Icon.vue'
 import { fetchMyProjectStats, fetchMyProjects, updateProjectStatus } from '@/api/projects'
 import { useUserStore } from '@/store/user'
 import type { ProjectListItem, ProjectStatus } from '@/types'
@@ -13,6 +14,7 @@ const userStore = useUserStore()
 const tabs: { label: string; value: ProjectStatus | 'ALL' }[] = [
   { label: '全部', value: 'ALL' },
   { label: '待响应', value: 'RECRUITING' },
+  { label: '沟通中', value: 'IN_PROGRESS' },
   { label: '已解决', value: 'COMPLETED' },
   { label: '已过期', value: 'ARCHIVED' },
 ]
@@ -42,6 +44,10 @@ function switchTab(tab: ProjectStatus | 'ALL') {
 
 function goDetail(id: string) {
   uni.navigateTo({ url: `/pages/project/detail?id=${id}` })
+}
+
+function goResponses() {
+  uni.navigateTo({ url: '/pages/project/responses' })
 }
 
 function isMine(project: ProjectListItem) {
@@ -75,17 +81,26 @@ onMounted(async () => {
     </view>
 
     <view class="task-board__stats">
-      <view class="task-board__stat">
+      <view class="task-board__stat" hover-class="opc-hover" @click="switchTab('RECRUITING')">
         <text class="task-board__stat-num">{{ stats.publishing }}</text>
-        <text class="task-board__stat-label">发布中</text>
+        <view class="task-board__stat-label-row">
+          <text class="task-board__stat-label">发布中</text>
+          <Icon name="chevron-right" size="20rpx" color="#9a9a9a" />
+        </view>
       </view>
-      <view class="task-board__stat">
+      <view class="task-board__stat" hover-class="opc-hover" @click="goResponses">
         <text class="task-board__stat-num">{{ stats.responses }}</text>
-        <text class="task-board__stat-label">响应</text>
+        <view class="task-board__stat-label-row">
+          <text class="task-board__stat-label">响应</text>
+          <Icon name="chevron-right" size="20rpx" color="#9a9a9a" />
+        </view>
       </view>
-      <view class="task-board__stat">
+      <view class="task-board__stat" hover-class="opc-hover" @click="switchTab('IN_PROGRESS')">
         <text class="task-board__stat-num">{{ stats.inConversation }}</text>
-        <text class="task-board__stat-label">沟通中</text>
+        <view class="task-board__stat-label-row">
+          <text class="task-board__stat-label">沟通中</text>
+          <Icon name="chevron-right" size="20rpx" color="#9a9a9a" />
+        </view>
       </view>
     </view>
 
@@ -175,11 +190,19 @@ onMounted(async () => {
     flex-direction: column;
     align-items: center;
     gap: 6rpx;
+    padding: $opc-spacing-xxs 0;
   }
 
   &__stat-num {
     font-size: $opc-font-lg;
     font-weight: 700;
+  }
+
+  // 加个箭头图标提示这三个数字是能点进去看详情的，之前完全看不出可以点
+  &__stat-label-row {
+    display: flex;
+    align-items: center;
+    gap: 2rpx;
   }
 
   &__stat-label {

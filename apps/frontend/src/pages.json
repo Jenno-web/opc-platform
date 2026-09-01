@@ -32,6 +32,12 @@
 			}
 		},
 		{
+			"path": "pages/project/responses",
+			"style": {
+				"navigationBarTitleText": "收到的响应"
+			}
+		},
+		{
 			"path": "pages/publish/index",
 			"style": {
 				"navigationBarTitleText": "发布"

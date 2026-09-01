@@ -1,8 +1,12 @@
 import { request } from '@/utils/request'
-import type { ApplicationItem } from '@/types'
+import type { ApplicationItem, ReceivedApplicationItem } from '@/types'
 
 export function fetchMyApplications() {
   return request<ApplicationItem[]>({ url: '/applications/mine' })
+}
+
+export function fetchReceivedApplications() {
+  return request<ReceivedApplicationItem[]>({ url: '/applications/received' })
 }
 
 export function createApplication(payload: { projectId: string; content: string; aiGenerated?: boolean }) {
