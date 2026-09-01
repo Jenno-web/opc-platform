@@ -88,9 +88,14 @@ async function handleExtractTodos() {
 // （见 .chat__messages 的 overflow-y），这里改成直接操作这个容器的 scrollTop，不依赖整页滚动
 const messagesRef = ref<HTMLElement | null>(null)
 function scrollToBottom() {
+  // uni-app 的 view 编译成自定义元素，它自己的渲染/布局可能比 Vue 的 nextTick 还晚一步完成，
+  // 这时候读 scrollHeight 读到的还是加这条消息之前的旧值，滚动会"差一条消息的高度"。
+  // 用 requestAnimationFrame 再等一帧，确保布局真的算完了再滚
   nextTick(() => {
-    const el = messagesRef.value
-    if (el) el.scrollTop = el.scrollHeight
+    requestAnimationFrame(() => {
+      const el = messagesRef.value
+      if (el) el.scrollTop = el.scrollHeight
+    })
   })
 }
 
