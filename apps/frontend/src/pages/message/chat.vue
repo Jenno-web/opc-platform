@@ -284,12 +284,16 @@ onUnmounted(() => {
     gap: $opc-spacing-xs;
     padding: $opc-spacing-xs $opc-spacing;
     background: $opc-bg-card;
-    border-top: 1px solid $opc-bg-page;
+    border-top: 1px solid $opc-border-color;
+    box-shadow: $opc-shadow-md;
   }
 
+  // 之前这里背景色跟外面 .chat__input-bar 是同一个白，输入框跟条形背景完全融在一起看不出来，
+  // 换成浅灰底 + 边框，才能看出这是个可以点的输入框
   &__input {
     flex: 1;
-    background: $opc-bg-page;
+    background: $opc-bg-subtle;
+    border: 1px solid $opc-border-color;
     border-radius: $opc-radius-tag;
     padding: $opc-spacing-xs $opc-spacing-sm;
     font-size: $opc-font-base;
