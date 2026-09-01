@@ -192,6 +192,8 @@ npm run dev:h5              # http://localhost:5173
 - **间距/字号是从设计稿精确值换算的，但没有自动化视觉回归**：Phase 6 用 Figma API 重新读取了全部画板的 Auto Layout 精确数值（`itemSpacing`/`padding`/`cornerRadius`/`fontSize`），按 uni-app rpx 与 Figma 画板的真实比例（750/402 ≈ 1.866）换算后写进 `tokens.scss` 和各页面样式，不再是估算或 1:1 硬套；但开发环境装不了 Chromium/Playwright，做不了截图级像素比对，最终视觉效果仍需要人工打开浏览器确认
 - **交互动效是补的，不是从设计稿读出来的**：核对过 Figma 文件里所有节点的 `interactions` 字段，全部是空数组——低保真稿本身没有定义任何原型跳转/动效。点击反馈（`hover-class`）、加载骨架屏、空状态、卡片入场动效、语音输入脉冲这些是按通用移动端交互规范另外设计并实现的，不是从设计稿里还原的
 - **没做整页滑动转场**：uni-app 的 `animationType` 页面转场只对 App 端生效，H5 端要做等价效果需要接管 uni-app 自己的页面栈路由，改动风险和收益不成比例，这次没做
+- **图标是手工画的基础图形，不是引入 Lucide 包**：Figma 组件命名（"Lucide / compass" 这类）说明设计意图是用 Lucide 风格图标，但项目里没有真的装这个包，而是用 `line`/`circle`/`polyline` 等 SVG 基础图形手工绘制、视觉上贴近同一种描边风格（`components/Icon.vue`），没有照抄 Lucide 源码的路径数据
+- **头像是精致化的文字头像，不是真实照片**：`avatarUrl` 在种子数据里从来没被赋值过，后端也没有任何图片上传/处理逻辑，所以现在、以后短期内都不会有真实用户头像。没有接入第三方头像图库去"伪装"成真实头像，`components/Avatar.vue` 统一做的是把"取昵称首字母"这个方案做得更精致（描边环、字重、尺寸 token 化），不是找假图片替代
 - **真实 Claude API 没有联调验证**：代码已就绪（zod 校验、失败重试、启动期配置校验），但没有 `ANTHROPIC_API_KEY`，没有实际验证过真实模型调用效果
 - **真实短信服务商没有接入**：`SmsProvider` 接口已抽象好，`MockSmsProvider` 是当前唯一实现，接入阿里云/腾讯云等需要对应账号
 - **小程序/App 没有正式发布**：`npm run build:mp-weixin` 已验证能正常编译出完整小程序包，但发布需要微信开发者账号 / Apple/Google 开发者账号
@@ -209,6 +211,7 @@ npm run dev:h5              # http://localhost:5173
 5. **Phase 5（对齐 Figma 真实设计）**：见上方"对齐 Figma 设计"一节，是工作量最大的一次返工
 6. **部署上线**：Vercel + Railway + Neon，排查 monorepo 构建、Node 版本、npm 缓存等一系列部署问题
 7. **Phase 6（高保真页面与交互）**：重新用 Figma API 拉取全部 18 个画板的 Auto Layout 精确数值，修正了 Phase 5 里"pt 数值直接当 rpx 用"的换算错误（正确比例应为 750/402≈1.866），扩展出真实的间距/字号刻度 token；新增 `SkeletonBlock`/`EmptyState` 共享组件替换纯文字加载态；给全部可点击元素加 `hover-class` 点击反馈；补了卡片入场动效、语音输入脉冲动效
+8. **Phase 7（图标系统与层次）**：意识到"精确对齐低保真稿"天花板还是低保真——低保真源文件本身没有真实图标、阴影层次、头像视觉。新增 `Icon.vue`（手工绘制的描边图标）替换全部文字/emoji 占位符；用 Pillow 生成底部 Tab 的真实图标（`compass`/`list-checks`/`message-circle`/`user-round`），补上 `pages.json` 里此前完全没配置过的 `iconPath`；新增阴影 token 给卡片补层次；新增 `Avatar.vue` 统一三处写法不一致的头像逻辑
 
 ## AI 辅助开发说明
 

@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { generateProjectDraft, createProject, type GenerateDraftResult } from '@/api/publish'
 import { isSpeechRecognitionSupported, startVoiceRecognition, stopVoiceRecognition } from '@/utils/speech'
+import Icon from '@/components/Icon.vue'
 import type { ProjectKind, PublishTier } from '@/types'
 
 // 4 步发布向导，对应 Figma 07-10 号画板（1/5 意图选择 → 2/5 表达 → 3/5 AI 解析确认 → 4/5 曝光层级）
@@ -164,7 +165,8 @@ async function handlePublish() {
           @click="handleVoiceInput"
         >
           <view v-if="listening" class="publish__voice-dot opc-pulse" />
-          <text>{{ listening ? '录音中' : '🎤' }}</text>
+          <text v-if="listening">录音中</text>
+          <Icon v-else name="mic" size="28rpx" />
         </view>
       </view>
       <view class="publish__count">{{ idea.length }} / 500</view>
@@ -221,7 +223,10 @@ async function handlePublish() {
         </view>
 
         <view v-if="draft.missingFields.length" class="publish__missing">
-          <text class="publish__missing-title">⚠ 待补充</text>
+          <view class="publish__missing-title">
+            <Icon name="alert-triangle" size="20rpx" color="#a8763e" />
+            <text>待补充</text>
+          </view>
           <text class="publish__missing-list">{{ draft.missingFields.join('、') }}</text>
         </view>
       </view>
@@ -293,6 +298,7 @@ async function handlePublish() {
     background: $opc-bg-card;
     border: 1px solid $opc-border-color;
     border-radius: $opc-radius-card;
+    box-shadow: $opc-shadow-sm;
     padding: $opc-spacing;
     margin-bottom: $opc-spacing-sm;
     display: flex;
@@ -400,6 +406,7 @@ async function handlePublish() {
     background: $opc-bg-card;
     border: 1px solid $opc-border-color;
     border-radius: $opc-radius-card;
+    box-shadow: $opc-shadow-sm;
     padding: $opc-spacing;
     margin-bottom: $opc-spacing-sm;
     display: flex;
@@ -470,6 +477,9 @@ async function handlePublish() {
   }
 
   &__missing-title {
+    display: flex;
+    align-items: center;
+    gap: 6rpx;
     color: $opc-color-warning;
     font-size: $opc-font-sm;
     font-weight: 600;

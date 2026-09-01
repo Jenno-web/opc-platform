@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import { fetchChannels } from '@/api/messages'
 import SkeletonBlock from '@/components/SkeletonBlock.vue'
 import EmptyState from '@/components/EmptyState.vue'
+import Icon from '@/components/Icon.vue'
 import type { ChannelItem } from '@/types'
 
 // 对应"11 消息&服务器频道浏览"画板。全平台目前只有"培风社官方"一个社区，
@@ -69,7 +70,9 @@ onMounted(async () => {
           hover-class="opc-hover"
           @click="openChannel(c)"
         >
-          <text class="channels__item-icon">{{ c.isVoiceRoom ? '🎙' : '#' }}</text>
+          <view class="channels__item-icon">
+            <Icon :name="c.isVoiceRoom ? 'mic' : 'hash'" size="28rpx" />
+          </view>
           <text class="channels__item-title">{{ c.title }}</text>
           <text v-if="c.unreadCount" class="channels__item-badge">{{ c.unreadCount }}</text>
         </view>
@@ -139,9 +142,10 @@ onMounted(async () => {
 
   &__item-icon {
     width: 40rpx;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: $opc-color-text-secondary;
-    font-size: $opc-font-base;
   }
 
   &__item-title {

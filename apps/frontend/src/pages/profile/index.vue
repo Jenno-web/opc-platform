@@ -2,6 +2,8 @@
 import { onMounted } from 'vue'
 import PublishFab from '@/components/PublishFab.vue'
 import SkeletonBlock from '@/components/SkeletonBlock.vue'
+import Avatar from '@/components/Avatar.vue'
+import Icon from '@/components/Icon.vue'
 import { useUserStore } from '@/store/user'
 
 const userStore = useUserStore()
@@ -15,14 +17,11 @@ onMounted(() => {
   <view class="profile">
     <template v-if="userStore.currentUser">
       <view class="profile__header">
-        <image
-          v-if="userStore.currentUser.avatarUrl"
-          class="profile__avatar"
-          :src="userStore.currentUser.avatarUrl"
+        <Avatar
+          :name="userStore.currentUser.nickname"
+          :avatar-url="userStore.currentUser.avatarUrl"
+          size="120rpx"
         />
-        <view v-else class="profile__avatar profile__avatar--fallback">
-          {{ userStore.currentUser.nickname.slice(0, 1) }}
-        </view>
         <view class="profile__identity">
           <text class="profile__nickname">{{ userStore.currentUser.nickname }}</text>
           <text class="profile__role">{{ userStore.currentUser.professionalIdentity }}</text>
@@ -73,7 +72,7 @@ onMounted(() => {
           @click="uni.navigateTo({ url: '/pages/profile/applications' })"
         >
           <text>项目申请</text>
-          <text class="profile__menu-arrow">›</text>
+          <Icon name="chevron-right" size="28rpx" color="#9a9a9a" />
         </view>
         <view
           class="profile__menu-item"
@@ -81,7 +80,7 @@ onMounted(() => {
           @click="uni.navigateTo({ url: '/pages/profile/knowledge' })"
         >
           <text>知识库</text>
-          <text class="profile__menu-arrow">›</text>
+          <Icon name="chevron-right" size="28rpx" color="#9a9a9a" />
         </view>
         <view
           class="profile__menu-item"
@@ -89,7 +88,7 @@ onMounted(() => {
           @click="uni.navigateTo({ url: '/pages/login/index' })"
         >
           <text>切换账号（手机号登录）</text>
-          <text class="profile__menu-arrow">›</text>
+          <Icon name="chevron-right" size="28rpx" color="#9a9a9a" />
         </view>
       </view>
     </template>
@@ -117,22 +116,6 @@ onMounted(() => {
     margin-bottom: $opc-spacing-lg;
   }
 
-  &__avatar {
-    width: 120rpx;
-    height: 120rpx;
-    border-radius: 50%;
-    background: $opc-bg-subtle;
-    border: 1px solid $opc-border-color;
-
-    &--fallback {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 44rpx;
-      color: $opc-color-text;
-      font-weight: 700;
-    }
-  }
 
   &__nickname {
     font-size: $opc-font-lg;
@@ -150,6 +133,7 @@ onMounted(() => {
     background: $opc-bg-subtle;
     border: 1px solid $opc-border-color;
     border-radius: $opc-radius-card;
+    box-shadow: $opc-shadow-sm;
     padding: $opc-spacing 0;
     margin-bottom: $opc-spacing-lg;
   }
@@ -229,6 +213,7 @@ onMounted(() => {
     background: $opc-bg-card;
     border: 1px solid $opc-border-color;
     border-radius: $opc-radius-card;
+    box-shadow: $opc-shadow-sm;
     overflow: hidden;
   }
 
@@ -242,10 +227,6 @@ onMounted(() => {
     &:last-child {
       border-bottom: none;
     }
-  }
-
-  &__menu-arrow {
-    color: $opc-color-text-placeholder;
   }
 
   &__loading {

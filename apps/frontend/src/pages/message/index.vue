@@ -3,6 +3,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import PublishFab from '@/components/PublishFab.vue'
 import SkeletonBlock from '@/components/SkeletonBlock.vue'
 import EmptyState from '@/components/EmptyState.vue'
+import Icon from '@/components/Icon.vue'
 import { confirmTodo, fetchConversations, fetchTodos } from '@/api/messages'
 import { getSocket } from '@/utils/socket'
 import type { ConversationItem, TodoItem } from '@/types'
@@ -82,7 +83,7 @@ onUnmounted(() => {
         <text class="message__server-name">培风社官方</text>
         <text class="message__server-desc">频道浏览 · 公告 / 休息室 / 项目群聊...</text>
       </view>
-      <text class="message__server-arrow">›</text>
+      <Icon name="chevron-right" size="28rpx" color="#9a9a9a" />
     </view>
 
     <template v-if="loading">
@@ -178,6 +179,7 @@ onUnmounted(() => {
     background: $opc-bg-card;
     border: 1px solid $opc-border-color;
     border-radius: $opc-radius-card;
+    box-shadow: $opc-shadow-sm;
     padding: $opc-spacing-sm;
     margin-bottom: $opc-spacing-lg;
   }
@@ -211,10 +213,6 @@ onUnmounted(() => {
     color: $opc-color-text-secondary;
   }
 
-  &__server-arrow {
-    color: $opc-color-text-placeholder;
-  }
-
   &__section {
     margin-bottom: $opc-spacing-lg;
   }
@@ -229,6 +227,7 @@ onUnmounted(() => {
     background: $opc-bg-card;
     border: 1px solid $opc-border-color;
     border-radius: $opc-radius-card-sm;
+    box-shadow: $opc-shadow-sm;
     padding: $opc-spacing-sm;
     margin-bottom: $opc-spacing-xxs;
   }
@@ -261,6 +260,7 @@ onUnmounted(() => {
     background: $opc-bg-card;
     border: 1px solid $opc-border-color;
     border-radius: $opc-radius-card-sm;
+    box-shadow: $opc-shadow-sm;
     padding: $opc-spacing-sm;
     margin-bottom: $opc-spacing-xxs;
   }

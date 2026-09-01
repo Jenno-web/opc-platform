@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import Icon from '@/components/Icon.vue'
+
 withDefaults(
   defineProps<{
     text: string
@@ -11,7 +13,7 @@ withDefaults(
 <template>
   <view class="empty-state">
     <view class="empty-state__icon">
-      <view class="empty-state__icon-dash" />
+      <Icon name="inbox" size="44rpx" color="#9a9a9a" />
     </view>
     <text class="empty-state__text">{{ text }}</text>
     <text v-if="hint" class="empty-state__hint">{{ hint }}</text>
@@ -34,17 +36,10 @@ withDefaults(
     width: 80rpx;
     height: 80rpx;
     border-radius: 50%;
-    border: 2px dashed $opc-border-color;
+    background: $opc-bg-subtle;
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-
-  &__icon-dash {
-    width: 32rpx;
-    height: 4rpx;
-    background: $opc-color-text-placeholder;
-    border-radius: $opc-radius-tag;
   }
 
   &__text {

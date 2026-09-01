@@ -47,3 +47,9 @@ $opc-font-base: 28rpx; // 正文（与 App.vue 里 page 的全局 28rpx 一致�
 $opc-font-lg: 32rpx;
 $opc-font-xl: 35rpx; // 卡片标题
 $opc-font-display: 56rpx; // 页面大标题（如"发现机会"）
+
+// 阴影层次：低保真源文件里没有阴影（线框图阶段不需要），卡片只靠边框区分。
+// 这三档是补的，边框保留不动，阴影是叠加上去的第二层视觉层次，不是替代关系
+$opc-shadow-sm: 0 2rpx 8rpx rgba(17, 17, 17, 0.06);
+$opc-shadow-md: 0 8rpx 24rpx rgba(17, 17, 17, 0.08);
+$opc-shadow-lg: 0 16rpx 40rpx rgba(17, 17, 17, 0.14);

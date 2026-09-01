@@ -26,6 +26,7 @@ defineProps<{
   background: $opc-bg-subtle;
   border: 1px solid $opc-border-color;
   border-radius: $opc-radius-card-sm;
+  box-shadow: $opc-shadow-sm;
 
   &__label {
     flex-shrink: 0;

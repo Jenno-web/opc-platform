@@ -4,6 +4,7 @@ import PublishFab from '@/components/PublishFab.vue'
 import ProjectCard from '@/components/ProjectCard.vue'
 import SkeletonBlock from '@/components/SkeletonBlock.vue'
 import EmptyState from '@/components/EmptyState.vue'
+import Icon from '@/components/Icon.vue'
 import { fetchHotProjects, fetchProjectList, fetchRecommendations } from '@/api/projects'
 import type { ProjectKind, ProjectListItem, PublishTier, RecommendationResult } from '@/types'
 
@@ -73,7 +74,9 @@ onMounted(() => loadByChip('recommend'))
   <view class="discover">
     <view class="discover__header">
       <text class="discover__brand">培风社 OPC</text>
-      <view class="discover__search-icon" hover-class="opc-hover" @click="goSearch">🔍</view>
+      <view class="discover__search-icon" hover-class="opc-hover" @click="goSearch">
+        <Icon name="search" size="32rpx" />
+      </view>
     </view>
     <text class="discover__title">发现机会</text>
 
@@ -185,6 +188,7 @@ onMounted(() => loadByChip('recommend'))
     background: $opc-bg-subtle;
     border: 1px solid $opc-border-color;
     border-radius: $opc-radius-card;
+    box-shadow: $opc-shadow-sm;
     padding: $opc-spacing-sm;
     margin-bottom: $opc-spacing-sm;
     display: flex;

@@ -3,6 +3,8 @@ import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import AiHint from '@/components/AiHint.vue'
 import SkeletonBlock from '@/components/SkeletonBlock.vue'
+import Avatar from '@/components/Avatar.vue'
+import Icon from '@/components/Icon.vue'
 import { fetchProjectDetail } from '@/api/projects'
 import type { ProjectDetail } from '@/types'
 
@@ -100,7 +102,7 @@ function goRespond(mode: 'question' | 'respond') {
       </view>
 
       <view class="detail__publisher">
-        <view class="detail__publisher-avatar">{{ detail.publisher.nickname.slice(0, 1) }}</view>
+        <Avatar :name="detail.publisher.nickname" :avatar-url="detail.publisher.avatarUrl" size="72rpx" />
         <view class="detail__publisher-info">
           <text class="detail__publisher-name">{{ detail.publisher.nickname }}</text>
           <text class="detail__publisher-meta">
@@ -108,7 +110,10 @@ function goRespond(mode: 'question' | 'respond') {
             {{ detail.publisher.collaborationCount }} 次合作
           </text>
         </view>
-        <text class="detail__publisher-rating">★ {{ detail.publisher.ratingAvg.toFixed(1) }}</text>
+        <view class="detail__publisher-rating">
+          <Icon name="star" filled size="24rpx" />
+          <text>{{ detail.publisher.ratingAvg.toFixed(1) }}</text>
+        </view>
       </view>
 
       <view class="detail__actions">
@@ -229,18 +234,7 @@ function goRespond(mode: 'question' | 'respond') {
     padding: $opc-spacing-sm;
     background: $opc-bg-subtle;
     border-radius: $opc-radius-card;
-  }
-
-  &__publisher-avatar {
-    width: 72rpx;
-    height: 72rpx;
-    border-radius: 50%;
-    background: $opc-bg-card;
-    border: 1px solid $opc-border-color;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
+    box-shadow: $opc-shadow-sm;
   }
 
   &__publisher-info {
@@ -261,6 +255,9 @@ function goRespond(mode: 'question' | 'respond') {
   }
 
   &__publisher-rating {
+    display: flex;
+    align-items: center;
+    gap: 4rpx;
     font-size: $opc-font-sm;
     font-weight: 600;
   }

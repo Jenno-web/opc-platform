@@ -77,6 +77,7 @@ async function saveEdit(entry: KnowledgeEntryItem) {
     background: $opc-bg-card;
     border: 1px solid $opc-border-color;
     border-radius: $opc-radius-card;
+    box-shadow: $opc-shadow-sm;
     padding: $opc-spacing;
     margin-bottom: $opc-spacing-sm;
   }

@@ -5,6 +5,7 @@ import { fetchVoiceRoomParticipants, joinVoiceRoom, leaveVoiceRoom } from '@/api
 import { getSocket } from '@/utils/socket'
 import { useUserStore } from '@/store/user'
 import EmptyState from '@/components/EmptyState.vue'
+import Avatar from '@/components/Avatar.vue'
 
 // 对应"14 消息&休息室语音房"画板。
 // 重要边界：这里只做"谁在场"的实时状态广播（复用已有 WebSocket 网关），不做真实语音通话——
@@ -77,8 +78,8 @@ onUnmounted(() => {
 
     <view class="voice-room__grid">
       <view v-for="p in participants" :key="p.id" class="voice-room__member opc-fade-in">
-        <view class="voice-room__avatar">
-          <text>{{ p.nickname.slice(0, 1) }}</text>
+        <view class="voice-room__avatar-ring">
+          <Avatar :name="p.nickname" :avatar-url="p.avatarUrl" size="88rpx" />
           <view class="voice-room__live-dot opc-pulse" />
         </view>
         <text class="voice-room__name">{{ p.nickname }}</text>
@@ -141,17 +142,12 @@ onUnmounted(() => {
     width: 120rpx;
   }
 
-  &__avatar {
+  // 头像本体交给 Avatar.vue 统一处理，这里只负责外面这圈"在场"绿色描边 + 徽标定位
+  &__avatar-ring {
     position: relative;
-    width: 88rpx;
-    height: 88rpx;
     border-radius: 50%;
-    background: $opc-bg-subtle;
     border: 2px solid $opc-color-success;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
+    padding: 3rpx;
   }
 
   // 在场提示：房间是实时状态展示，不是真实语音通话，靠这个绿点强调"人在线"而不是"正在说话"

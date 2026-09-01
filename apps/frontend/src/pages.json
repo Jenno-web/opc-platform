@@ -100,19 +100,27 @@
 		"list": [
 			{
 				"pagePath": "pages/discover/index",
-				"text": "发现"
+				"text": "发现",
+				"iconPath": "static/tabbar/compass-inactive.png",
+				"selectedIconPath": "static/tabbar/compass-active.png"
 			},
 			{
 				"pagePath": "pages/project/index",
-				"text": "任务"
+				"text": "任务",
+				"iconPath": "static/tabbar/list-checks-inactive.png",
+				"selectedIconPath": "static/tabbar/list-checks-active.png"
 			},
 			{
 				"pagePath": "pages/message/index",
-				"text": "信息"
+				"text": "信息",
+				"iconPath": "static/tabbar/message-circle-inactive.png",
+				"selectedIconPath": "static/tabbar/message-circle-active.png"
 			},
 			{
 				"pagePath": "pages/profile/index",
-				"text": "我的"
+				"text": "我的",
+				"iconPath": "static/tabbar/user-round-inactive.png",
+				"selectedIconPath": "static/tabbar/user-round-active.png"
 			}
 		]
 	}
