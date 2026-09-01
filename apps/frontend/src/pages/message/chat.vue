@@ -327,12 +327,14 @@ onUnmounted(() => {
     line-height: 1.5;
   }
 
+  // 之前这条工具栏背景色跟页面背景一样，完全看不出是个独立的条，加边框跟输入框区分开
   &__ai-bar {
     flex-shrink: 0;
     display: flex;
     gap: $opc-spacing-xs;
-    padding: $opc-spacing-xxs $opc-spacing;
-    background: $opc-bg-page;
+    padding: $opc-spacing-xs $opc-spacing;
+    background: $opc-bg-card;
+    border-top: 1px solid $opc-border-color;
   }
 
   &__ai-btn {
