@@ -1,15 +1,20 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import AiHint from '@/components/AiHint.vue'
 import SkeletonBlock from '@/components/SkeletonBlock.vue'
 import Avatar from '@/components/Avatar.vue'
 import Icon from '@/components/Icon.vue'
 import { fetchProjectDetail } from '@/api/projects'
+import { useUserStore } from '@/store/user'
 import type { ProjectDetail } from '@/types'
 
+const userStore = useUserStore()
 const detail = ref<ProjectDetail | null>(null)
 const loading = ref(true)
+
+// 对自己发布的项目点"提问"/"我想响应"没有意义——后端也挡了这个情况，这里是前端提前把入口收起来
+const isOwnProject = computed(() => detail.value?.publisher.id === userStore.currentUser?.id)
 
 const kindLabel: Record<string, string> = { DEMAND: '需求', SUPPLY: '供给', MUTUAL: '互助' }
 const statusLabel: Record<string, string> = {
@@ -21,6 +26,7 @@ const statusLabel: Record<string, string> = {
 }
 
 onLoad(async (query) => {
+  if (!userStore.currentUser) await userStore.loadCurrentUser()
   const id = query?.id as string
   if (!id) return
   loading.value = true
@@ -116,10 +122,11 @@ function goRespond(mode: 'question' | 'respond') {
         </view>
       </view>
 
-      <view class="detail__actions">
+      <view v-if="!isOwnProject" class="detail__actions">
         <button class="detail__question-btn" hover-class="opc-hover" @click="goRespond('question')">提问</button>
         <button class="detail__respond-btn" hover-class="opc-hover" @click="goRespond('respond')">我想响应</button>
       </view>
+      <view v-else class="detail__own-hint">这是你发布的项目，去"任务"页查看收到的响应</view>
     </template>
   </view>
 </template>
@@ -269,6 +276,13 @@ function goRespond(mode: 'question' | 'respond') {
     bottom: 32rpx;
     display: flex;
     gap: $opc-spacing-xs;
+  }
+
+  &__own-hint {
+    text-align: center;
+    font-size: $opc-font-sm;
+    color: $opc-color-text-placeholder;
+    padding: $opc-spacing-sm 0 100rpx;
   }
 
   &__question-btn {

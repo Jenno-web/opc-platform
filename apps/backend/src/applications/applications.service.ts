@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 const applicantSelect = {
@@ -29,7 +29,12 @@ export class ApplicationsService {
     });
   }
 
-  create(userId: string, projectId: string, content: string, roleId?: string, aiGenerated = false) {
+  async create(userId: string, projectId: string, content: string, roleId?: string, aiGenerated = false) {
+    const project = await this.prisma.project.findUniqueOrThrow({ where: { id: projectId } });
+    // 前端已经隐藏了自己项目上的"提问"/"我想响应"按钮，这里再挡一道——防止绕过前端直接调接口，
+    // 也避免出现"申请人和发布者是同一个人"这种脏数据
+    if (project.publisherId === userId) throw new ForbiddenException('不能响应自己发布的项目');
+
     return this.prisma.application.create({
       data: { applicantId: userId, projectId, content, roleId, aiGenerated },
     });
