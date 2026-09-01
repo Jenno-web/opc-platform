@@ -91,8 +91,8 @@ onMounted(async () => {
   if (!userStore.currentUser) await userStore.loadCurrentUser()
   loading.value = true
   try {
+    // 消息从顶部开始排列，进页面就该直接看到，不用像贴底部聊天软件那样自动滚到底部
     await loadMessages()
-    scrollToBottom()
   } finally {
     loading.value = false
   }
@@ -196,14 +196,11 @@ onUnmounted(() => {
     color: $opc-color-text;
   }
 
-  // 消息区用 flex-end 贴底：聊天窗口应该跟真实聊天软件一样，消息从底部往上堆，
-  // 消息少的时候上面留白，而不是消息挤在顶部、下面一大片空白（之前的 bug）
   &__messages {
     flex: 1;
     padding: $opc-spacing;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
     gap: $opc-spacing-sm;
   }
 
