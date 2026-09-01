@@ -329,7 +329,7 @@ async function handlePublish() {
   }
 
   &__tier-badge {
-    font-size: 18rpx;
+    font-size: $opc-font-micro;
     color: #fff;
     background: $opc-color-primary;
     padding: 2rpx 12rpx;
@@ -367,6 +367,7 @@ async function handlePublish() {
     text-align: center;
     border-radius: 50%;
     background: $opc-bg-subtle;
+    border: 1px solid $opc-border-color;
     font-size: 28rpx;
     display: flex;
     align-items: center;
@@ -440,6 +441,7 @@ async function handlePublish() {
   &__number-input {
     width: 120rpx;
     background: $opc-bg-subtle;
+    border: 1px solid $opc-border-color;
     border-radius: 8rpx;
     padding: 8rpx $opc-spacing-xxs;
     font-size: $opc-font-base;

@@ -73,24 +73,24 @@ onMounted(async () => {
 
   &__status {
     font-size: $opc-font-xs;
-    padding: 4rpx 16rpx;
+    padding: $opc-spacing-micro 16rpx;
     border-radius: $opc-radius-tag;
     background: $opc-color-primary-soft;
     color: $opc-color-primary;
 
     &.is-accepted {
-      background: rgba(34, 197, 94, 0.12);
+      background: rgba($opc-color-success, 0.12);
       color: $opc-color-success;
     }
     &.is-rejected {
-      background: rgba(239, 68, 68, 0.12);
+      background: rgba($opc-color-danger, 0.12);
       color: $opc-color-danger;
     }
   }
 
   &__ai-tag {
     display: inline-block;
-    font-size: 18rpx;
+    font-size: $opc-font-micro;
     color: $opc-color-ai;
     background: $opc-color-primary-soft;
     padding: 4rpx 12rpx;

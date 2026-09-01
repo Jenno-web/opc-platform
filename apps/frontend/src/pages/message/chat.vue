@@ -77,9 +77,15 @@ async function handleExtractTodos() {
   }
 }
 
+// 之前用 uni.pageScrollTo 滚整个页面，前提是页面本身会滚动；但输入框是靠 position:fixed
+// 钉在屏幕底部的，只要外层容器不是"整页面"在滚（比如被 uni-app 的页面包裹层裁切成内部滚动），
+// fixed 就不一定是相对浏览器视口，会导致滑到底也够不着输入框。现在把消息区改成自己的滚动容器
+// （见 .chat__messages 的 overflow-y），这里改成直接操作这个容器的 scrollTop，不依赖整页滚动
+const messagesRef = ref<HTMLElement | null>(null)
 function scrollToBottom() {
   nextTick(() => {
-    uni.pageScrollTo({ scrollTop: 999999, duration: 100 })
+    const el = messagesRef.value
+    if (el) el.scrollTop = el.scrollHeight
   })
 }
 
@@ -134,7 +140,7 @@ onUnmounted(() => {
       <SkeletonBlock :rows="1" avatar />
       <SkeletonBlock :rows="1" avatar />
     </view>
-    <view v-else class="chat__messages">
+    <view v-else ref="messagesRef" class="chat__messages">
       <view
         v-for="message in messages"
         :key="message.id"
@@ -177,13 +183,17 @@ onUnmounted(() => {
 <style scoped lang="scss">
 @import '@/styles/tokens.scss';
 
+// 改成固定高度 + 内部滚动，而不是"整页滚动 + 输入框 fixed 钉在屏幕底部"——后者依赖页面本身
+// 就是唯一的滚动容器这个假设，一旦这个假设不成立（比如被外层容器裁切成内部滚动），
+// fixed 元素就会变成"看得见摸不着"，这正是之前"滑不到输入框"这个问题的根源
 .chat {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  padding-bottom: 180rpx;
+  height: 100vh;
+  overflow: hidden;
 
   &__context {
+    flex-shrink: 0;
     margin: $opc-spacing $opc-spacing 0;
     padding: $opc-spacing-xxs $opc-spacing-sm;
     background: $opc-bg-subtle;
@@ -195,6 +205,7 @@ onUnmounted(() => {
   }
 
   &__summary {
+    flex-shrink: 0;
     margin: $opc-spacing $opc-spacing 0;
     padding: $opc-spacing-xs $opc-spacing-sm;
     background: $opc-color-primary-soft;
@@ -217,6 +228,9 @@ onUnmounted(() => {
 
   &__messages {
     flex: 1;
+    min-height: 0; // flex 子项默认 min-height:auto 会撑破父容器导致内部滚动失效，必须显式清零
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     padding: $opc-spacing;
     display: flex;
     flex-direction: column;
@@ -270,10 +284,7 @@ onUnmounted(() => {
   }
 
   &__ai-bar {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 100rpx;
+    flex-shrink: 0;
     display: flex;
     gap: $opc-spacing-xs;
     padding: $opc-spacing-xxs $opc-spacing;
@@ -294,14 +305,12 @@ onUnmounted(() => {
   }
 
   &__input-bar {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     gap: $opc-spacing-xs;
     padding: $opc-spacing-xs $opc-spacing;
+    padding-bottom: max($opc-spacing-xs, env(safe-area-inset-bottom));
     background: $opc-bg-card;
     border-top: 1px solid $opc-border-color;
     box-shadow: $opc-shadow-md;

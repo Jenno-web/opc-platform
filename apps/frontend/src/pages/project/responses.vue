@@ -120,17 +120,19 @@ async function goChat(app: ReceivedApplicationItem) {
 
   &__status {
     font-size: $opc-font-xs;
-    padding: 4rpx 16rpx;
+    padding: $opc-spacing-micro 16rpx;
     border-radius: $opc-radius-tag;
     background: $opc-color-primary-soft;
     color: $opc-color-primary;
 
+    // 之前这两个背景色是随手写的鲜艳 rgb 值，跟 success/danger token 的低饱和度完全对不上，
+    // 改成直接从对应 token 取透明度，颜色系统才是一套的
     &.is-accepted {
-      background: rgba(34, 197, 94, 0.12);
+      background: rgba($opc-color-success, 0.12);
       color: $opc-color-success;
     }
     &.is-rejected {
-      background: rgba(239, 68, 68, 0.12);
+      background: rgba($opc-color-danger, 0.12);
       color: $opc-color-danger;
     }
   }

@@ -192,6 +192,7 @@ onMounted(() => {
     background: $opc-bg-subtle;
     border: 1px solid $opc-border-color;
     border-radius: $opc-radius-card-sm;
+    box-shadow: $opc-shadow-sm;
     padding: $opc-spacing-xs $opc-spacing-sm;
     margin-bottom: $opc-spacing-xxs;
     display: flex;

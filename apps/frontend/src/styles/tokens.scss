@@ -32,6 +32,7 @@ $opc-radius-tag: 999rpx; // 胶囊按钮/标签：Figma 里也是设的一个远
 
 // 间距刻度：从 18 个画板里所有 Auto Layout 的 itemSpacing / padding 实测值统计出的高频聚类，
 // 按 ×1.866 换算后取整，不是随手定的数字
+$opc-spacing-micro: 4rpx; // 小标签/徽标内边距这一档，比 xxs 还小，之前这类地方各页面各写各的数字（2/4/6/8rpx 都有）
 $opc-spacing-xxs: 11rpx;
 $opc-spacing-xs: 15rpx;
 $opc-spacing-sm: 22rpx;
@@ -41,6 +42,7 @@ $opc-spacing-lg: 41rpx;
 $opc-spacing-xl: 45rpx;
 
 // 字号刻度：同样从画板文本节点的真实 fontSize 统计出的高频值换算而来
+$opc-font-micro: 18rpx; // 小徽标文字（AI 生成标记、曝光层级 badge 这类），比 xs 还小的一档
 $opc-font-xs: 19rpx; // Tab 文字、时间戳等辅助信息
 $opc-font-sm: 22rpx; // 标签/次要文字
 $opc-font-base: 28rpx; // 正文（与 App.vue 里 page 的全局 28rpx 一致）

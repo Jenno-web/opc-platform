@@ -158,7 +158,7 @@ function goRespond(mode: 'question' | 'respond') {
     color: $opc-color-text;
     background: $opc-bg-subtle;
     border: 1px solid $opc-border-color;
-    padding: 2rpx 14rpx;
+    padding: $opc-spacing-micro 14rpx;
     border-radius: $opc-radius-tag;
   }
 
@@ -167,14 +167,14 @@ function goRespond(mode: 'question' | 'respond') {
     font-weight: 700;
     color: #fff;
     background: $opc-color-primary;
-    padding: 2rpx 14rpx;
+    padding: $opc-spacing-micro 14rpx;
     border-radius: $opc-radius-tag;
   }
 
   &__status {
     font-size: $opc-font-xs;
     color: $opc-color-text-secondary;
-    padding: 2rpx 14rpx;
+    padding: $opc-spacing-micro 14rpx;
     border-radius: $opc-radius-tag;
     background: $opc-bg-subtle;
   }

@@ -95,7 +95,7 @@ async function saveEdit(entry: KnowledgeEntryItem) {
   }
 
   &__ai-tag {
-    font-size: 18rpx;
+    font-size: $opc-font-micro;
     color: $opc-color-ai;
     background: $opc-color-primary-soft;
     padding: 4rpx 12rpx;

@@ -156,7 +156,7 @@ onMounted(async () => {
   &__item-badge {
     background: $opc-color-primary;
     color: #fff;
-    font-size: 18rpx;
+    font-size: $opc-font-micro;
     min-width: 32rpx;
     height: 32rpx;
     line-height: 32rpx;

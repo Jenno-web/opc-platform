@@ -157,6 +157,7 @@ onUnmounted(() => {
     background: $opc-bg-subtle;
     border: 1px solid $opc-border-color;
     border-radius: $opc-radius-card;
+    box-shadow: $opc-shadow-sm;
     padding: $opc-spacing 0;
     margin-bottom: $opc-spacing-sm;
   }
@@ -308,7 +309,7 @@ onUnmounted(() => {
     right: 20rpx;
     background: $opc-color-primary;
     color: #fff;
-    font-size: 18rpx;
+    font-size: $opc-font-micro;
     min-width: 32rpx;
     height: 32rpx;
     line-height: 32rpx;

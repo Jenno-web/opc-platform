@@ -96,7 +96,7 @@ function handleClick() {
     color: $opc-color-text;
     background: $opc-bg-subtle;
     border: 1px solid $opc-border-color;
-    padding: 2rpx 14rpx;
+    padding: $opc-spacing-micro 14rpx;
     border-radius: $opc-radius-tag;
   }
 
@@ -105,13 +105,13 @@ function handleClick() {
     font-weight: 700;
     color: #ffffff;
     background: $opc-color-primary;
-    padding: 2rpx 14rpx;
+    padding: $opc-spacing-micro 14rpx;
     border-radius: $opc-radius-tag;
   }
 
   &__status {
     font-size: $opc-font-xs;
-    padding: 4rpx 14rpx;
+    padding: 6rpx 14rpx;
     border-radius: $opc-radius-tag;
     background: $opc-bg-subtle;
     color: $opc-color-text-secondary;
