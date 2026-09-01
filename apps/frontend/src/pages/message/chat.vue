@@ -12,6 +12,7 @@ import { useUserStore } from '@/store/user'
 import { getSocket } from '@/utils/socket'
 import SkeletonBlock from '@/components/SkeletonBlock.vue'
 import EmptyState from '@/components/EmptyState.vue'
+import Avatar from '@/components/Avatar.vue'
 import type { ChatMessageItem } from '@/types'
 
 const userStore = useUserStore()
@@ -132,8 +133,16 @@ onUnmounted(() => {
         class="chat__bubble-row opc-fade-in"
         :class="{ 'is-mine': message.senderId === userStore.currentUser?.id }"
       >
-        <text class="chat__sender">{{ message.sender.nickname }}</text>
-        <view class="chat__bubble">{{ message.content }}</view>
+        <Avatar
+          class="chat__avatar"
+          :name="message.sender.nickname"
+          :avatar-url="message.sender.avatarUrl"
+          size="56rpx"
+        />
+        <view class="chat__bubble-col">
+          <text class="chat__sender">{{ message.sender.nickname }}</text>
+          <view class="chat__bubble">{{ message.content }}</view>
+        </view>
       </view>
       <EmptyState v-if="messages.length === 0" text="暂无消息" />
     </view>
@@ -187,27 +196,45 @@ onUnmounted(() => {
     color: $opc-color-text;
   }
 
+  // 消息区用 flex-end 贴底：聊天窗口应该跟真实聊天软件一样，消息从底部往上堆，
+  // 消息少的时候上面留白，而不是消息挤在顶部、下面一大片空白（之前的 bug）
   &__messages {
     flex: 1;
     padding: $opc-spacing;
     display: flex;
     flex-direction: column;
+    justify-content: flex-end;
     gap: $opc-spacing-sm;
   }
 
   &__bubble-row {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    align-items: flex-end;
+    gap: $opc-spacing-xxs;
 
     &.is-mine {
-      align-items: flex-end;
+      flex-direction: row-reverse;
+
+      .chat__bubble-col {
+        align-items: flex-end;
+      }
 
       .chat__bubble {
         background: $opc-color-primary;
         color: #fff;
       }
     }
+  }
+
+  &__avatar {
+    flex-shrink: 0;
+  }
+
+  &__bubble-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 70%;
   }
 
   &__sender {
@@ -217,11 +244,11 @@ onUnmounted(() => {
   }
 
   &__bubble {
-    max-width: 70%;
     background: $opc-bg-card;
     color: $opc-color-text;
     padding: $opc-spacing-xs $opc-spacing-sm;
     border-radius: $opc-radius-card-sm;
+    box-shadow: $opc-shadow-sm;
     font-size: $opc-font-base;
     line-height: 1.5;
   }
