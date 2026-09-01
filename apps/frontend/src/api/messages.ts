@@ -1,16 +1,25 @@
 import { request } from '@/utils/request'
-import type { ChannelItem, ChatMessageItem, ConversationItem, TodoItem } from '@/types'
+import type { ChannelItem, ChatMessageItem, ConversationDetail, ConversationItem, TodoItem } from '@/types'
 
 export function fetchConversations() {
   return request<ConversationItem[]>({ url: '/conversations' })
+}
+
+export function fetchConversation(conversationId: string) {
+  return request<ConversationDetail>({ url: `/conversations/${conversationId}` })
 }
 
 export function fetchChannels() {
   return request<ChannelItem[]>({ url: '/conversations/channels' })
 }
 
-export function getOrCreatePrivateConversation(otherUserId: string) {
-  return request<ConversationItem>({ url: `/conversations/private/${otherUserId}`, method: 'POST' })
+// projectId 可选：从项目详情页"提问"/"我想响应"发起时带上，让对方知道是通过哪个项目联系的
+export function getOrCreatePrivateConversation(otherUserId: string, projectId?: string) {
+  return request<ConversationItem>({
+    url: `/conversations/private/${otherUserId}`,
+    method: 'POST',
+    data: projectId ? { projectId } : undefined,
+  })
 }
 
 export function joinVoiceRoom(conversationId: string) {

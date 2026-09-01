@@ -3,6 +3,7 @@ import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import {
   extractTodosFromConversation,
+  fetchConversation,
   fetchConversationMessages,
   sendChatMessage,
   suggestReply,
@@ -23,6 +24,8 @@ const loading = ref(true)
 const aiWorking = ref(false)
 const aiSummary = ref('')
 const realtimeConnected = ref(false)
+// 对方是通过哪个项目找过来的，只有从项目详情页"提问"发起的私信才会有
+const projectTitle = ref<string | null>(null)
 
 function handleIncomingMessage(message: ChatMessageItem) {
   if (message.conversationId !== conversationId.value) return
@@ -92,7 +95,8 @@ onMounted(async () => {
   loading.value = true
   try {
     // 消息从顶部开始排列，进页面就该直接看到，不用像贴底部聊天软件那样自动滚到底部
-    await loadMessages()
+    const [, detail] = await Promise.all([loadMessages(), fetchConversation(conversationId.value)])
+    projectTitle.value = detail.projectTitle
   } finally {
     loading.value = false
   }
@@ -117,6 +121,10 @@ onUnmounted(() => {
 
 <template>
   <view class="chat">
+    <view v-if="projectTitle" class="chat__context">
+      <text>关于项目《{{ projectTitle }}》</text>
+    </view>
+
     <view v-if="aiSummary" class="chat__summary">
       <text class="chat__summary-label">AI 对话总结</text>
       <text class="chat__summary-text">{{ aiSummary }}</text>
@@ -174,6 +182,17 @@ onUnmounted(() => {
   flex-direction: column;
   min-height: 100vh;
   padding-bottom: 180rpx;
+
+  &__context {
+    margin: $opc-spacing $opc-spacing 0;
+    padding: $opc-spacing-xxs $opc-spacing-sm;
+    background: $opc-bg-subtle;
+    border: 1px solid $opc-border-color;
+    border-radius: $opc-radius-tag;
+    font-size: $opc-font-xs;
+    color: $opc-color-text-secondary;
+    align-self: flex-start;
+  }
 
   &__summary {
     margin: $opc-spacing $opc-spacing 0;

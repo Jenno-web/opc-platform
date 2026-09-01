@@ -42,7 +42,7 @@ async function handleSubmit() {
       await createApplication({ projectId: projectId.value, content: draft.value.trim() })
       uni.showToast({ title: '响应已发送', icon: 'success' })
     } else {
-      const conversation = await getOrCreatePrivateConversation(publisherId.value)
+      const conversation = await getOrCreatePrivateConversation(publisherId.value, projectId.value)
       await sendChatMessage(conversation.id, draft.value.trim())
       uni.showToast({ title: '已发送', icon: 'success' })
     }

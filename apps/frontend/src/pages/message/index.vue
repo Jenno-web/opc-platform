@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+import { onShow } from '@dcloudio/uni-app'
 import PublishFab from '@/components/PublishFab.vue'
 import SkeletonBlock from '@/components/SkeletonBlock.vue'
 import EmptyState from '@/components/EmptyState.vue'
@@ -50,8 +51,14 @@ function handleRealtimeRefresh() {
   load()
 }
 
-onMounted(() => {
+// 用 onShow 而不是 onMounted 加载数据：从聊天页 navigateBack 回来这个页面组件不会重新
+// mount（uni-app 页面栈机制），onMounted 只会跑一次，未读数清零这类在别的页面发生的变化
+// 刷不出来。onShow 每次页面重新可见都会触发（包括第一次打开），一个钩子顶两个用
+onShow(() => {
   load()
+})
+
+onMounted(() => {
   const socket = getSocket()
   socket?.on('message:new', handleRealtimeRefresh)
   socket?.on('todos:extracted', handleRealtimeRefresh)
@@ -126,6 +133,7 @@ onUnmounted(() => {
             <text class="message__conversation-title">{{ c.title }}</text>
             <text class="message__conversation-type">{{ typeLabel[c.type] }}</text>
           </view>
+          <text v-if="c.projectTitle" class="message__conversation-context">关于《{{ c.projectTitle }}》</text>
           <text class="message__conversation-last">{{ c.lastMessage }}</text>
           <text v-if="c.unreadCount" class="message__conversation-badge">{{ c.unreadCount }}</text>
         </view>
@@ -280,6 +288,13 @@ onUnmounted(() => {
   &__conversation-type {
     font-size: $opc-font-xs;
     color: $opc-color-text-secondary;
+  }
+
+  &__conversation-context {
+    display: block;
+    font-size: $opc-font-xs;
+    color: $opc-color-ai;
+    margin-bottom: 4rpx;
   }
 
   &__conversation-last {

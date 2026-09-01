@@ -23,6 +23,9 @@ export class ConversationsService {
             // PRIVATE 会话要拿到"对方"是谁——title 字段存的是创建时固定写死的字符串，
             // 双方看到的是同一份，会出现"我给自己发消息"这种错觉（见下方 title 计算）
             participants: { where: { userId: { not: userId } }, include: { user: { select: { nickname: true } } } },
+            // 私信如果是从项目详情页"提问"发起的，会带着 projectId，用来告诉收信人
+            // "对方是通过哪个项目找过来的"，不然打开一条私信完全没有上下文
+            project: { select: { title: true } },
           },
         },
       },
@@ -36,6 +39,7 @@ export class ConversationsService {
         p.conversation.type === 'PRIVATE'
           ? (p.conversation.participants[0]?.user.nickname ?? p.conversation.title)
           : p.conversation.title,
+      projectTitle: p.conversation.project?.title ?? null,
       lastMessage: p.conversation.messages[0]?.content ?? '',
       lastMessageAt: p.conversation.lastMessageAt,
       unreadCount: p.unreadCount,
@@ -63,8 +67,12 @@ export class ConversationsService {
     }));
   }
 
-  /** 对应"04 响应/联系"画板的"提问"入口：找到（或新建）与项目发布者的私信会话 */
-  async getOrCreatePrivateConversation(userId: string, otherUserId: string) {
+  /**
+   * 对应"04 响应/联系"画板的"提问"/"我想响应"入口：找到（或新建）与项目发布者的私信会话。
+   * projectId 可选——从项目详情页发起时带上，存到会话上，这样对方能看到"是通过哪个项目联系我的"，
+   * 不是打开一条私信完全不知道对方是谁、为什么找过来
+   */
+  async getOrCreatePrivateConversation(userId: string, otherUserId: string, projectId?: string) {
     if (userId === otherUserId) throw new ForbiddenException('不能和自己私信');
 
     const existing = await this.prisma.conversation.findFirst({
@@ -73,6 +81,7 @@ export class ConversationsService {
         participants: { some: { userId } },
         AND: [{ participants: { some: { userId: otherUserId } } }],
       },
+      include: { project: { select: { title: true } } },
     });
     if (existing) return existing;
 
@@ -81,8 +90,10 @@ export class ConversationsService {
       data: {
         type: 'PRIVATE',
         title: otherUser.nickname,
+        projectId: projectId ?? undefined,
         participants: { create: [{ userId }, { userId: otherUserId }] },
       },
+      include: { project: { select: { title: true } } },
     });
   }
 
@@ -112,9 +123,20 @@ export class ConversationsService {
 
   async getConversation(conversationId: string, userId: string) {
     await this.ensureAccess(conversationId, userId);
-    return this.prisma.conversation.findUniqueOrThrow({
+    const conversation = await this.prisma.conversation.findUniqueOrThrow({
       where: { id: conversationId },
+      include: {
+        participants: { where: { userId: { not: userId } }, include: { user: { select: { nickname: true } } } },
+        project: { select: { title: true } },
+      },
     });
+
+    return {
+      id: conversation.id,
+      type: conversation.type,
+      title: conversation.type === 'PRIVATE' ? (conversation.participants[0]?.user.nickname ?? conversation.title) : conversation.title,
+      projectTitle: conversation.project?.title ?? null,
+    };
   }
 
   async listMessages(conversationId: string, userId: string) {

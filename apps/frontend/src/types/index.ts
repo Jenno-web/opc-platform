@@ -94,9 +94,18 @@ export interface ConversationItem {
   id: string
   type: ConversationType
   title: string
+  // 私信是从项目详情页"提问"/"我想响应"发起的，会带上这个——告诉你对方是通过哪个项目找过来的
+  projectTitle: string | null
   lastMessage: string
   lastMessageAt: string
   unreadCount: number
+}
+
+export interface ConversationDetail {
+  id: string
+  type: ConversationType
+  title: string
+  projectTitle: string | null
 }
 
 export interface ChannelItem {

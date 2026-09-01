@@ -26,9 +26,17 @@ export class ConversationsController {
   }
 
   @Post('private/:otherUserId')
-  @ApiOperation({ summary: '获取或创建与某用户的私信会话（对应详情页"提问"入口）' })
-  getOrCreatePrivate(@Param('otherUserId') otherUserId: string, @CurrentUser() user: AuthPayload) {
-    return this.conversationsService.getOrCreatePrivateConversation(user.sub, otherUserId);
+  @ApiOperation({
+    summary:
+      '获取或创建与某用户的私信会话（对应详情页"提问"/"我想响应"入口）。projectId 可选——从项目详情页发起时带上，' +
+      '这样对方在消息列表/聊天页能看到"是通过哪个项目联系我的"，不传就是普通私信',
+  })
+  getOrCreatePrivate(
+    @Param('otherUserId') otherUserId: string,
+    @Body('projectId') projectId: string | undefined,
+    @CurrentUser() user: AuthPayload,
+  ) {
+    return this.conversationsService.getOrCreatePrivateConversation(user.sub, otherUserId, projectId);
   }
 
   @Get(':id')
