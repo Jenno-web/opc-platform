@@ -20,6 +20,9 @@ export class ConversationsService {
         conversation: {
           include: {
             messages: { orderBy: { createdAt: 'desc' }, take: 1 },
+            // PRIVATE 会话要拿到"对方"是谁——title 字段存的是创建时固定写死的字符串，
+            // 双方看到的是同一份，会出现"我给自己发消息"这种错觉（见下方 title 计算）
+            participants: { where: { userId: { not: userId } }, include: { user: { select: { nickname: true } } } },
           },
         },
       },
@@ -29,7 +32,10 @@ export class ConversationsService {
     return participations.map((p) => ({
       id: p.conversation.id,
       type: p.conversation.type,
-      title: p.conversation.title,
+      title:
+        p.conversation.type === 'PRIVATE'
+          ? (p.conversation.participants[0]?.user.nickname ?? p.conversation.title)
+          : p.conversation.title,
       lastMessage: p.conversation.messages[0]?.content ?? '',
       lastMessageAt: p.conversation.lastMessageAt,
       unreadCount: p.unreadCount,
@@ -106,21 +112,22 @@ export class ConversationsService {
 
   async getConversation(conversationId: string, userId: string) {
     await this.ensureAccess(conversationId, userId);
-    const conversation = await this.prisma.conversation.findUniqueOrThrow({
+    return this.prisma.conversation.findUniqueOrThrow({
       where: { id: conversationId },
     });
+  }
 
-    // 打开会话即视为已读
+  async listMessages(conversationId: string, userId: string) {
+    await this.ensureAccess(conversationId, userId);
+
+    // "打开会话即视为已读"这个动作要挂在前端真正会调用的接口上——之前挂在 getConversation
+    // 上，但聊天页加载消息走的是这个 listMessages，getConversation 从来没被前端调用过，
+    // 导致未读数永远不会被清掉
     await this.prisma.conversationParticipant.update({
       where: { conversationId_userId: { conversationId, userId } },
       data: { unreadCount: 0 },
     });
 
-    return conversation;
-  }
-
-  async listMessages(conversationId: string, userId: string) {
-    await this.ensureAccess(conversationId, userId);
     return this.prisma.chatMessage.findMany({
       where: { conversationId },
       include: { sender: senderSelect },
