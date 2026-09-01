@@ -82,20 +82,16 @@ async function handleExtractTodos() {
   }
 }
 
-// 之前用 uni.pageScrollTo 滚整个页面，前提是页面本身会滚动；但输入框是靠 position:fixed
-// 钉在屏幕底部的，只要外层容器不是"整页面"在滚（比如被 uni-app 的页面包裹层裁切成内部滚动），
-// fixed 就不一定是相对浏览器视口，会导致滑到底也够不着输入框。现在把消息区改成自己的滚动容器
-// （见 .chat__messages 的 overflow-y），这里改成直接操作这个容器的 scrollTop，不依赖整页滚动
-const messagesRef = ref<HTMLElement | null>(null)
+// 消息区用 uni-app 官方的 scroll-view 组件，不是自己拿 CSS overflow + 手动操作 DOM 的
+// scrollTop——试了三轮手动操作 scrollTop 都没能稳定生效（大概率是 view 编译成的自定义元素
+// 在滚动这件事上有些不透明的内部行为），scroll-view 是 uni-app 专门给"页面里的一块可滚动
+// 区域"设计的组件，各端表现是框架自己保证的，比手写 overflow 卡更可靠
+const scrollTop = ref(0)
 function scrollToBottom() {
-  // uni-app 的 view 编译成自定义元素，它自己的渲染/布局可能比 Vue 的 nextTick 还晚一步完成，
-  // 这时候读 scrollHeight 读到的还是加这条消息之前的旧值，滚动会"差一条消息的高度"。
-  // 用 requestAnimationFrame 再等一帧，确保布局真的算完了再滚
   nextTick(() => {
-    requestAnimationFrame(() => {
-      const el = messagesRef.value
-      if (el) el.scrollTop = el.scrollHeight
-    })
+    // scroll-top 必须真的"变化"才会触发滚动，设成同一个值两次不会重复触发，
+    // 所以在两个足够大的数之间来回切换（数值本身超过实际内容高度会被自动钳制到底部）
+    scrollTop.value = scrollTop.value === 999999 ? 999998 : 999999
   })
 }
 
@@ -152,7 +148,7 @@ onUnmounted(() => {
       <SkeletonBlock :rows="1" avatar />
       <SkeletonBlock :rows="1" avatar />
     </view>
-    <view v-else ref="messagesRef" class="chat__messages">
+    <scroll-view v-else scroll-y scroll-with-animation :scroll-top="scrollTop" class="chat__messages">
       <view
         v-for="message in messages"
         :key="message.id"
@@ -171,7 +167,7 @@ onUnmounted(() => {
         </view>
       </view>
       <EmptyState v-if="messages.length === 0" text="暂无消息" />
-    </view>
+    </scroll-view>
 
     <view class="chat__ai-bar">
       <view class="chat__ai-btn" hover-class="opc-hover" :class="{ 'is-disabled': aiWorking }" @click="handleSummarize">
@@ -214,17 +210,21 @@ onUnmounted(() => {
     background: $opc-bg-subtle;
     border: 1px solid $opc-border-color;
     border-radius: $opc-radius-tag;
+    box-shadow: $opc-shadow-sm;
     font-size: $opc-font-xs;
     color: $opc-color-text-secondary;
     align-self: flex-start;
   }
 
+  // 之前这个框完全没有边框和阴影，只有一个跟页面背景差不多的浅灰底，看起来跟背景融在一起
   &__summary {
     flex-shrink: 0;
     margin: $opc-spacing $opc-spacing 0;
     padding: $opc-spacing-xs $opc-spacing-sm;
     background: $opc-color-primary-soft;
+    border: 1px solid $opc-border-color;
     border-radius: $opc-radius-card-sm;
+    box-shadow: $opc-shadow-sm;
     display: flex;
     flex-direction: column;
     gap: 6rpx;
@@ -241,15 +241,17 @@ onUnmounted(() => {
     color: $opc-color-text;
   }
 
+  // scroll-view 自己管理滚动，不需要再手动加 overflow-y——那是给普通 view 用 CSS 模拟滚动的
+  // 做法，两边都设可能互相打架。这里只需要给它一个明确的高度边界（flex:1 + min-height:0）
   &__messages {
     flex: 1;
     min-height: 0; // flex 子项默认 min-height:auto 会撑破父容器导致内部滚动失效，必须显式清零
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
     padding: $opc-spacing;
-    display: flex;
-    flex-direction: column;
-    gap: $opc-spacing-sm;
+    box-sizing: border-box;
+  }
+
+  &__bubble-row + &__bubble-row {
+    margin-top: $opc-spacing-sm;
   }
 
   &__bubble-row {
