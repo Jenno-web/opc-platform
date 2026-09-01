@@ -110,12 +110,13 @@ onMounted(async () => {
   if (!userStore.currentUser) await userStore.loadCurrentUser()
   loading.value = true
   try {
-    // 消息从顶部开始排列，进页面就该直接看到，不用像贴底部聊天软件那样自动滚到底部
     const [, detail] = await Promise.all([loadMessages(), fetchConversation(conversationId.value)])
     projectTitle.value = detail.projectTitle
   } finally {
     loading.value = false
   }
+  // 进页面直接跳到最新一条，跟真实聊天软件的习惯一致
+  scrollToBottom()
 
   const socket = getSocket()
   if (socket) {
