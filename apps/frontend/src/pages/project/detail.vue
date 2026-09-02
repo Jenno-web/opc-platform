@@ -57,7 +57,7 @@ function goRespond(mode: 'question' | 'respond') {
       <view class="detail__badges">
         <text class="detail__kind" :class="`is-${detail.kind.toLowerCase()}`">{{ kindLabel[detail.kind] }}</text>
         <text v-if="detail.publishTier === 'BOUNTY'" class="detail__bounty">悬赏</text>
-        <text class="detail__status">{{ statusLabel[detail.status] }}</text>
+        <text class="detail__status" :class="`is-${detail.status.toLowerCase()}`">{{ statusLabel[detail.status] }}</text>
       </view>
 
       <view class="detail__title">{{ detail.title }}</view>
@@ -193,6 +193,23 @@ function goRespond(mode: 'question' | 'respond') {
     padding: $opc-spacing-micro 14rpx;
     border-radius: $opc-radius-tag;
     background: $opc-bg-subtle;
+
+    &.is-recruiting {
+      color: $opc-color-accent;
+      background: rgba($opc-color-accent, 0.1);
+    }
+    &.is-in_progress {
+      color: $opc-color-kind-supply;
+      background: rgba($opc-color-kind-supply, 0.1);
+    }
+    &.is-pending_confirm {
+      color: $opc-color-warning;
+      background: rgba($opc-color-warning, 0.1);
+    }
+    &.is-completed {
+      color: $opc-color-success;
+      background: rgba($opc-color-success, 0.1);
+    }
   }
 
   &__title {

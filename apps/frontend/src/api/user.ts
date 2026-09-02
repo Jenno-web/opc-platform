@@ -8,3 +8,11 @@ export function fetchCurrentUser() {
 export function fetchMyTasks() {
   return request<TaskItem[]>({ url: '/tasks/mine' })
 }
+
+export function updateAvatar(avatarUrl: string) {
+  return request<{ id: string; avatarUrl: string | null }>({
+    url: '/users/me/avatar',
+    method: 'PATCH',
+    data: { avatarUrl },
+  })
+}

@@ -96,6 +96,8 @@ export interface ConversationItem {
   title: string
   // 私信是从项目详情页"提问"/"我想响应"发起的，会带上这个——告诉你对方是通过哪个项目找过来的
   projectTitle: string | null
+  // 只有 PRIVATE 一对一会话才有唯一确定的"对方"，群聊/系统通知没有单一头像可代表整个会话
+  otherAvatarUrl: string | null
   lastMessage: string
   lastMessageAt: string
   unreadCount: number

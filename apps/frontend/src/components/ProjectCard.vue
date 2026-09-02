@@ -129,6 +129,9 @@ function handleClick() {
     border-radius: $opc-radius-tag;
   }
 
+  // 状态标签之前除了"已完成"是绿色，其余四种状态全是同一套灰底灰字，"招募中/进行中/待确认"
+  // 这几个最需要一眼分辨的状态反而看不出区别。"已归档"保持灰色是有意的——归档本来就该显得
+  // "不活跃"，不需要强行凑颜色
   &__status {
     font-size: $opc-font-xs;
     padding: 6rpx 14rpx;
@@ -137,8 +140,21 @@ function handleClick() {
     color: $opc-color-text-secondary;
     white-space: nowrap;
 
+    &.is-recruiting {
+      color: $opc-color-accent;
+      background: rgba($opc-color-accent, 0.1);
+    }
+    &.is-in_progress {
+      color: $opc-color-kind-supply;
+      background: rgba($opc-color-kind-supply, 0.1);
+    }
+    &.is-pending_confirm {
+      color: $opc-color-warning;
+      background: rgba($opc-color-warning, 0.1);
+    }
     &.is-completed {
       color: $opc-color-success;
+      background: rgba($opc-color-success, 0.1);
     }
   }
 

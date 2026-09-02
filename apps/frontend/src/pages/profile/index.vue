@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import PublishFab from '@/components/PublishFab.vue'
 import SkeletonBlock from '@/components/SkeletonBlock.vue'
 import Avatar from '@/components/Avatar.vue'
@@ -8,21 +8,70 @@ import { useUserStore } from '@/store/user'
 import CountUp from '@/components/CountUp.vue'
 
 const userStore = useUserStore()
+const uploadingAvatar = ref(false)
 
 onMounted(() => {
   userStore.loadCurrentUser()
 })
+
+// 选完的图片先压到一个很小的正方形尺寸再转 base64，不然随手拍的照片动辄几 MB，
+// 直接存数据库字段既浪费又可能撞 body 大小上限。压缩在浏览器本地做，不需要后端处理
+function resizeToDataUrl(src: string, maxSize = 240, quality = 0.82): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.onload = () => {
+      const canvas = document.createElement('canvas')
+      const scale = Math.min(1, maxSize / Math.max(img.width, img.height))
+      canvas.width = Math.round(img.width * scale)
+      canvas.height = Math.round(img.height * scale)
+      const ctx = canvas.getContext('2d')
+      if (!ctx) {
+        reject(new Error('无法处理图片'))
+        return
+      }
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+      resolve(canvas.toDataURL('image/jpeg', quality))
+    }
+    img.onerror = () => reject(new Error('图片加载失败'))
+    img.src = src
+  })
+}
+
+function changeAvatar() {
+  uni.chooseImage({
+    count: 1,
+    sizeType: ['compressed'],
+    success: async (res) => {
+      const path = (res.tempFilePaths as string[])[0]
+      uploadingAvatar.value = true
+      try {
+        const dataUrl = await resizeToDataUrl(path)
+        await userStore.updateAvatar(dataUrl)
+        uni.showToast({ title: '头像已更新', icon: 'success' })
+      } catch {
+        uni.showToast({ title: '头像更新失败，换一张试试', icon: 'none' })
+      } finally {
+        uploadingAvatar.value = false
+      }
+    },
+  })
+}
 </script>
 
 <template>
   <view class="profile">
     <template v-if="userStore.currentUser">
       <view class="profile__header">
-        <Avatar
-          :name="userStore.currentUser.nickname"
-          :avatar-url="userStore.currentUser.avatarUrl"
-          size="120rpx"
-        />
+        <view class="profile__avatar-wrap" hover-class="opc-hover" @click="changeAvatar">
+          <Avatar
+            :name="userStore.currentUser.nickname"
+            :avatar-url="userStore.currentUser.avatarUrl"
+            size="120rpx"
+          />
+          <view class="profile__avatar-edit" :class="{ 'is-busy': uploadingAvatar }">
+            <Icon name="plus" size="20rpx" color="#ffffff" />
+          </view>
+        </view>
         <view class="profile__identity">
           <text class="profile__nickname">{{ userStore.currentUser.nickname }}</text>
           <text class="profile__role">{{ userStore.currentUser.professionalIdentity }}</text>
@@ -124,6 +173,30 @@ onMounted(() => {
     margin-bottom: $opc-spacing-lg;
   }
 
+  // 头像本体交给 Avatar.vue，这里只负责右下角那个可点击的"+"编辑徽标，跟 voice-room
+  // 的 in-场徽标是同一个定位思路（相对定位容器 + 绝对定位小圆点）
+  &__avatar-wrap {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  &__avatar-edit {
+    position: absolute;
+    right: -4rpx;
+    bottom: -4rpx;
+    width: 40rpx;
+    height: 40rpx;
+    border-radius: 50%;
+    background: $opc-color-accent;
+    border: 3rpx solid $opc-bg-page;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.is-busy {
+      opacity: 0.5;
+    }
+  }
 
   &__nickname {
     font-size: $opc-font-lg;

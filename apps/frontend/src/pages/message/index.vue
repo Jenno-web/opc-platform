@@ -5,6 +5,7 @@ import PublishFab from '@/components/PublishFab.vue'
 import SkeletonBlock from '@/components/SkeletonBlock.vue'
 import EmptyState from '@/components/EmptyState.vue'
 import Icon from '@/components/Icon.vue'
+import Avatar from '@/components/Avatar.vue'
 import CountUp from '@/components/CountUp.vue'
 import { confirmTodo, fetchConversations, fetchTodos } from '@/api/messages'
 import { getSocket } from '@/utils/socket'
@@ -139,12 +140,15 @@ onUnmounted(() => {
           hover-class="opc-hover"
           @click="openConversation(c)"
         >
-          <view class="message__conversation-header">
-            <text class="message__conversation-title">{{ c.title }}</text>
-            <text class="message__conversation-type">{{ typeLabel[c.type] }}</text>
+          <Avatar :name="c.title" :avatar-url="c.otherAvatarUrl" size="72rpx" />
+          <view class="message__conversation-body">
+            <view class="message__conversation-header">
+              <text class="message__conversation-title">{{ c.title }}</text>
+              <text class="message__conversation-type">{{ typeLabel[c.type] }}</text>
+            </view>
+            <text v-if="c.projectTitle" class="message__conversation-context">关于《{{ c.projectTitle }}》</text>
+            <text class="message__conversation-last">{{ c.lastMessage }}</text>
           </view>
-          <text v-if="c.projectTitle" class="message__conversation-context">关于《{{ c.projectTitle }}》</text>
-          <text class="message__conversation-last">{{ c.lastMessage }}</text>
           <text v-if="c.unreadCount" class="message__conversation-badge">{{ c.unreadCount }}</text>
         </view>
         <EmptyState v-if="conversations.length === 0" text="暂无会话" />
@@ -300,6 +304,9 @@ onUnmounted(() => {
 
   &__conversation {
     position: relative;
+    display: flex;
+    align-items: center;
+    gap: $opc-spacing-xs;
     background: $opc-bg-card;
     border: 1px solid $opc-border-color;
     border-radius: $opc-radius-card-sm;
@@ -308,11 +315,16 @@ onUnmounted(() => {
     margin-bottom: $opc-spacing-xxs;
   }
 
+  &__conversation-body {
+    flex: 1;
+    min-width: 0;
+    padding-right: 40rpx;
+  }
+
   &__conversation-header {
     display: flex;
     justify-content: space-between;
     margin-bottom: 6rpx;
-    padding-right: 40rpx;
   }
 
   &__conversation-title {

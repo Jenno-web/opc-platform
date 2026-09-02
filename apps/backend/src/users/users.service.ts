@@ -65,4 +65,19 @@ export class UsersService {
       stats: { collaborationCount, responseCount, knowledgeCount },
     };
   }
+
+  /**
+   * 头像没有真实的上传/图片处理后端（Railway 部署环境是无持久卷的临时文件系统，写磁盘
+   * 重启就丢），所以不走"传文件存路径"这条路，而是前端把图片压缩到很小的尺寸后转成
+   * base64 data URI，整个字符串直接存进 avatarUrl 这个 TEXT 字段——数据库本身是持久的，
+   * 不受重启影响，不需要额外接对象存储
+   */
+  async updateAvatar(userId: string, avatarUrl: string) {
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data: { avatarUrl },
+      select: { id: true, avatarUrl: true },
+    });
+    return user;
+  }
 }

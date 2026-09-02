@@ -22,7 +22,10 @@ export class ConversationsService {
             messages: { orderBy: { createdAt: 'desc' }, take: 1 },
             // PRIVATE 会话要拿到"对方"是谁——title 字段存的是创建时固定写死的字符串，
             // 双方看到的是同一份，会出现"我给自己发消息"这种错觉（见下方 title 计算）
-            participants: { where: { userId: { not: userId } }, include: { user: { select: { nickname: true } } } },
+            participants: {
+              where: { userId: { not: userId } },
+              include: { user: { select: { nickname: true, avatarUrl: true } } },
+            },
             // 私信如果是从项目详情页"提问"发起的，会带着 projectId，用来告诉收信人
             // "对方是通过哪个项目找过来的"，不然打开一条私信完全没有上下文
             project: { select: { title: true } },
@@ -39,6 +42,10 @@ export class ConversationsService {
         p.conversation.type === 'PRIVATE'
           ? (p.conversation.participants[0]?.user.nickname ?? p.conversation.title)
           : p.conversation.title,
+      // 会话列表加对方头像：只有 PRIVATE 一对一会话"对方是谁"才是唯一确定的，
+      // PROJECT 群聊有多个参与者，没有单一头像可代表整个会话，不强行取一个凑数
+      otherAvatarUrl:
+        p.conversation.type === 'PRIVATE' ? (p.conversation.participants[0]?.user.avatarUrl ?? null) : null,
       projectTitle: p.conversation.project?.title ?? null,
       lastMessage: p.conversation.messages[0]?.content ?? '',
       lastMessageAt: p.conversation.lastMessageAt,
