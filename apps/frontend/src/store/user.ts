@@ -1,6 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { fetchCurrentUser, updateAvatar as updateAvatarApi } from '@/api/user'
+import {
+  fetchCurrentUser,
+  updateAvatar as updateAvatarApi,
+  updateProfile as updateProfileApi,
+  type UpdateProfilePayload,
+} from '@/api/user'
 import type { CurrentUser } from '@/types'
 
 export const useUserStore = defineStore('user', () => {
@@ -16,12 +21,15 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  // 头像完整度算分也依赖 avatarUrl（见后端 calcCompleteness），改完头像整份 profile 都要刷新，
-  // 不只是替换 avatarUrl 这一个字段，所以直接重新拉一次 loadCurrentUser 而不是本地手动拼
+  // 头像/资料接口现在都直接返回完整 profile（含联动变化的 completeness 分数），
+  // 直接拿返回值赋值就行，不用再多打一次 GET /users/me
   async function updateAvatar(avatarUrl: string) {
-    await updateAvatarApi(avatarUrl)
-    await loadCurrentUser()
+    currentUser.value = await updateAvatarApi(avatarUrl)
   }
 
-  return { currentUser, loading, loadCurrentUser, updateAvatar }
+  async function updateProfile(payload: UpdateProfilePayload) {
+    currentUser.value = await updateProfileApi(payload)
+  }
+
+  return { currentUser, loading, loadCurrentUser, updateAvatar, updateProfile }
 })

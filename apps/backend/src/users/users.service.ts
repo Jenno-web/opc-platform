@@ -71,13 +71,49 @@ export class UsersService {
    * 重启就丢），所以不走"传文件存路径"这条路，而是前端把图片压缩到很小的尺寸后转成
    * base64 data URI，整个字符串直接存进 avatarUrl 这个 TEXT 字段——数据库本身是持久的，
    * 不受重启影响，不需要额外接对象存储
+   *
+   * 返回完整 profile（而不是只返回 avatarUrl 本身）是因为头像会联动改变 completeness 分数，
+   * 前端设置页保存后要立刻看到分数变化，不用再单独发一次 GET /users/me
    */
   async updateAvatar(userId: string, avatarUrl: string) {
-    const user = await this.prisma.user.update({
+    await this.prisma.user.update({ where: { id: userId }, data: { avatarUrl } });
+    return this.getProfile(userId);
+  }
+
+  /**
+   * 昵称/身份/简介/技能标签是"我的"页面之前唯一没有编辑入口的资料信息，这里统一收进一个
+   * 设置接口。技能标签跟项目发布用的是同一套"按名字 upsert 再 connect"逻辑（见
+   * projects.service.ts 的 create 方法），保持全站技能标签是同一份目录，不会同名建两条。
+   * 用 set 而不是 connect：设置页传来的是"完整的当前选中集合"，没选的标签要被摘掉，
+   * 不是只增不减
+   */
+  async updateProfile(
+    userId: string,
+    dto: { nickname?: string; professionalIdentity?: string; bio?: string; skillTagNames?: string[] },
+  ) {
+    const skillTags =
+      dto.skillTagNames !== undefined
+        ? await Promise.all(
+            dto.skillTagNames.map((name) =>
+              this.prisma.skillTag.upsert({ where: { name }, update: {}, create: { name } }),
+            ),
+          )
+        : undefined;
+
+    await this.prisma.user.update({
       where: { id: userId },
-      data: { avatarUrl },
-      select: { id: true, avatarUrl: true },
+      data: {
+        ...(dto.nickname !== undefined ? { nickname: dto.nickname } : {}),
+        ...(dto.professionalIdentity !== undefined ? { professionalIdentity: dto.professionalIdentity } : {}),
+        ...(dto.bio !== undefined ? { bio: dto.bio } : {}),
+        ...(skillTags !== undefined ? { skillTags: { set: skillTags.map((tag) => ({ id: tag.id })) } } : {}),
+      },
     });
-    return user;
+    return this.getProfile(userId);
+  }
+
+  /** 设置页的技能标签选择器要有个目录可选，不是自己随便打字——跟项目发布是同一份全局标签目录 */
+  async listSkillTags() {
+    return this.prisma.skillTag.findMany({ orderBy: { name: 'asc' } });
   }
 }
