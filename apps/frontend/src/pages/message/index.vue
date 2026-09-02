@@ -146,7 +146,10 @@ onUnmounted(() => {
               <text class="message__conversation-title">{{ c.title }}</text>
               <text class="message__conversation-type">{{ typeLabel[c.type] }}</text>
             </view>
-            <text v-if="c.projectTitle" class="message__conversation-context">关于《{{ c.projectTitle }}》</text>
+            <text
+              class="message__conversation-context"
+              :class="{ 'is-empty': !c.projectTitle }"
+            >关于《{{ c.projectTitle }}》</text>
             <text class="message__conversation-last">{{ c.lastMessage }}</text>
           </view>
           <text v-if="c.unreadCount" class="message__conversation-badge">{{ c.unreadCount }}</text>
@@ -309,6 +312,11 @@ onUnmounted(() => {
   // 跟 hover-class 是两条独立的反馈路径，不依赖 uni 自己那套移动判定逻辑
   &__conversation {
     position: relative;
+    box-sizing: border-box;
+    // 三行文字都截断成单行之后，"正常情况"下高度已经统一了，这里再显式定死一个高度是
+    // 双保险——不同语言文字（中文/英文）在同一套字体栈里的行高计算可能有一两像素的
+    // 天然差异，显式定高能保证卡片绝对像素级一致，不依赖内容自然撑出来的高度
+    height: 156rpx;
     display: flex;
     align-items: center;
     gap: $opc-spacing-xs;
@@ -316,7 +324,7 @@ onUnmounted(() => {
     border: 1px solid $opc-border-color;
     border-radius: $opc-radius-card-sm;
     box-shadow: $opc-shadow-sm;
-    padding: $opc-spacing-sm;
+    padding: 0 $opc-spacing-sm;
     margin-bottom: $opc-spacing-xxs;
 
     &:active {
@@ -331,30 +339,52 @@ onUnmounted(() => {
     padding-right: 40rpx;
   }
 
+  // 之前标题/关于项目/最后一条消息这三行只要有一行文字长一点就换行，加上"关于项目"
+  // 这行本身是按条件渲染的（不是每个会话都关联项目），几个因素叠加导致每张会话卡片
+  // 高矮不一。现在三行全部单行省略号截断，"关于项目"这行改成始终渲染、没有项目时用
+  // visibility:hidden 占位不占内容——这样每张卡片的高度都是同一个固定值
   &__conversation-header {
     display: flex;
-    justify-content: space-between;
+    align-items: center;
+    gap: $opc-spacing-xxs;
     margin-bottom: 6rpx;
   }
 
   &__conversation-title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     font-size: $opc-font-base;
     font-weight: 600;
   }
 
   &__conversation-type {
+    flex-shrink: 0;
     font-size: $opc-font-xs;
     color: $opc-color-text-secondary;
   }
 
   &__conversation-context {
     display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     font-size: $opc-font-xs;
     color: $opc-color-ai;
     margin-bottom: 4rpx;
+
+    &.is-empty {
+      visibility: hidden;
+    }
   }
 
   &__conversation-last {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     font-size: $opc-font-sm;
     color: $opc-color-text-secondary;
   }
