@@ -17,6 +17,13 @@ $opc-color-primary-soft: $opc-color-accent-soft;
 
 $opc-color-ai: $opc-color-accent; // AI 相关内容之前"只靠加粗+图标区分，不靠颜色"，现在靠强调色
 
+// 供需类型色：之前"需求/供给/互助"三个标签全是同一套灰底黑字，列表页扫一眼分不出类型。
+// 加三个和强调色同一克制调性的色相（不是三原色那种鲜艳撞色），扫视时能靠颜色分类型，
+// 不用每次都读文字。DEMAND 沿用强调色本身（"主诉求"用主色合理），SUPPLY/MUTUAL 各给一个新色相
+$opc-color-kind-demand: $opc-color-accent;
+$opc-color-kind-supply: #2F8A7F;
+$opc-color-kind-mutual: #A9793A;
+
 // 以下三个状态色（成功/警告/危险）Figma 低保真稿里没有定义——线框图阶段不需要传达这类状态色。
 // 保留是因为产品真实运行时需要区分"已完成/临期/错误"这类状态，属于低保真之外的产品判断，
 // 选用了和黑白灰整体氛围接近的低饱和度色，而不是之前那种鲜艳蓝紫风格。

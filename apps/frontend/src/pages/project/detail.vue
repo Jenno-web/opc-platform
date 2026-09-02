@@ -55,7 +55,7 @@ function goRespond(mode: 'question' | 'respond') {
 
     <template v-else-if="detail">
       <view class="detail__badges">
-        <text class="detail__kind">{{ kindLabel[detail.kind] }}</text>
+        <text class="detail__kind" :class="`is-${detail.kind.toLowerCase()}`">{{ kindLabel[detail.kind] }}</text>
         <text v-if="detail.publishTier === 'BOUNTY'" class="detail__bounty">悬赏</text>
         <text class="detail__status">{{ statusLabel[detail.status] }}</text>
       </view>
@@ -161,11 +161,21 @@ function goRespond(mode: 'question' | 'respond') {
   &__kind {
     font-size: $opc-font-xs;
     font-weight: 600;
-    color: $opc-color-text;
-    background: $opc-bg-subtle;
-    border: 1px solid $opc-border-color;
     padding: $opc-spacing-micro 14rpx;
     border-radius: $opc-radius-tag;
+
+    &.is-demand {
+      color: $opc-color-kind-demand;
+      background: rgba($opc-color-kind-demand, 0.1);
+    }
+    &.is-supply {
+      color: $opc-color-kind-supply;
+      background: rgba($opc-color-kind-supply, 0.1);
+    }
+    &.is-mutual {
+      color: $opc-color-kind-mutual;
+      background: rgba($opc-color-kind-mutual, 0.1);
+    }
   }
 
   &__bounty {

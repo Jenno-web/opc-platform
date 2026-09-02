@@ -2,6 +2,7 @@
 import type { ProjectListItem } from '@/types'
 import { formatRelativeTime } from '@/utils/time'
 import Icon from '@/components/Icon.vue'
+import Avatar from '@/components/Avatar.vue'
 
 const props = defineProps<{
   project: ProjectListItem
@@ -32,7 +33,7 @@ function handleClick() {
   <view class="project-card" hover-class="opc-hover" @click="handleClick">
     <view class="project-card__header">
       <view class="project-card__badges">
-        <text class="project-card__kind">{{ kindLabel[project.kind] }}</text>
+        <text class="project-card__kind" :class="`is-${project.kind.toLowerCase()}`">{{ kindLabel[project.kind] }}</text>
         <text v-if="project.publishTier === 'BOUNTY'" class="project-card__bounty">悬赏</text>
       </view>
       <text class="project-card__status" :class="`is-${project.status.toLowerCase()}`">
@@ -56,7 +57,10 @@ function handleClick() {
     </view>
 
     <view class="project-card__meta">
-      <text>{{ project.publisher.nickname }} · {{ project.heat }} 人看过</text>
+      <view class="project-card__publisher">
+        <Avatar :name="project.publisher.nickname" :avatar-url="project.publisher.avatarUrl" size="36rpx" />
+        <text>{{ project.publisher.nickname }} · {{ project.heat }} 人看过</text>
+      </view>
       <text>{{ formatRelativeTime(project.createdAt) }}</text>
     </view>
 
@@ -94,14 +98,26 @@ function handleClick() {
     gap: $opc-spacing-xxs;
   }
 
+  // 之前需求/供给/互助三个标签全是同一套灰底黑字，扫一眼分不出类型，要逐个读文字。
+  // 现在每个类型给一个独立色相的浅底+同色文字，跟头像调色板共用同一套色相，视觉语言统一
   &__kind {
     font-size: $opc-font-xs;
     font-weight: 600;
-    color: $opc-color-text;
-    background: $opc-bg-subtle;
-    border: 1px solid $opc-border-color;
     padding: $opc-spacing-micro 14rpx;
     border-radius: $opc-radius-tag;
+
+    &.is-demand {
+      color: $opc-color-kind-demand;
+      background: rgba($opc-color-kind-demand, 0.1);
+    }
+    &.is-supply {
+      color: $opc-color-kind-supply;
+      background: rgba($opc-color-kind-supply, 0.1);
+    }
+    &.is-mutual {
+      color: $opc-color-kind-mutual;
+      background: rgba($opc-color-kind-mutual, 0.1);
+    }
   }
 
   &__bounty {
@@ -182,8 +198,15 @@ function handleClick() {
   &__footer {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     font-size: $opc-font-xs;
     color: $opc-color-text-secondary;
+  }
+
+  &__publisher {
+    display: flex;
+    align-items: center;
+    gap: 8rpx;
   }
 }
 </style>
