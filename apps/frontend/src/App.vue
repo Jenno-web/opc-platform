@@ -52,6 +52,20 @@ uni-page-head {
   border-bottom: 1px solid #c7c4bc;
 }
 
+/* uni-input 自己有一条基于 line-height 算出来的默认固定高度，业务代码只要给它加 padding
+   （而且 box-sizing 是 border-box），这条固定高度就会被 padding 反过来压缩——内部真正
+   装文字的那层最后只剩几 px 高、overflow 又是裁切的，文字整行只露出顶上一条缝，看起来
+   像是"字消失了"。实测（Chrome DevTools 量出来）：外层 <uni-input> 26px 高，中间
+   .uni-input-wrapper、最内层 .uni-input-input 都被这个固定高度带着一起塌缩到 4px。
+   uni-input-wrapper / uni-input-input 是框架内部渲染出来的两层 div，不是业务代码写的
+   标签，所以在全局样式里直接按类名改，不用管是哪个页面在用 <input> */
+uni-input,
+uni-input .uni-input-wrapper,
+uni-input .uni-input-input {
+  height: auto;
+  line-height: normal;
+}
+
 /* 全局交互工具类：Figma 低保真稿没有定义动效，这几个是按通用移动端交互习惯补的，
    放在全局是因为要被十几个页面复用，写进每个组件的 scoped style 里会重复十几份。
    #3B4BC4 是强调色的硬编码值——这个 <style> 块是纯 CSS 没走 SCSS，没法引用 tokens.scss
