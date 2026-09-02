@@ -304,6 +304,9 @@ onUnmounted(() => {
     color: $opc-color-success;
   }
 
+  // hover-class 是 uni-app 自己用 JS 追踪 touchstart/touchmove 实现的，长列表里手指按住时
+  // 只要有一点点移动就会被当成"在滚动"而取消反馈。这里再叠一层浏览器原生 :active 做保底，
+  // 跟 hover-class 是两条独立的反馈路径，不依赖 uni 自己那套移动判定逻辑
   &__conversation {
     position: relative;
     display: flex;
@@ -315,6 +318,11 @@ onUnmounted(() => {
     box-shadow: $opc-shadow-sm;
     padding: $opc-spacing-sm;
     margin-bottom: $opc-spacing-xxs;
+
+    &:active {
+      opacity: 0.6;
+      transform: scale(0.98);
+    }
   }
 
   &__conversation-body {

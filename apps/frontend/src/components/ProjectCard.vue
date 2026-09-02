@@ -87,6 +87,15 @@ function handleClick() {
   flex-direction: column;
   gap: $opc-spacing-md;
 
+  // hover-class 是 uni-app 自己用 JS 追踪 touchstart/touchmove 实现的，只要手指在按住期间
+  // 有一点点移动（在这种长列表卡片上很容易发生，哪怕只是轻微的意图外滑动）就会被当成
+  // "在滚动"而取消，反馈完全不出现。这里再叠一层浏览器原生 :active 做保底——原生伪类
+  // 不依赖 uni 自己那套移动判定逻辑，跟 hover-class 是两条独立的反馈路径
+  &:active {
+    opacity: 0.6;
+    transform: scale(0.98);
+  }
+
   &__header {
     display: flex;
     justify-content: space-between;

@@ -133,12 +133,18 @@ onMounted(async () => {
     display: block;
   }
 
+  // hover-class 在长列表里手指按住时只要有一点移动就会被 uni-app 自己的 JS 判定成
+  // "在滚动"而取消反馈，这里叠一层浏览器原生 :active 做保底
   &__item {
     display: flex;
     align-items: center;
     gap: $opc-spacing-xs;
     padding: $opc-spacing-xs $opc-spacing-xxs;
     border-bottom: 1px solid $opc-border-color;
+
+    &:active {
+      opacity: 0.6;
+    }
   }
 
   &__item-icon {
