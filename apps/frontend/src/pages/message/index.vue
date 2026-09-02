@@ -164,7 +164,9 @@ onUnmounted(() => {
 
 .message {
   padding: $opc-spacing;
-  padding-bottom: 160rpx;
+  // PublishFab 是 position:fixed，占的屏幕空间是 bottom:120rpx + 自身高度 96rpx = 216rpx，
+  // 之前这里只留 160rpx，页面内容不够长的时候最后一块会被悬浮按钮真实挡住、点不到
+  padding-bottom: 240rpx;
 
   &__stats {
     display: flex;

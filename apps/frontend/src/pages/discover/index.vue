@@ -140,7 +140,10 @@ onMounted(() => loadByChip('recommend'))
 
 .discover {
   padding: $opc-spacing;
-  padding-bottom: 160rpx;
+  // PublishFab 是 position:fixed，占的屏幕空间是 bottom:120rpx + 自身高度 96rpx = 216rpx，
+  // 之前这里只留 160rpx，页面内容不够长的时候最后一块会被悬浮按钮真实挡住、点不到
+  // （不只是看不出点击反馈，是物理上点不中），四个用到 PublishFab 的页面都是这个问题
+  padding-bottom: 240rpx;
   min-height: 100vh;
 
   &__header {

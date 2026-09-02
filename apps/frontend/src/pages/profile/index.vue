@@ -124,7 +124,10 @@ onMounted(() => {
 
 .profile {
   padding: $opc-spacing;
-  padding-bottom: 160rpx;
+  // PublishFab 是 position:fixed，占的屏幕空间是 bottom:120rpx + 自身高度 96rpx = 216rpx，
+  // 之前这里只留 160rpx，页面内容不够长的时候最后一块（这里正好是"设置"菜单项）会被
+  // 悬浮按钮真实挡住、物理上点不中——不是缺点击反馈，是压根点不到
+  padding-bottom: 240rpx;
 
   &__header {
     display: flex;
