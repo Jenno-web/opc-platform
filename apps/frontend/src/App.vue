@@ -85,6 +85,29 @@ uni-navigator {
     border-color 0.2s ease;
 }
 
+/* 底部 tabBar 和顶部导航栏返回箭头是框架原生渲染的（由 pages.json 配置生成，不是业务代码
+   写的 <view>/<button>），套不上 hover-class，点下去之前完全没有反馈，感觉像点了没反应。
+   iOS Safari 默认不触发 :active，除非页面里绑了至少一个 touch 事件监听——已经在
+   index.html 的 <body> 上加了个空的 ontouchstart 属性来解锁这个行为（经典 trick）。
+   跟 .opc-hover 用同一套"变暗+轻微缩小"手感，交互反馈保持统一 */
+.uni-tabbar__item:active {
+  opacity: 0.6;
+}
+
+.uni-tabbar__icon,
+.uni-page-head-btn {
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.uni-tabbar__item:active .uni-tabbar__icon {
+  transform: scale(0.9);
+}
+
+.uni-page-head-btn:active {
+  opacity: 0.6;
+  transform: scale(0.9);
+}
+
 /* 卡片/列表项首次渲染时的淡入上滑，减少"数据突然出现"的生硬感。
    配合 --opc-stagger 这个 CSS 变量可以做"依次错开"的入场——在 v-for 里给每一项绑
    :style="{ '--opc-stagger': index }"，不用改动画本身，只是让入场有先后节奏，
