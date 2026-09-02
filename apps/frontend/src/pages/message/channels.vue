@@ -64,14 +64,15 @@ onMounted(async () => {
       <view v-for="[category, items] in grouped" :key="category" class="channels__group">
         <text class="channels__group-title">{{ category }}</text>
         <view
-          v-for="c in items"
+          v-for="(c, index) in items"
           :key="c.id"
-          class="channels__item"
+          class="channels__item opc-fade-in"
+          :style="{ '--opc-stagger': Math.min(index, 6) }"
           hover-class="opc-hover"
           @click="openChannel(c)"
         >
           <view class="channels__item-icon">
-            <Icon :name="c.isVoiceRoom ? 'mic' : 'hash'" size="28rpx" />
+            <Icon :name="c.isVoiceRoom ? 'mic' : 'hash'" size="24rpx" color="#3B4BC4" />
           </view>
           <text class="channels__item-title">{{ c.title }}</text>
           <text v-if="c.unreadCount" class="channels__item-badge">{{ c.unreadCount }}</text>
@@ -141,11 +142,13 @@ onMounted(async () => {
   }
 
   &__item-icon {
-    width: 40rpx;
+    width: 48rpx;
+    height: 48rpx;
+    border-radius: 50%;
+    background: $opc-color-primary-soft;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: $opc-color-text-secondary;
   }
 
   &__item-title {

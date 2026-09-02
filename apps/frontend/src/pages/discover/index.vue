@@ -99,14 +99,20 @@ onMounted(() => loadByChip('recommend'))
 
     <template v-else-if="activeChip === 'recommend'">
       <view v-if="recommendations.length" class="discover__banner opc-fade-in">
-        <text class="discover__banner-title">今日匹配</text>
-        <text class="discover__banner-desc">{{ recommendations.length }} 条机会与你的方向相关</text>
+        <view class="discover__banner-icon">
+          <Icon name="sparkle" size="28rpx" color="#ffffff" />
+        </view>
+        <view class="discover__banner-copy">
+          <text class="discover__banner-title">今日匹配</text>
+          <text class="discover__banner-desc">{{ recommendations.length }} 条机会与你的方向相关</text>
+        </view>
       </view>
 
       <ProjectCard
-        v-for="r in recommendations"
+        v-for="(r, index) in recommendations"
         :key="r.project.id"
         class="opc-fade-in"
+        :style="{ '--opc-stagger': Math.min(index, 6) }"
         :project="{ ...r.project, matchScore: r.matchScore, matchReason: r.reason }"
         @click="goDetail"
       />
@@ -114,7 +120,14 @@ onMounted(() => loadByChip('recommend'))
     </template>
 
     <template v-else>
-      <ProjectCard v-for="p in listItems" :key="p.id" class="opc-fade-in" :project="p" @click="goDetail" />
+      <ProjectCard
+        v-for="(p, index) in listItems"
+        :key="p.id"
+        class="opc-fade-in"
+        :style="{ '--opc-stagger': Math.min(index, 6) }"
+        :project="p"
+        @click="goDetail"
+      />
       <EmptyState v-if="listItems.length === 0" text="这个分类下暂无内容" />
     </template>
 
@@ -184,13 +197,31 @@ onMounted(() => loadByChip('recommend'))
     }
   }
 
+  // "今日匹配"是 AI 算出来的结果，之前跟普通信息横幅一样浅灰底纯黑字，现在用强调色
+  // 渐变底 + 白字，做出"这是个重要的、AI 生成的提示"的分量感
   &__banner {
-    background: $opc-bg-subtle;
-    border: 1px solid $opc-border-color;
+    display: flex;
+    align-items: center;
+    gap: $opc-spacing-xs;
+    background: linear-gradient(135deg, $opc-color-accent, $opc-color-accent-dark);
     border-radius: $opc-radius-card;
-    box-shadow: $opc-shadow-sm;
+    box-shadow: $opc-shadow-md;
     padding: $opc-spacing-sm;
     margin-bottom: $opc-spacing-sm;
+  }
+
+  &__banner-icon {
+    flex-shrink: 0;
+    width: 64rpx;
+    height: 64rpx;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__banner-copy {
     display: flex;
     flex-direction: column;
     gap: 4rpx;
@@ -199,12 +230,12 @@ onMounted(() => loadByChip('recommend'))
   &__banner-title {
     font-size: $opc-font-sm;
     font-weight: 700;
-    color: $opc-color-text;
+    color: #ffffff;
   }
 
   &__banner-desc {
     font-size: $opc-font-sm;
-    color: $opc-color-text-secondary;
+    color: rgba(255, 255, 255, 0.85);
   }
 }
 </style>

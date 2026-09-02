@@ -117,7 +117,15 @@ async function handlePublish() {
 
 <template>
   <view class="publish">
-    <text class="publish__step">{{ step }} / 4</text>
+    <view class="publish__progress">
+      <view
+        v-for="n in 4"
+        :key="n"
+        class="publish__progress-bar"
+        :class="{ 'is-done': n <= step }"
+      />
+    </view>
+    <text class="publish__step">第 {{ step }} 步，共 4 步</text>
 
     <!-- 第 1 步：意图选择 -->
     <template v-if="step === 1">
@@ -151,7 +159,7 @@ async function handlePublish() {
       <view class="publish__hero-title">自然表达</view>
       <view class="publish__hero-subtitle">像发语音一样说明你的需求</view>
 
-      <view class="publish__input-row">
+      <view class="publish__input-row" :class="{ 'opc-ai-working': generating }">
         <textarea
           v-model="idea"
           class="publish__textarea"
@@ -183,7 +191,10 @@ async function handlePublish() {
 
     <!-- 第 3 步：AI 解析确认 -->
     <template v-else-if="step === 3 && draft">
-      <view class="publish__hero-title">AI 已整理</view>
+      <view class="publish__hero-title publish__hero-title--ai">
+        <Icon name="sparkle" size="32rpx" color="#3B4BC4" />
+        <text>AI 已整理</text>
+      </view>
       <view class="publish__hero-subtitle">确认对外展示的信息</view>
 
       <view class="publish__card">
@@ -277,6 +288,26 @@ async function handlePublish() {
   padding: $opc-spacing;
   padding-bottom: 80rpx;
 
+  // 之前步骤指示就是纯文字"1 / 4"，现在换成四段进度条，走到第几步一眼看出来，
+  // 也是给整个向导流程加"设计感"最直接的地方——用户会在这个页面停留最久
+  &__progress {
+    display: flex;
+    gap: 8rpx;
+    margin-bottom: $opc-spacing-xxs;
+  }
+
+  &__progress-bar {
+    flex: 1;
+    height: 6rpx;
+    border-radius: $opc-radius-tag;
+    background: $opc-bg-subtle;
+    transition: background-color 0.3s ease;
+
+    &.is-done {
+      background: $opc-color-accent;
+    }
+  }
+
   &__step {
     font-size: $opc-font-xs;
     color: $opc-color-text-secondary;
@@ -286,6 +317,12 @@ async function handlePublish() {
     font-size: $opc-font-xl;
     font-weight: 700;
     margin: $opc-spacing-xxs 0 8rpx;
+
+    &--ai {
+      display: flex;
+      align-items: center;
+      gap: $opc-spacing-xxs;
+    }
   }
 
   &__hero-subtitle {

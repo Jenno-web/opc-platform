@@ -47,7 +47,12 @@ async function goChat(app: ReceivedApplicationItem) {
       <SkeletonBlock v-for="i in 3" :key="i" :rows="2" avatar />
     </template>
     <template v-else>
-      <view v-for="app in applications" :key="app.id" class="responses__item opc-fade-in">
+      <view
+        v-for="(app, index) in applications"
+        :key="app.id"
+        class="responses__item opc-fade-in"
+        :style="{ '--opc-stagger': Math.min(index, 6) }"
+      >
         <view class="responses__header">
           <Avatar :name="app.applicant.nickname" :avatar-url="app.applicant.avatarUrl" size="64rpx" />
           <view class="responses__identity">

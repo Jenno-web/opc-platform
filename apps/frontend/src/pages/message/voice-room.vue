@@ -77,7 +77,12 @@ onUnmounted(() => {
     <text class="voice-room__subtitle">让小组知道你来了</text>
 
     <view class="voice-room__grid">
-      <view v-for="p in participants" :key="p.id" class="voice-room__member opc-fade-in">
+      <view
+        v-for="(p, index) in participants"
+        :key="p.id"
+        class="voice-room__member opc-fade-in"
+        :style="{ '--opc-stagger': Math.min(index, 6) }"
+      >
         <view class="voice-room__avatar-ring">
           <Avatar :name="p.nickname" :avatar-url="p.avatarUrl" size="88rpx" />
           <view class="voice-room__live-dot opc-pulse" />

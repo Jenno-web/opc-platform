@@ -30,7 +30,12 @@ onMounted(async () => {
       <SkeletonBlock v-for="i in 3" :key="i" :rows="2" />
     </template>
     <template v-else>
-      <view v-for="app in applications" :key="app.id" class="applications__item opc-fade-in">
+      <view
+        v-for="(app, index) in applications"
+        :key="app.id"
+        class="applications__item opc-fade-in"
+        :style="{ '--opc-stagger': Math.min(index, 6) }"
+      >
         <view class="applications__header">
           <text class="applications__title">{{ app.project.title }}</text>
           <text class="applications__status" :class="`is-${app.status.toLowerCase()}`">

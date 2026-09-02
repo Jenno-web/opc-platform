@@ -14,6 +14,7 @@ import { getSocket } from '@/utils/socket'
 import SkeletonBlock from '@/components/SkeletonBlock.vue'
 import EmptyState from '@/components/EmptyState.vue'
 import Avatar from '@/components/Avatar.vue'
+import Icon from '@/components/Icon.vue'
 import type { ChatMessageItem } from '@/types'
 
 const userStore = useUserStore()
@@ -158,7 +159,10 @@ onUnmounted(() => {
     </view>
 
     <view v-if="aiSummary" class="chat__summary">
-      <text class="chat__summary-label">AI 对话总结</text>
+      <view class="chat__summary-label">
+        <Icon name="sparkle" size="20rpx" color="#3B4BC4" />
+        <text>AI 对话总结</text>
+      </view>
       <text class="chat__summary-text">{{ aiSummary }}</text>
     </view>
 
@@ -196,14 +200,17 @@ onUnmounted(() => {
       <EmptyState v-if="messages.length === 0" text="暂无消息" />
     </scroll-view>
 
-    <view class="chat__ai-bar">
+    <view class="chat__ai-bar" :class="{ 'opc-ai-working': aiWorking }">
       <view class="chat__ai-btn" hover-class="opc-hover" :class="{ 'is-disabled': aiWorking }" @click="handleSummarize">
+        <Icon name="sparkle" size="18rpx" />
         <text>对话总结</text>
       </view>
       <view class="chat__ai-btn" hover-class="opc-hover" :class="{ 'is-disabled': aiWorking }" @click="handleExtractTodos">
+        <Icon name="sparkle" size="18rpx" />
         <text>提取待办</text>
       </view>
       <view class="chat__ai-btn" hover-class="opc-hover" :class="{ 'is-disabled': aiWorking }" @click="handleSuggestReply">
+        <Icon name="sparkle" size="18rpx" />
         <text>回复建议</text>
       </view>
     </view>
@@ -258,6 +265,9 @@ onUnmounted(() => {
   }
 
   &__summary-label {
+    display: flex;
+    align-items: center;
+    gap: 4rpx;
     font-size: $opc-font-xs;
     font-weight: 600;
     color: $opc-color-ai;
@@ -338,7 +348,9 @@ onUnmounted(() => {
   }
 
   &__ai-btn {
-    display: inline-block;
+    display: flex;
+    align-items: center;
+    gap: 4rpx;
     font-size: $opc-font-sm;
     color: $opc-color-ai;
     background: $opc-color-primary-soft;

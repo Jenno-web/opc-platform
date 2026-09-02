@@ -38,7 +38,12 @@ async function saveEdit(entry: KnowledgeEntryItem) {
       <SkeletonBlock v-for="i in 3" :key="i" :rows="3" />
     </template>
     <template v-else>
-      <view v-for="entry in entries" :key="entry.id" class="knowledge__item opc-fade-in">
+      <view
+        v-for="(entry, index) in entries"
+        :key="entry.id"
+        class="knowledge__item opc-fade-in"
+        :style="{ '--opc-stagger': Math.min(index, 6) }"
+      >
         <view class="knowledge__header">
           <text class="knowledge__project">{{ entry.project?.title ?? '通用经验' }}</text>
           <text v-if="entry.aiGenerated" class="knowledge__ai-tag">

@@ -5,6 +5,7 @@ import PublishFab from '@/components/PublishFab.vue'
 import SkeletonBlock from '@/components/SkeletonBlock.vue'
 import EmptyState from '@/components/EmptyState.vue'
 import Icon from '@/components/Icon.vue'
+import CountUp from '@/components/CountUp.vue'
 import { confirmTodo, fetchConversations, fetchTodos } from '@/api/messages'
 import { getSocket } from '@/utils/socket'
 import type { ConversationItem, TodoItem } from '@/types'
@@ -75,11 +76,11 @@ onUnmounted(() => {
   <view class="message">
     <view class="message__stats">
       <view class="message__stat-item">
-        <text class="message__stat-num">{{ todos.filter((t) => !t.confirmedByUser).length }}</text>
+        <text class="message__stat-num"><CountUp :value="todos.filter((t) => !t.confirmedByUser).length" /></text>
         <text class="message__stat-label">待办事项</text>
       </view>
       <view class="message__stat-item">
-        <text class="message__stat-num">{{ conversations.reduce((s, c) => s + c.unreadCount, 0) }}</text>
+        <text class="message__stat-num"><CountUp :value="conversations.reduce((s, c) => s + c.unreadCount, 0)" /></text>
         <text class="message__stat-label">未读消息</text>
       </view>
     </view>
@@ -101,8 +102,16 @@ onUnmounted(() => {
 
     <template v-else>
       <view v-if="todos.length" class="message__section">
-        <view class="message__section-title">AI 待办提取</view>
-        <view v-for="todo in todos" :key="todo.id" class="message__todo opc-fade-in">
+        <view class="message__section-title message__section-title--ai">
+          <Icon name="sparkle" size="24rpx" color="#3B4BC4" />
+          <text>AI 待办提取</text>
+        </view>
+        <view
+          v-for="(todo, index) in todos"
+          :key="todo.id"
+          class="message__todo opc-fade-in"
+          :style="{ '--opc-stagger': Math.min(index, 6) }"
+        >
           <text class="message__todo-content">{{ todo.content }}</text>
           <view class="message__todo-meta">
             <text v-if="todo.assignee">负责人：{{ todo.assignee }}</text>
@@ -123,9 +132,10 @@ onUnmounted(() => {
       <view class="message__section">
         <view class="message__section-title">会话</view>
         <view
-          v-for="c in conversations"
+          v-for="(c, index) in conversations"
           :key="c.id"
           class="message__conversation opc-fade-in"
+          :style="{ '--opc-stagger': Math.min(index, 6) }"
           hover-class="opc-hover"
           @click="openConversation(c)"
         >
@@ -173,7 +183,7 @@ onUnmounted(() => {
   &__stat-num {
     font-size: $opc-font-lg;
     font-weight: 700;
-    color: $opc-color-text;
+    color: $opc-color-accent;
   }
 
   &__stat-label {
@@ -227,9 +237,33 @@ onUnmounted(() => {
   }
 
   &__section-title {
+    position: relative;
+    padding-left: $opc-spacing-xxs;
     font-size: $opc-font-base;
     font-weight: 700;
     margin-bottom: $opc-spacing-xs;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: -#{$opc-spacing-xxs};
+      top: 4rpx;
+      bottom: 4rpx;
+      width: 6rpx;
+      border-radius: $opc-radius-tag;
+      background: $opc-color-accent;
+    }
+
+    &--ai {
+      display: flex;
+      align-items: center;
+      gap: 6rpx;
+      padding-left: 0;
+
+      &::before {
+        display: none;
+      }
+    }
   }
 
   &__todo {

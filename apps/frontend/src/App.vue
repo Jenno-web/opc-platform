@@ -53,22 +53,41 @@ uni-page-head {
 }
 
 /* 全局交互工具类：Figma 低保真稿没有定义动效，这几个是按通用移动端交互习惯补的，
-   放在全局是因为要被十几个页面复用，写进每个组件的 scoped style 里会重复十几份 */
+   放在全局是因为要被十几个页面复用，写进每个组件的 scoped style 里会重复十几份。
+   #3B4BC4 是强调色的硬编码值——这个 <style> 块是纯 CSS 没走 SCSS，没法引用 tokens.scss
+   里的 $opc-color-accent，改强调色的时候要记得这里也跟着改 */
 
 /* 配合 uni-app 原生 hover-class 使用：view/button/navigator 等组件点下去自动切这个 class，
-   松开自动去掉，比 CSS :active 在 iOS Safari 上更可靠（:active 需要额外绑 touchstart 才会触发） */
+   松开自动去掉，比 CSS :active 在 iOS Safari 上更可靠（:active 需要额外绑 touchstart 才会触发）。
+   之前只有透明度变化，这次加了轻微缩放，按下去有"真的按下去了"的反馈，不只是变暗 */
 .opc-hover {
   opacity: 0.6;
+  transform: scale(0.97);
 }
 
-/* 卡片/列表项首次渲染时的淡入上滑，减少"数据突然出现"的生硬感 */
+/* 注意：uni-app 编译到 H5 之后 <view>/<button> 变成的是 <uni-view>/<uni-button> 这类自定义
+   元素，不是字面意义上的 view/button 标签，选择器必须写编译后的标签名才会真的生效
+   （前面 uni-page-wrapper 那几条也是同样道理，已经验证过这个规律） */
+uni-view,
+uni-button,
+uni-navigator {
+  transition: transform 0.15s ease, opacity 0.15s ease, background-color 0.2s ease, color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* 卡片/列表项首次渲染时的淡入上滑，减少"数据突然出现"的生硬感。
+   配合 --opc-stagger 这个 CSS 变量可以做"依次错开"的入场——在 v-for 里给每一项绑
+   :style="{ '--opc-stagger': index }"，不用改动画本身，只是让入场有先后节奏，
+   不设这个变量时默认是 0，行为跟以前完全一样 */
 .opc-fade-in {
-  animation: opc-fade-in-up 0.3s ease both;
+  --opc-stagger: 0;
+  animation: opc-fade-in-up 0.4s ease both;
+  animation-delay: calc(var(--opc-stagger) * 60ms);
 }
 @keyframes opc-fade-in-up {
   from {
     opacity: 0;
-    transform: translateY(12rpx);
+    transform: translateY(16rpx);
   }
   to {
     opacity: 1;
@@ -89,6 +108,30 @@ uni-page-head {
   50% {
     transform: scale(1.15);
     opacity: 0.65;
+  }
+}
+
+/* AI 在工作时用的流光效果——呼应"AI 在处理"这件事，比纯文字 loading/转圈更有"设计感"，
+   用在生成草稿、对话总结、匹配分析这类 AI 请求进行中的容器上 */
+.opc-ai-working {
+  position: relative;
+  overflow: hidden;
+}
+.opc-ai-working::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 20%, rgba(59, 75, 196, 0.16) 50%, transparent 80%);
+  background-size: 200% 100%;
+  animation: opc-ai-shimmer 1.4s linear infinite;
+  pointer-events: none;
+}
+@keyframes opc-ai-shimmer {
+  from {
+    background-position: 150% 0;
+  }
+  to {
+    background-position: -50% 0;
   }
 }
 </style>

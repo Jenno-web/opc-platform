@@ -82,28 +82,34 @@ function goRespond(mode: 'question' | 'respond') {
         :emphasis="`匹配度 ${detail.aiMatch.score}%`"
       />
 
-      <view class="detail__section">
-        <view class="detail__section-title">项目目标</view>
-        <text class="detail__section-body">{{ detail.goal }}</text>
-      </view>
-      <view class="detail__section">
-        <view class="detail__section-title">核心功能</view>
-        <text class="detail__section-body">{{ detail.coreFeatures }}</text>
-      </view>
-      <view class="detail__section">
-        <view class="detail__section-title">交付内容</view>
-        <text class="detail__section-body">{{ detail.deliverables }}</text>
-      </view>
-      <view class="detail__section">
-        <view class="detail__section-title">验收标准</view>
-        <text class="detail__section-body">{{ detail.acceptanceCriteria }}</text>
+      <!-- 之前这四块是各自悬空的小节，只靠 margin 隔开，容易连成一片；现在合并进一个卡片，
+           内部用分隔线区隔，小节标题前加强调色竖条做视觉锚点 -->
+      <view class="detail__content-card">
+        <view class="detail__section">
+          <view class="detail__section-title">项目目标</view>
+          <text class="detail__section-body">{{ detail.goal }}</text>
+        </view>
+        <view class="detail__section">
+          <view class="detail__section-title">核心功能</view>
+          <text class="detail__section-body">{{ detail.coreFeatures }}</text>
+        </view>
+        <view class="detail__section">
+          <view class="detail__section-title">交付内容</view>
+          <text class="detail__section-body">{{ detail.deliverables }}</text>
+        </view>
+        <view class="detail__section">
+          <view class="detail__section-title">验收标准</view>
+          <text class="detail__section-body">{{ detail.acceptanceCriteria }}</text>
+        </view>
       </view>
 
-      <view v-if="detail.roles.length" class="detail__section">
-        <view class="detail__section-title">正在招募</view>
-        <view v-for="role in detail.roles" :key="role.id" class="detail__role">
-          <text class="detail__role-name">{{ role.roleName }}</text>
-          <text class="detail__role-count">{{ role.filledCount }}/{{ role.headcount }} 人</text>
+      <view v-if="detail.roles.length" class="detail__content-card">
+        <view class="detail__section">
+          <view class="detail__section-title">正在招募</view>
+          <view v-for="role in detail.roles" :key="role.id" class="detail__role">
+            <text class="detail__role-name">{{ role.roleName }}</text>
+            <text class="detail__role-count">{{ role.filledCount }}/{{ role.headcount }} 人</text>
+          </view>
         </view>
       </view>
 
@@ -212,10 +218,42 @@ function goRespond(mode: 'question' | 'respond') {
     color: $opc-color-text-secondary;
   }
 
+  // 内容合并进的大卡片：边框+阴影跟其他卡片一个规格，内部小节靠 border-top 分隔线区隔，
+  // 不再是纯文字紧挨着纯文字
+  &__content-card {
+    background: $opc-bg-card;
+    border: 1px solid $opc-border-color;
+    border-radius: $opc-radius-card;
+    box-shadow: $opc-shadow-sm;
+    padding: 0 $opc-spacing;
+  }
+
+  &__section {
+    padding: $opc-spacing-sm 0;
+
+    &:not(:first-child) {
+      border-top: 1px solid $opc-border-color;
+    }
+  }
+
+  // 小节标题前加一条强调色竖条，做出明确的视觉锚点，不再是纯靠字重区分
   &__section-title {
+    position: relative;
+    padding-left: $opc-spacing-xxs;
     font-size: $opc-font-base;
     font-weight: 600;
     margin-bottom: $opc-spacing-xxs;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: -#{$opc-spacing-xxs};
+      top: 4rpx;
+      bottom: 4rpx;
+      width: 6rpx;
+      border-radius: $opc-radius-tag;
+      background: $opc-color-accent;
+    }
   }
 
   &__section-body {
@@ -232,6 +270,10 @@ function goRespond(mode: 'question' | 'respond') {
     border-radius: $opc-radius-card-sm;
     margin-bottom: $opc-spacing-xxs;
     font-size: $opc-font-base;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 
   &__publisher {

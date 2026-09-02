@@ -5,6 +5,7 @@ import ProjectCard from '@/components/ProjectCard.vue'
 import SkeletonBlock from '@/components/SkeletonBlock.vue'
 import EmptyState from '@/components/EmptyState.vue'
 import Icon from '@/components/Icon.vue'
+import CountUp from '@/components/CountUp.vue'
 import { fetchMyProjectStats, fetchMyProjects, updateProjectStatus } from '@/api/projects'
 import { useUserStore } from '@/store/user'
 import type { ProjectListItem, ProjectStatus } from '@/types'
@@ -82,21 +83,21 @@ onMounted(async () => {
 
     <view class="task-board__stats">
       <view class="task-board__stat" hover-class="opc-hover" @click="switchTab('RECRUITING')">
-        <text class="task-board__stat-num">{{ stats.publishing }}</text>
+        <text class="task-board__stat-num"><CountUp :value="stats.publishing" /></text>
         <view class="task-board__stat-label-row">
           <text class="task-board__stat-label">发布中</text>
           <Icon name="chevron-right" size="20rpx" color="#9a9a9a" />
         </view>
       </view>
       <view class="task-board__stat" hover-class="opc-hover" @click="goResponses">
-        <text class="task-board__stat-num">{{ stats.responses }}</text>
+        <text class="task-board__stat-num"><CountUp :value="stats.responses" /></text>
         <view class="task-board__stat-label-row">
           <text class="task-board__stat-label">响应</text>
           <Icon name="chevron-right" size="20rpx" color="#9a9a9a" />
         </view>
       </view>
       <view class="task-board__stat" hover-class="opc-hover" @click="switchTab('IN_PROGRESS')">
-        <text class="task-board__stat-num">{{ stats.inConversation }}</text>
+        <text class="task-board__stat-num"><CountUp :value="stats.inConversation" /></text>
         <view class="task-board__stat-label-row">
           <text class="task-board__stat-label">沟通中</text>
           <Icon name="chevron-right" size="20rpx" color="#9a9a9a" />
@@ -121,7 +122,12 @@ onMounted(async () => {
       <SkeletonBlock v-for="i in 3" :key="i" :rows="2" />
     </view>
     <view v-else class="task-board__list">
-      <view v-for="p in list" :key="p.id" class="task-board__item opc-fade-in">
+      <view
+        v-for="(p, index) in list"
+        :key="p.id"
+        class="task-board__item opc-fade-in"
+        :style="{ '--opc-stagger': Math.min(index, 6) }"
+      >
         <ProjectCard :project="p" @click="goDetail" />
         <view v-if="isMine(p)" class="task-board__actions">
           <view
@@ -196,6 +202,7 @@ onMounted(async () => {
   &__stat-num {
     font-size: $opc-font-lg;
     font-weight: 700;
+    color: $opc-color-accent;
   }
 
   // 加个箭头图标提示这三个数字是能点进去看详情的，之前完全看不出可以点

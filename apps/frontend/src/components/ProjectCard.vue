@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ProjectListItem } from '@/types'
 import { formatRelativeTime } from '@/utils/time'
+import Icon from '@/components/Icon.vue'
 
 const props = defineProps<{
   project: ProjectListItem
@@ -47,7 +48,10 @@ function handleClick() {
     </view>
 
     <view v-if="project.matchScore" class="project-card__match">
-      <text class="project-card__match-score">匹配 {{ project.matchScore }}%</text>
+      <view class="project-card__match-score">
+        <Icon name="sparkle" size="18rpx" color="#ffffff" />
+        <text>匹配 {{ project.matchScore }}%</text>
+      </view>
       <text class="project-card__match-reason">{{ project.matchReason }}</text>
     </view>
 
@@ -148,6 +152,8 @@ function handleClick() {
     border-radius: $opc-radius-tag;
   }
 
+  // AI 匹配度是这张卡片里唯一"AI 算出来的"信息，之前跟其他文字一样纯黑，识别不出来。
+  // 用强调色实心徽标 + 闪光图标，跟 AiHint 是同一套视觉语言
   &__match {
     display: flex;
     align-items: center;
@@ -156,8 +162,16 @@ function handleClick() {
   }
 
   &__match-score {
-    color: $opc-color-text;
+    display: flex;
+    align-items: center;
+    gap: 4rpx;
+    flex-shrink: 0;
+    color: #ffffff;
+    background: $opc-color-accent;
+    padding: 2rpx $opc-spacing-xxs;
+    border-radius: $opc-radius-tag;
     font-weight: 700;
+    font-size: $opc-font-xs;
   }
 
   &__match-reason {

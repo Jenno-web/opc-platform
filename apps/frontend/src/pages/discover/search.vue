@@ -78,57 +78,60 @@ onMounted(runSearch)
       @confirm="runSearch"
     />
 
-    <view class="search__group">
-      <text class="search__group-title">供需类型</text>
-      <view class="search__chips">
-        <view
-          v-for="opt in kindOptions"
-          :key="opt.value"
-          class="search__chip"
-          hover-class="opc-hover"
-          :class="{ 'is-active': activeKind === opt.value }"
-          @click="toggleKind(opt.value); runSearch()"
-        >
-          <text>{{ opt.label }}</text>
+    <!-- 之前四个筛选分组是纯堆叠、只靠 margin 隔开，现在合并进一个卡片，内部用分隔线区隔 -->
+    <view class="search__filter-card">
+      <view class="search__group">
+        <text class="search__group-title">供需类型</text>
+        <view class="search__chips">
+          <view
+            v-for="opt in kindOptions"
+            :key="opt.value"
+            class="search__chip"
+            hover-class="opc-hover"
+            :class="{ 'is-active': activeKind === opt.value }"
+            @click="toggleKind(opt.value); runSearch()"
+          >
+            <text>{{ opt.label }}</text>
+          </view>
         </view>
       </view>
-    </view>
 
-    <view class="search__group">
-      <text class="search__group-title">能力领域（可多选）</text>
-      <view class="search__chips">
-        <view
-          v-for="skill in skillOptions"
-          :key="skill"
-          class="search__chip"
-          hover-class="opc-hover"
-          :class="{ 'is-active': activeSkills.includes(skill) }"
-          @click="toggleSkill(skill); runSearch()"
-        >
-          <text>{{ skill }}</text>
+      <view class="search__group">
+        <text class="search__group-title">能力领域（可多选）</text>
+        <view class="search__chips">
+          <view
+            v-for="skill in skillOptions"
+            :key="skill"
+            class="search__chip"
+            hover-class="opc-hover"
+            :class="{ 'is-active': activeSkills.includes(skill) }"
+            @click="toggleSkill(skill); runSearch()"
+          >
+            <text>{{ skill }}</text>
+          </view>
         </view>
       </view>
-    </view>
 
-    <view class="search__group">
-      <text class="search__group-title">预算 / 回报</text>
-      <view class="search__budget-row">
-        <input v-model="budgetMin" class="search__budget-input" type="number" placeholder="最低" @blur="runSearch" />
-        <text class="search__budget-sep">-</text>
-        <input v-model="budgetMax" class="search__budget-input" type="number" placeholder="最高" @blur="runSearch" />
-        <text class="search__unit">元</text>
+      <view class="search__group">
+        <text class="search__group-title">预算 / 回报</text>
+        <view class="search__budget-row">
+          <input v-model="budgetMin" class="search__budget-input" type="number" placeholder="最低" @blur="runSearch" />
+          <text class="search__budget-sep">-</text>
+          <input v-model="budgetMax" class="search__budget-input" type="number" placeholder="最高" @blur="runSearch" />
+          <text class="search__unit">元</text>
+        </view>
+        <view class="search__chips">
+          <text class="search__chip is-static">资源置换</text>
+          <text class="search__chip is-static">分成</text>
+          <text class="search__chip is-static">算力额度</text>
+        </view>
       </view>
-      <view class="search__chips">
-        <text class="search__chip is-static">资源置换</text>
-        <text class="search__chip is-static">分成</text>
-        <text class="search__chip is-static">算力额度</text>
-      </view>
-    </view>
 
-    <view class="search__group">
-      <text class="search__group-title">合作方式</text>
-      <view class="search__chips">
-        <text v-for="opt in cooperationOptions" :key="opt" class="search__chip is-static">{{ opt }}</text>
+      <view class="search__group">
+        <text class="search__group-title">合作方式</text>
+        <view class="search__chips">
+          <text v-for="opt in cooperationOptions" :key="opt" class="search__chip is-static">{{ opt }}</text>
+        </view>
       </view>
     </view>
 
@@ -142,9 +145,10 @@ onMounted(runSearch)
     </template>
     <template v-else>
       <ProjectCard
-        v-for="r in results"
+        v-for="(r, index) in results"
         :key="r.project.id"
         class="opc-fade-in"
+        :style="{ '--opc-stagger': Math.min(index, 6) }"
         :project="{ ...r.project, matchScore: r.matchScore, matchReason: r.matchReason }"
         @click="goDetail"
       />
@@ -169,8 +173,21 @@ onMounted(runSearch)
     margin-bottom: $opc-spacing-lg;
   }
 
+  &__filter-card {
+    background: $opc-bg-card;
+    border: 1px solid $opc-border-color;
+    border-radius: $opc-radius-card;
+    box-shadow: $opc-shadow-sm;
+    padding: $opc-spacing 0;
+    margin-bottom: $opc-spacing-sm;
+  }
+
   &__group {
-    margin-bottom: $opc-spacing-lg;
+    padding: $opc-spacing-sm $opc-spacing;
+
+    &:not(:first-child) {
+      border-top: 1px solid $opc-border-color;
+    }
   }
 
   &__group-title {

@@ -14,6 +14,7 @@ withDefaults(
       | 'chevron-right'
       | 'star'
       | 'inbox'
+      | 'sparkle'
     size?: string
     color?: string
     filled?: boolean
@@ -77,6 +78,17 @@ withDefaults(
     <template v-else-if="name === 'inbox'">
       <polyline points="3,9 8,9 9.5,13 14.5,13 16,9 21,9" />
       <rect x="3" y="9" width="18" height="12" rx="2" />
+    </template>
+
+    <!-- AI 相关内容的标记图标——常见的四角星"闪光"符号，填充而不是描边，
+         主星在中心、右上角配一颗小星，做出"AI 生成/智能"的视觉联想 -->
+    <template v-else-if="name === 'sparkle'">
+      <polygon
+        fill="currentColor"
+        stroke="none"
+        points="11,2 13.2,9.3 20.5,11.5 13.2,13.7 11,21 8.8,13.7 1.5,11.5 8.8,9.3"
+      />
+      <polygon fill="currentColor" stroke="none" points="19,2 19.9,5 22.5,6 19.9,7 19,10 18.1,7 15.5,6 18.1,5" />
     </template>
   </svg>
 </template>
