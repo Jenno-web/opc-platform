@@ -44,13 +44,9 @@ uni-page-body {
   height: 100%;
 }
 
-/* 顶部原生导航栏（返回箭头 + 页面标题那一条）跟下面的页面内容之间框架自己没画边界线，
-   两块背景色又很接近，看起来像是连在一起的一整块。加一条明显的底边线分开。
-   颜色跟 tokens.scss 里的 $opc-border-color 保持一致——这个 <style> 块是纯 CSS、
-   没走 SCSS，没法直接引用那个变量，改的时候要记得两边一起改 */
-uni-page-head {
-  border-bottom: 1px solid #c7c4bc;
-}
+/* 顶部原生导航栏改成强调色底 + 白字（pages.json 的 globalStyle 里配的），跟下面白色
+   页面内容天然就有色差分界，之前那条灰色 border-bottom 是白底白字年代补的，现在留着
+   反而在靛蓝底上显得多余，去掉 */
 
 /* uni-input 自己有一条基于 line-height 算出来的默认固定高度，业务代码只要给它加 padding
    （而且 box-sizing 是 border-box），这条固定高度就会被 padding 反过来压缩——内部真正

@@ -99,14 +99,14 @@
 		}
 	],
 	"globalStyle": {
-		"navigationBarTextStyle": "black",
+		"navigationBarTextStyle": "white",
 		"navigationBarTitleText": "培风社 OPC",
-		"navigationBarBackgroundColor": "#FFFFFF",
+		"navigationBarBackgroundColor": "#3B4BC4",
 		"backgroundColor": "#FFFFFF"
 	},
 	"tabBar": {
 		"color": "#777777",
-		"selectedColor": "#111111",
+		"selectedColor": "#3B4BC4",
 		"backgroundColor": "#FFFFFF",
 		"borderStyle": "black",
 		"list": [
