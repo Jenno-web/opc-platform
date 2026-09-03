@@ -97,50 +97,52 @@ onMounted(() => {
           </div>
         </div>
 
-        <div class="view-tabs">
-          <button class="view-tab" :class="{ 'is-active': activeView === 'published' }" @click="switchView('published')">我发布的</button>
-          <button class="view-tab" :class="{ 'is-active': activeView === 'applied' }" @click="switchView('applied')">我响应的</button>
-          <button class="view-tab" :class="{ 'is-active': activeView === 'received' }" @click="switchView('received')">收到的申请</button>
-        </div>
-
-        <template v-if="loading">
-          <SkeletonBlock v-for="i in 3" :key="i" :rows="2" />
-        </template>
-
-        <div v-else-if="activeView === 'published'" class="kanban">
-          <StatusColumn
-            v-for="col in statusColumns"
-            :key="col.status"
-            :label="col.label"
-            :status="col.status"
-            :projects="projectsByStatus[col.status]"
-            @complete="handleComplete"
-            @archive="handleArchive"
-          />
-        </div>
-
-        <div v-else-if="activeView === 'applied'" class="list-view">
-          <div v-for="app in myApplications" :key="app.id" class="list-item">
-            <div class="list-item__header">
-              <span class="list-item__title">{{ app.project.title }}</span>
-              <span class="list-item__status" :class="`is-${app.status.toLowerCase()}`">{{ statusLabel[app.status] }}</span>
-            </div>
-            <span v-if="app.aiGenerated" class="list-item__ai-tag">AI 生成申请文案</span>
-            <p class="list-item__content">{{ app.content }}</p>
+        <div class="board-panel">
+          <div class="view-tabs">
+            <button class="view-tab" :class="{ 'is-active': activeView === 'published' }" @click="switchView('published')">我发布的</button>
+            <button class="view-tab" :class="{ 'is-active': activeView === 'applied' }" @click="switchView('applied')">我响应的</button>
+            <button class="view-tab" :class="{ 'is-active': activeView === 'received' }" @click="switchView('received')">收到的申请</button>
           </div>
-          <EmptyState v-if="myApplications.length === 0" text="还没有响应过项目" />
-        </div>
 
-        <div v-else class="list-view">
-          <div v-for="app in receivedApplications" :key="app.id" class="list-item">
-            <div class="list-item__header">
-              <span class="list-item__title">{{ app.applicant.nickname }} · {{ app.project.title }}</span>
-              <span class="list-item__status" :class="`is-${app.status.toLowerCase()}`">{{ statusLabel[app.status] }}</span>
-            </div>
-            <span class="list-item__meta">{{ app.applicant.professionalIdentity }} · {{ formatRelativeTime(app.createdAt) }}</span>
-            <p class="list-item__content">{{ app.content }}</p>
+          <template v-if="loading">
+            <SkeletonBlock v-for="i in 3" :key="i" :rows="2" />
+          </template>
+
+          <div v-else-if="activeView === 'published'" class="kanban">
+            <StatusColumn
+              v-for="col in statusColumns"
+              :key="col.status"
+              :label="col.label"
+              :status="col.status"
+              :projects="projectsByStatus[col.status]"
+              @complete="handleComplete"
+              @archive="handleArchive"
+            />
           </div>
-          <EmptyState v-if="receivedApplications.length === 0" text="还没有人响应你的项目" />
+
+          <div v-else-if="activeView === 'applied'" class="list-view">
+            <div v-for="app in myApplications" :key="app.id" class="list-item">
+              <div class="list-item__header">
+                <span class="list-item__title">{{ app.project.title }}</span>
+                <span class="list-item__status" :class="`is-${app.status.toLowerCase()}`">{{ statusLabel[app.status] }}</span>
+              </div>
+              <span v-if="app.aiGenerated" class="list-item__ai-tag">AI 生成申请文案</span>
+              <p class="list-item__content">{{ app.content }}</p>
+            </div>
+            <EmptyState v-if="myApplications.length === 0" text="还没有响应过项目" />
+          </div>
+
+          <div v-else class="list-view">
+            <div v-for="app in receivedApplications" :key="app.id" class="list-item">
+              <div class="list-item__header">
+                <span class="list-item__title">{{ app.applicant.nickname }} · {{ app.project.title }}</span>
+                <span class="list-item__status" :class="`is-${app.status.toLowerCase()}`">{{ statusLabel[app.status] }}</span>
+              </div>
+              <span class="list-item__meta">{{ app.applicant.professionalIdentity }} · {{ formatRelativeTime(app.createdAt) }}</span>
+              <p class="list-item__content">{{ app.content }}</p>
+            </div>
+            <EmptyState v-if="receivedApplications.length === 0" text="还没有人响应你的项目" />
+          </div>
         </div>
       </div>
 
@@ -203,9 +205,24 @@ onMounted(() => {
   }
 }
 
+// 看板本身内容一少，页面下面会空出一大截——之前 view-tabs/kanban 是裸露
+// 在页面背景上的，跟页面背景同色，空白部分和"内容区"完全分不清，显得像
+// 没加载完。包一层有边框/阴影的卡片，看板到这里就结束了，卡片外面是正常
+// 的页面留白，不是内容区域断在半空
+.board-panel {
+  background: $opc-bg-card;
+  border: 1px solid $opc-border-color;
+  border-radius: $opc-radius-card;
+  box-shadow: $opc-shadow-sm;
+  padding: $opc-spacing-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $opc-spacing-md;
+}
+
 .view-tabs {
   display: flex;
-  gap: $opc-spacing-xs;
+  gap: $opc-spacing-md;
   border-bottom: 1px solid $opc-border-color;
 }
 
