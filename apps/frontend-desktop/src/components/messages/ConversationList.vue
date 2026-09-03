@@ -92,10 +92,12 @@ const typeLabel: Record<string, string> = {
   display: flex;
   align-items: center;
   gap: $opc-spacing-xs;
-  padding: $opc-spacing-xs $opc-spacing-sm;
+  padding: $opc-spacing-sm;
   cursor: pointer;
   border-radius: $opc-radius-card-sm;
   margin: 0 6px;
+  border-left: 2px solid transparent;
+  transition: background 0.15s ease, border-color 0.15s ease;
 
   &:hover {
     background: $opc-bg-subtle;
@@ -103,6 +105,7 @@ const typeLabel: Record<string, string> = {
 
   &.is-active {
     background: $opc-color-accent-soft;
+    border-left-color: $opc-color-accent;
   }
 
   &__body {

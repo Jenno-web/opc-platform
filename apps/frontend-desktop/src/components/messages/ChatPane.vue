@@ -197,12 +197,12 @@ onUnmounted(() => {
     display: flex;
     align-items: baseline;
     gap: $opc-spacing-xs;
-    padding: $opc-spacing-sm $opc-spacing-md;
+    padding: $opc-spacing-md $opc-spacing-lg;
     border-bottom: 1px solid $opc-border-color;
   }
 
   &__title {
-    font-size: $opc-font-base;
+    font-size: $opc-font-lg;
     font-weight: 700;
   }
 
@@ -211,10 +211,13 @@ onUnmounted(() => {
     color: $opc-color-accent;
   }
 
+  // AI 工具条给一层浅底色，跟下面纯白的消息区分出"这是一条工具栏"而不是
+  // 悬浮在消息流最上面的孤立按钮
   &__ai-bar {
     display: flex;
     gap: $opc-spacing-xs;
-    padding: $opc-spacing-xs $opc-spacing-md;
+    padding: $opc-spacing-sm $opc-spacing-lg;
+    background: $opc-bg-subtle;
     border-bottom: 1px solid $opc-border-color;
 
     &.is-working {
@@ -233,19 +236,24 @@ onUnmounted(() => {
     line-height: 1.6;
   }
 
+  // 短对话（消息条数不足一屏）之前会顶在容器最上面、下面留一大片空白到输入框，
+  // 视觉上像没加载完。justify-content: flex-end 让消息始终贴底部生长，
+  // 跟真实聊天软件（iMessage/Slack/微信）的习惯一致；消息多到溢出时这个属性
+  // 不影响正常滚动，早期消息依旧是往上滚才能看到
   &__messages {
     flex: 1;
     overflow-y: auto;
-    padding: $opc-spacing-md;
+    padding: $opc-spacing-lg;
     display: flex;
     flex-direction: column;
+    justify-content: flex-end;
     gap: $opc-spacing-sm;
   }
 
   &__composer {
     display: flex;
     gap: $opc-spacing-xs;
-    padding: $opc-spacing-sm $opc-spacing-md;
+    padding: $opc-spacing-md $opc-spacing-lg;
     border-top: 1px solid $opc-border-color;
   }
 
@@ -253,7 +261,7 @@ onUnmounted(() => {
     flex: 1;
     border: 1px solid $opc-border-color;
     border-radius: $opc-radius-tag;
-    padding: 8px 16px;
+    padding: 10px 18px;
     font-size: $opc-font-sm;
     outline: none;
 
@@ -320,7 +328,7 @@ onUnmounted(() => {
   &__bubble {
     background: $opc-bg-subtle;
     border-radius: $opc-radius-card-sm;
-    padding: $opc-spacing-xs $opc-spacing-sm;
+    padding: $opc-spacing-xs $opc-spacing;
   }
 
   &__sender {

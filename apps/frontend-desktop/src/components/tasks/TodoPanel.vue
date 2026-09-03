@@ -58,13 +58,13 @@ onMounted(load)
   border: 1px solid $opc-border-color;
   border-radius: $opc-radius-card;
   box-shadow: $opc-shadow-sm;
-  padding: $opc-spacing-md;
+  padding: $opc-spacing-lg;
   display: flex;
   flex-direction: column;
-  gap: $opc-spacing-sm;
+  gap: $opc-spacing-md;
 
   &__title {
-    font-size: $opc-font-base;
+    font-size: $opc-font-lg;
     font-weight: 700;
   }
 }
@@ -72,11 +72,12 @@ onMounted(load)
 .todo-item {
   background: $opc-bg-subtle;
   border-radius: $opc-radius-card-sm;
-  padding: $opc-spacing-sm;
+  padding: $opc-spacing;
 
   &__content {
     margin: 0 0 6px;
     font-size: $opc-font-sm;
+    line-height: 1.5;
   }
 
   &__meta {

@@ -350,21 +350,27 @@ onMounted(async () => {
 
 .stats-row {
   display: flex;
-  background: $opc-bg-subtle;
+  background: $opc-bg-card;
   border: 1px solid $opc-border-color;
   border-radius: $opc-radius-card;
   box-shadow: $opc-shadow-sm;
-  padding: $opc-spacing-md 0;
+  padding: $opc-spacing-lg 0;
   margin-bottom: $opc-spacing-lg;
 
   &__tile {
     flex: 1;
     text-align: center;
+    border-left: 1px solid $opc-border-color;
+
+    &:first-child {
+      border-left: none;
+    }
   }
 
   &__num {
-    font-size: $opc-font-xl;
-    font-weight: 700;
+    font-size: 28px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
     color: $opc-color-accent;
   }
 

@@ -173,20 +173,26 @@ onMounted(() => {
 
 .stats-row {
   display: flex;
-  background: $opc-bg-subtle;
+  background: $opc-bg-card;
   border: 1px solid $opc-border-color;
   border-radius: $opc-radius-card;
   box-shadow: $opc-shadow-sm;
-  padding: $opc-spacing-md 0;
+  padding: $opc-spacing-lg 0;
 
   &__tile {
     flex: 1;
     text-align: center;
+    border-left: 1px solid $opc-border-color;
+
+    &:first-child {
+      border-left: none;
+    }
   }
 
   &__num {
-    font-size: $opc-font-xl;
-    font-weight: 700;
+    font-size: 28px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
     color: $opc-color-accent;
   }
 
@@ -239,12 +245,19 @@ onMounted(() => {
   border: 1px solid $opc-border-color;
   border-radius: $opc-radius-card;
   box-shadow: $opc-shadow-sm;
-  padding: $opc-spacing-md;
+  padding: $opc-spacing-lg;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $opc-shadow-glow;
+    border-color: rgba($opc-color-accent, 0.4);
+  }
 
   &__header {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 4px;
+    margin-bottom: $opc-spacing-xxs;
   }
 
   &__title {

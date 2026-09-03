@@ -94,14 +94,17 @@ const emit = defineEmits<{
   border-radius: $opc-radius-card-sm;
   box-shadow: $opc-shadow-sm;
   overflow: hidden;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $opc-shadow-glow;
+    border-color: rgba($opc-color-accent, 0.4);
+  }
 
   &__link {
     display: block;
     padding: $opc-spacing-sm $opc-spacing;
-
-    &:hover {
-      background: $opc-bg-subtle;
-    }
   }
 
   &__title {
