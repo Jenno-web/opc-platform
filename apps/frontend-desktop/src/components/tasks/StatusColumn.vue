@@ -73,10 +73,10 @@ const emit = defineEmits<{
   &__list {
     display: flex;
     flex-direction: column;
-    gap: $opc-spacing-xs;
+    gap: $opc-spacing-sm;
     background: $opc-bg-subtle;
     border-radius: $opc-radius-card;
-    padding: $opc-spacing-xs;
+    padding: $opc-spacing-sm;
     min-height: 80px;
   }
 
@@ -97,7 +97,7 @@ const emit = defineEmits<{
 
   &__link {
     display: block;
-    padding: $opc-spacing-sm;
+    padding: $opc-spacing-sm $opc-spacing;
 
     &:hover {
       background: $opc-bg-subtle;
@@ -107,7 +107,8 @@ const emit = defineEmits<{
   &__title {
     font-size: $opc-font-sm;
     font-weight: 600;
-    margin-bottom: 4px;
+    line-height: 1.5;
+    margin-bottom: 6px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;

@@ -186,7 +186,7 @@ onMounted(() => {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: $opc-spacing-md;
+  gap: $opc-spacing-lg;
 
   &__badges {
     display: flex;
@@ -293,11 +293,11 @@ onMounted(() => {
   border: 1px solid $opc-border-color;
   border-radius: $opc-radius-card;
   box-shadow: $opc-shadow-sm;
-  padding: 0 $opc-spacing-md;
+  padding: 0 $opc-spacing-lg;
 }
 
 .content-section {
-  padding: $opc-spacing-md 0;
+  padding: $opc-spacing-lg 0;
   border-top: 1px solid $opc-border-color;
 
   &:first-child {
@@ -306,7 +306,7 @@ onMounted(() => {
 
   h3 {
     position: relative;
-    margin: 0 0 $opc-spacing-xs;
+    margin: 0 0 $opc-spacing-sm;
     padding-left: 10px;
     font-size: $opc-font-base;
     font-weight: 700;

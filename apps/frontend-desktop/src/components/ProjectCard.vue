@@ -66,12 +66,12 @@ const statusLabel: Record<string, string> = {
 .project-card {
   display: flex;
   flex-direction: column;
-  gap: $opc-spacing-sm;
+  gap: $opc-spacing;
   background: $opc-bg-card;
   border: 1px solid $opc-border-color;
   border-radius: $opc-radius-card;
   box-shadow: $opc-shadow-sm;
-  padding: $opc-spacing-md;
+  padding: $opc-spacing-lg;
   transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 
   &:hover {
@@ -215,7 +215,7 @@ const statusLabel: Record<string, string> = {
     align-items: center;
     font-size: $opc-font-xs;
     color: $opc-color-text-secondary;
-    padding-top: $opc-spacing-xs;
+    padding-top: $opc-spacing-sm;
     border-top: 1px solid $opc-border-color;
   }
 

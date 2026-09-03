@@ -376,13 +376,13 @@ onMounted(async () => {
 }
 
 .profile-grid {
-  max-width: 640px;
+  max-width: 680px;
 }
 
 .profile-main {
   display: flex;
   flex-direction: column;
-  gap: $opc-spacing-lg;
+  gap: $opc-spacing-xl;
 }
 
 .panel {
@@ -390,14 +390,14 @@ onMounted(async () => {
   border: 1px solid $opc-border-color;
   border-radius: $opc-radius-card;
   box-shadow: $opc-shadow-sm;
-  padding: $opc-spacing-md;
+  padding: $opc-spacing-lg;
   display: flex;
   flex-direction: column;
-  gap: $opc-spacing-sm;
+  gap: $opc-spacing-md;
 
   &__title {
     margin: 0;
-    font-size: $opc-font-base;
+    font-size: $opc-font-lg;
     font-weight: 700;
   }
 }
@@ -405,7 +405,7 @@ onMounted(async () => {
 .field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: $opc-spacing-xxs;
 
   label {
     font-size: $opc-font-xs;
@@ -418,7 +418,7 @@ onMounted(async () => {
     box-sizing: border-box;
     border: 1px solid $opc-border-color;
     border-radius: $opc-radius-card-sm;
-    padding: $opc-spacing-xs $opc-spacing-sm;
+    padding: $opc-spacing-sm;
     font-size: $opc-font-sm;
 
     &:focus {
@@ -486,7 +486,7 @@ onMounted(async () => {
 .case-item {
   background: $opc-bg-subtle;
   border-radius: $opc-radius-card-sm;
-  padding: $opc-spacing-sm;
+  padding: $opc-spacing;
 
   &__title {
     font-size: $opc-font-sm;
@@ -494,8 +494,9 @@ onMounted(async () => {
   }
 
   &__desc {
-    margin: 4px 0 0;
+    margin: $opc-spacing-xxs 0 0;
     font-size: $opc-font-xs;
+    line-height: 1.6;
     color: $opc-color-text-secondary;
   }
 }
@@ -503,10 +504,10 @@ onMounted(async () => {
 .knowledge-item {
   background: $opc-bg-subtle;
   border-radius: $opc-radius-card-sm;
-  padding: $opc-spacing-sm;
+  padding: $opc-spacing;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: $opc-spacing-xxs;
 
   &__header {
     display: flex;

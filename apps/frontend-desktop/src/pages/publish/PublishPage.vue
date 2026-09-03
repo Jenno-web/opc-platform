@@ -245,7 +245,7 @@ onMounted(async () => {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: $opc-spacing-md;
+  gap: $opc-spacing-lg;
 }
 
 .step-indicator {
@@ -304,7 +304,7 @@ onMounted(async () => {
 .field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: $opc-spacing-xxs;
 
   label {
     font-size: $opc-font-xs;
@@ -317,7 +317,7 @@ onMounted(async () => {
     box-sizing: border-box;
     border: 1px solid $opc-border-color;
     border-radius: $opc-radius-card-sm;
-    padding: $opc-spacing-xs $opc-spacing-sm;
+    padding: $opc-spacing-sm;
     font-size: $opc-font-sm;
 
     &:focus {
