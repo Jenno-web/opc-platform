@@ -236,19 +236,12 @@ onUnmounted(() => {
     line-height: 1.6;
   }
 
-  // 消息列表从顶部往下排；宽屏下消息气泡本身不铺满整个可用宽度是正常的
-  // （max-width: 70%），但如果整个消息列不做限宽，短消息会孤零零地贴在
-  // 一大片空白左侧，看着很空。这里给消息列本身限一个阅读宽度并居中，
-  // 空白匀到两侧，不再是单侧一大块空
   &__messages {
     flex: 1;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: $opc-spacing-sm;
-    width: 100%;
-    max-width: 760px;
-    margin: 0 auto;
     padding: $opc-spacing-lg;
     box-sizing: border-box;
   }
@@ -312,7 +305,7 @@ onUnmounted(() => {
   display: flex;
   align-items: flex-end;
   gap: 8px;
-  max-width: 70%;
+  max-width: min(70%, 640px);
 
   &.is-mine {
     align-self: flex-end;
