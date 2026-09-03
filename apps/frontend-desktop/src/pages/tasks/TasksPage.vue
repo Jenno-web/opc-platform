@@ -231,11 +231,12 @@ onMounted(() => {
   }
 }
 
+// 按状态竖着堆叠，不是横向排开靠滚动看完——宽屏下每个分区内部的卡片
+// 网格本身就能一行摆好几张，不需要额外的横向滚动交互
 .kanban {
   display: flex;
-  gap: $opc-spacing-md;
-  overflow-x: auto;
-  padding-bottom: $opc-spacing-xs;
+  flex-direction: column;
+  gap: $opc-spacing-lg;
 }
 
 .list-view {

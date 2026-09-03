@@ -50,8 +50,10 @@ const emit = defineEmits<{
 <style scoped lang="scss">
 @import '@/styles/tokens.scss';
 
+// 之前 5 个状态列横排、超出可视宽度靠横向滚动看完——没有人喜欢在网页上
+// 左右划。改成按状态竖着堆叠的分区，每个分区内部卡片用响应式网格自动换行，
+// 整页正常上下滚动，不再需要横向滚动条
 .status-column {
-  flex: 0 0 264px;
   display: flex;
   flex-direction: column;
   gap: $opc-spacing-sm;
@@ -103,20 +105,21 @@ const emit = defineEmits<{
     font-size: 11px;
   }
 
-  // 列本身就是一张浅底的"泳道"卡片——之前套了一层外框才让看板显得"完整"，
-  // 现在去掉外框，靠每一列自己的底色/圆角/内边距站得住，不需要额外的边界
+  // 分区本身就是一张浅底的卡片——不需要再套一层外框才显得完整。内部卡片用
+  // 响应式网格自动换行铺开，宽屏一行能摆好几张，不用横向滚动
   &__list {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: $opc-spacing-sm;
     background: $opc-bg-subtle;
     border: 1px solid $opc-border-color;
     border-radius: $opc-radius-card;
     padding: $opc-spacing-sm;
-    min-height: 120px;
+    min-height: 76px;
   }
 
   &__empty {
+    grid-column: 1 / -1;
     text-align: center;
     font-size: $opc-font-xs;
     color: $opc-color-text-placeholder;
