@@ -137,21 +137,21 @@ onUnmounted(() => {
 
     <div class="chat-pane__ai-bar" :class="{ 'is-working': aiWorking }">
       <button class="ai-btn" :disabled="aiWorking" @click="handleSummarize">
-        <Icon name="sparkle" size="12px" color="#3B4BC4" />
+        <Icon name="sparkle" size="12px" color="#7c6cff" />
         <span>总结对话</span>
       </button>
       <button class="ai-btn" :disabled="aiWorking" @click="handleSuggestReply">
-        <Icon name="sparkle" size="12px" color="#3B4BC4" />
+        <Icon name="sparkle" size="12px" color="#7c6cff" />
         <span>建议回复</span>
       </button>
       <button class="ai-btn" :disabled="aiWorking" @click="handleExtractTodos">
-        <Icon name="sparkle" size="12px" color="#3B4BC4" />
+        <Icon name="sparkle" size="12px" color="#7c6cff" />
         <span>提取待办</span>
       </button>
     </div>
 
     <div v-if="aiSummary" class="chat-pane__summary">
-      <Icon name="sparkle" size="12px" color="#3B4BC4" />
+      <Icon name="sparkle" size="12px" color="#7c6cff" />
       <span>{{ aiSummary }}</span>
     </div>
 
@@ -266,7 +266,7 @@ onUnmounted(() => {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: $opc-color-accent;
+    background: $opc-gradient-primary;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -308,7 +308,7 @@ onUnmounted(() => {
     flex-direction: row-reverse;
 
     .message-row__bubble {
-      background: $opc-color-accent;
+      background: $opc-gradient-primary;
       color: #fff;
     }
 

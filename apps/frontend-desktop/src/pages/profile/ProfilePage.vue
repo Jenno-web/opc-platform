@@ -152,7 +152,7 @@ onMounted(async () => {
           <div class="profile-header__name">{{ userStore.currentUser.nickname }}</div>
           <div class="profile-header__role">{{ userStore.currentUser.professionalIdentity }}</div>
           <div class="profile-header__rating">
-            <Icon name="star" filled size="14px" color="#a8763e" />
+            <Icon name="star" filled size="14px" color="#fbbf24" />
             <span>{{ userStore.currentUser.ratingAvg.toFixed(1) }}（{{ userStore.currentUser.ratingCount }}）</span>
           </div>
         </div>
@@ -283,7 +283,7 @@ onMounted(async () => {
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    background: $opc-color-accent;
+    background: $opc-gradient-primary;
     border: 2px solid $opc-bg-page;
     display: flex;
     align-items: center;
@@ -338,7 +338,7 @@ onMounted(async () => {
 
   &__completeness-fill {
     height: 100%;
-    background: $opc-color-accent;
+    background: $opc-gradient-primary;
     transition: width 0.4s ease;
   }
 
@@ -443,8 +443,8 @@ onMounted(async () => {
   color: $opc-color-text-secondary;
 
   &.is-active {
-    background: $opc-color-accent;
-    border-color: $opc-color-accent;
+    background: $opc-gradient-primary;
+    border-color: transparent;
     color: #fff;
     font-weight: 600;
   }
@@ -463,11 +463,11 @@ onMounted(async () => {
   }
 
   &--primary {
-    background: $opc-color-accent;
+    background: $opc-gradient-primary;
     color: #fff;
 
     &:hover:not(:disabled) {
-      background: $opc-color-accent-dark;
+      filter: brightness(1.08);
     }
   }
 

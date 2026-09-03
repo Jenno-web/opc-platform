@@ -123,7 +123,7 @@ onMounted(async () => {
 
       <template v-else-if="step === 2 && draft">
         <h2 class="wizard-title">
-          <Icon name="sparkle" size="18px" color="#3B4BC4" />
+          <Icon name="sparkle" size="18px" color="#7c6cff" />
           <span>AI 已整理，确认或修改</span>
         </h2>
 
@@ -259,7 +259,7 @@ onMounted(async () => {
     background: $opc-bg-subtle;
 
     &.is-active {
-      background: $opc-color-accent;
+      background: $opc-gradient-primary;
     }
   }
 }
@@ -362,8 +362,8 @@ onMounted(async () => {
   transition: background 0.15s ease, color 0.15s ease;
 
   &.is-active {
-    background: $opc-color-accent;
-    border-color: $opc-color-accent;
+    background: $opc-gradient-primary;
+    border-color: transparent;
     color: #fff;
     font-weight: 600;
   }
@@ -396,17 +396,17 @@ onMounted(async () => {
   }
 
   &--primary {
-    background: $opc-color-accent;
+    background: $opc-gradient-primary;
     color: #fff;
 
     &:hover:not(:disabled) {
-      background: $opc-color-accent-dark;
+      filter: brightness(1.08);
     }
   }
 
   &--outline {
     background: $opc-bg-card;
-    border: 1px solid $opc-color-text;
+    border: 1px solid $opc-border-color;
     color: $opc-color-text;
 
     &:hover {

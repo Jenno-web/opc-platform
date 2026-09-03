@@ -18,7 +18,7 @@ defineProps<{ publisher: PublisherDetail }>()
 
     <div class="publisher-sidebar__stats">
       <div class="publisher-sidebar__stat">
-        <Icon name="star" filled size="14px" color="#a8763e" />
+        <Icon name="star" filled size="14px" color="#fbbf24" />
         <span>{{ publisher.ratingAvg.toFixed(1) }}（{{ publisher.ratingCount }}）</span>
       </div>
       <div class="publisher-sidebar__stat">

@@ -33,10 +33,22 @@ button {
   cursor: pointer;
 }
 
+// 浏览器给 input/textarea/select 的默认背景是白色、不会跟着页面暗色主题走，
+// 之前发布向导的想法输入框就因为组件自己没显式设 background 而漏成白底黑字。
+// 这里在全局兜一层暗色默认值，各组件自己样式里显式设置的 background/color 优先级更高，
+// 会正常覆盖这个默认值，不冲突——是安全网，不是唯一的样式来源
 input,
-textarea {
+textarea,
+select {
   font: inherit;
-  color: inherit;
+  color: $opc-color-text;
+  background: $opc-bg-subtle;
+  border: 1px solid $opc-border-color;
+  border-radius: $opc-radius-card-sm;
+
+  &::placeholder {
+    color: $opc-color-text-placeholder;
+  }
 }
 
 ul,
@@ -48,4 +60,20 @@ ol {
 
 #app {
   min-height: 100vh;
+}
+
+// 暗色页面配浏览器默认的浅色系统滚动条会很突兀，改成跟页面同色系的深色滚动条
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: $opc-border-color;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: $opc-color-text-placeholder;
 }

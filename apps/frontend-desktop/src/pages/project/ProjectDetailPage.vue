@@ -106,7 +106,7 @@ onMounted(() => {
 
         <div v-if="detail.aiSummary" class="ai-callout">
           <div class="ai-callout__label">
-            <Icon name="sparkle" size="14px" color="#3B4BC4" />
+            <Icon name="sparkle" size="14px" color="#7c6cff" />
             <span>AI 摘要</span>
           </div>
           <p>{{ detail.aiSummary }}</p>
@@ -145,7 +145,7 @@ onMounted(() => {
       <div class="detail-side">
         <PublisherSidebar :publisher="detail.publisher">
           <div v-if="detail.aiMatch" class="ai-match">
-            <Icon name="sparkle" size="12px" color="#3B4BC4" />
+            <Icon name="sparkle" size="12px" color="#7c6cff" />
             <span>匹配度 {{ detail.aiMatch.score }}% · {{ detail.aiMatch.reason }}</span>
           </div>
 
@@ -217,7 +217,7 @@ onMounted(() => {
     font-size: $opc-font-xs;
     font-weight: 700;
     color: #fff;
-    background: $opc-color-accent;
+    background: $opc-gradient-primary;
     padding: 3px 12px;
     border-radius: $opc-radius-tag;
   }
@@ -371,17 +371,17 @@ onMounted(() => {
   }
 
   &--primary {
-    background: $opc-color-accent;
+    background: $opc-gradient-primary;
     color: #fff;
 
     &:hover:not(:disabled) {
-      background: $opc-color-accent-dark;
+      filter: brightness(1.08);
     }
   }
 
   &--outline {
     background: $opc-bg-card;
-    border: 1px solid $opc-color-text;
+    border: 1px solid $opc-border-color;
     color: $opc-color-text;
 
     &:hover {

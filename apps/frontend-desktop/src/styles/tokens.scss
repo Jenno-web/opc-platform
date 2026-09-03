@@ -1,40 +1,49 @@
-/* 颜色跟移动端 apps/frontend/src/styles/tokens.scss 完全一致，保持同一个品牌视觉——
-   移动端已经验证过的强调色/供需类型色/状态色，直接照搬十六进制值，不重新设计一套。
-   间距/字号/圆角是重新定的：移动端用 rpx（跟屏幕宽度联动的移动端单位），桌面不适用
-   这套比例，改用桌面惯例的 px 刻度。 */
+/* 参考 launchmesh.cn（同类 OPC 协作平台）的桌面视觉语言重做过一版：暗色基调 + 蓝紫渐变
+   品牌色 + 发光边框卡片，这是桌面端独立于移动端的视觉判断——移动端保持浅色克制风格是
+   忠于 Figma 低保真源文件 + 导师那轮"加色彩但别太花"的反馈；桌面端没有对应的低保真源文件
+   约束，参照的是导师实际发的同类产品案例，走的是更有"AI 产品"气质的暗色路线。
+   强调色本身还是从移动端的靛蓝 #3B4BC4 出发（不是另起一套完全无关的颜色，两端还是
+   同一个产品），往紫色方向拉出一个渐变，跟品牌保持一点连续性。 */
 
-// 强调色
-$opc-color-accent: #3b4bc4;
-$opc-color-accent-soft: #eef0fb;
-$opc-color-accent-dark: #2a3794;
+// 强调色：暗色背景下靛蓝原值饱和度不够亮，提亮一档保证可读性；渐变是新加的桌面专属语言
+$opc-color-accent: #6d5ef5;
+$opc-color-accent-bright: #7c6cff;
+$opc-color-accent-soft: rgba(109, 94, 245, 0.16);
+$opc-color-accent-dark: #5648d6;
 $opc-color-primary: $opc-color-accent;
 $opc-color-primary-soft: $opc-color-accent-soft;
 $opc-color-ai: $opc-color-accent;
 
-// 供需类型色
+// 品牌渐变：蓝到紫，用在主按钮、CTA、logo 标、hero 装饰上，是这轮视觉重做的核心
+$opc-gradient-primary: linear-gradient(135deg, #4f6ef7 0%, #9333ea 100%);
+$opc-gradient-primary-hover: linear-gradient(135deg, #5d7bff 0%, #a742f5 100%);
+$opc-gradient-text: linear-gradient(135deg, #7c9cff 0%, #c084fc 100%);
+
+// 供需类型色：暗色背景需要比浅色模式更高的明度才能读清楚，原来的低饱和茶色/墨绿在
+// 近黑背景上会糊成一团，这里整体提亮
 $opc-color-kind-demand: $opc-color-accent;
-$opc-color-kind-supply: #2f8a7f;
-$opc-color-kind-mutual: #a9793a;
+$opc-color-kind-supply: #2dd4bf;
+$opc-color-kind-mutual: #fbbf24;
 
-// 状态色
-$opc-color-success: #4a7c59;
-$opc-color-warning: #a8763e;
-$opc-color-danger: #b3453f;
+// 状态色：同样为暗色背景提亮
+$opc-color-success: #34d399;
+$opc-color-warning: #fbbf24;
+$opc-color-danger: #f87171;
 
-// 文字/背景/边框
-$opc-color-text: #111111;
-$opc-color-text-secondary: #777777;
-$opc-color-text-placeholder: #9a9a9a;
-$opc-bg-page: #ffffff;
-$opc-bg-card: #ffffff;
-$opc-bg-subtle: #f5f5f3;
-$opc-border-color: #c7c4bc;
+// 文字/背景/边框：近黑背景 + 分层的卡片面板色阶
+$opc-color-text: #f2f2f7;
+$opc-color-text-secondary: #9a9aad;
+$opc-color-text-placeholder: #5c5c72;
+$opc-bg-page: #0a0a0f;
+$opc-bg-card: #14141c;
+$opc-bg-subtle: #1c1c28;
+$opc-border-color: #2a2a3a;
 
 $opc-font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', 'Helvetica Neue', sans-serif;
 
 // 圆角
-$opc-radius-card: 12px;
-$opc-radius-card-sm: 8px;
+$opc-radius-card: 16px;
+$opc-radius-card-sm: 10px;
 $opc-radius-tag: 999px;
 
 // 间距刻度（桌面惯例的 4px 基准倍数，不是从 rpx 换算来的）
@@ -46,18 +55,21 @@ $opc-spacing-md: 20px;
 $opc-spacing-lg: 28px;
 $opc-spacing-xl: 40px;
 
-// 字号刻度
+// 字号刻度：hero 标题这次明显放大，桌面空间足够，参考案例的大字号标题是关键视觉特征之一
 $opc-font-xs: 12px;
 $opc-font-sm: 13px;
 $opc-font-base: 15px;
 $opc-font-lg: 18px;
 $opc-font-xl: 22px;
-$opc-font-display: 40px;
+$opc-font-display: 52px;
 
-// 阴影
-$opc-shadow-sm: 0 1px 3px rgba(17, 17, 17, 0.06);
-$opc-shadow-md: 0 4px 12px rgba(17, 17, 17, 0.08);
-$opc-shadow-lg: 0 12px 32px rgba(17, 17, 17, 0.14);
+// 阴影：暗色背景下深色投影几乎看不见，改成用强调色的发光替代传统阴影，
+// 具体用法是 box-shadow 配合 $opc-color-accent 的低透明度版本，不是这里定死一个值，
+// 各组件按需要用 rgba($opc-color-accent, 0.15~0.3) 现配
+$opc-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+$opc-shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+$opc-shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
+$opc-shadow-glow: 0 0 0 1px rgba(109, 94, 245, 0.4), 0 8px 24px rgba(109, 94, 245, 0.15);
 
 // 桌面专属：内容区最大宽度、顶部导航高度、侧栏宽度——移动端没有这几个概念
 $opc-content-max-width: 1200px;

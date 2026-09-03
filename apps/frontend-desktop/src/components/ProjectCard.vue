@@ -76,8 +76,8 @@ const statusLabel: Record<string, string> = {
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: $opc-shadow-md;
-    border-color: $opc-color-accent;
+    box-shadow: $opc-shadow-glow;
+    border-color: rgba($opc-color-accent, 0.5);
   }
 
   &__header {
@@ -115,7 +115,7 @@ const statusLabel: Record<string, string> = {
     font-size: $opc-font-xs;
     font-weight: 700;
     color: #fff;
-    background: $opc-color-accent;
+    background: $opc-gradient-primary;
     padding: 2px 10px;
     border-radius: $opc-radius-tag;
   }
@@ -196,7 +196,7 @@ const statusLabel: Record<string, string> = {
     gap: 3px;
     flex-shrink: 0;
     color: #fff;
-    background: $opc-color-accent;
+    background: $opc-gradient-primary;
     padding: 2px 8px;
     border-radius: $opc-radius-tag;
     font-weight: 700;

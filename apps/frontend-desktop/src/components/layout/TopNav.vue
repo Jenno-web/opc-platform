@@ -56,7 +56,10 @@ onUnmounted(() => {
 <template>
   <header class="top-nav">
     <div class="top-nav__inner">
-      <RouterLink to="/discover" class="top-nav__logo">培风社 OPC</RouterLink>
+      <RouterLink to="/discover" class="top-nav__logo">
+        <span class="top-nav__logo-mark">培</span>
+        <span>培风社 OPC</span>
+      </RouterLink>
 
       <nav class="top-nav__links">
         <RouterLink to="/discover" class="top-nav__link" active-class="is-active">发现</RouterLink>
@@ -81,7 +84,7 @@ onUnmounted(() => {
             size="32px"
           />
           <span v-if="userStore.currentUser" class="top-nav__nickname">{{ userStore.currentUser.nickname }}</span>
-          <Icon name="chevron-down" size="14px" color="#9a9a9a" />
+          <Icon name="chevron-down" size="14px" />
 
           <div v-if="menuOpen" class="top-nav__dropdown" @click.stop>
             <RouterLink to="/profile" class="top-nav__dropdown-item" @click="closeMenu">
@@ -125,10 +128,27 @@ onUnmounted(() => {
   }
 
   &__logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     font-size: $opc-font-lg;
     font-weight: 700;
-    color: $opc-color-accent;
+    color: $opc-color-text;
     white-space: nowrap;
+  }
+
+  &__logo-mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    background: $opc-gradient-primary;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    flex-shrink: 0;
   }
 
   &__links {
@@ -182,16 +202,18 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
     gap: 4px;
-    background: $opc-color-accent;
+    background: $opc-gradient-primary;
     color: #fff;
     font-size: $opc-font-sm;
     font-weight: 600;
     padding: 8px 16px;
     border-radius: $opc-radius-tag;
-    transition: background 0.15s ease, transform 0.15s ease;
+    box-shadow: 0 4px 16px rgba(109, 94, 245, 0.35);
+    transition: box-shadow 0.15s ease, transform 0.15s ease, filter 0.15s ease;
 
     &:hover {
-      background: $opc-color-accent-dark;
+      filter: brightness(1.08);
+      box-shadow: 0 6px 20px rgba(109, 94, 245, 0.45);
     }
     &:active {
       transform: scale(0.96);

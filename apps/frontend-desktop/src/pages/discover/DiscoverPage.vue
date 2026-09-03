@@ -55,16 +55,21 @@ onMounted(async () => {
 <template>
   <PageContainer>
     <section class="hero">
-      <h1 class="hero__title">发现真实的协作机会</h1>
+      <div class="hero__glow hero__glow--a" />
+      <div class="hero__glow hero__glow--b" />
+      <h1 class="hero__title">发现真实的<span class="hero__title-accent">协作机会</span></h1>
       <p class="hero__subtitle">需求、供给、互助——找到值得投入的项目，或者被值得信任的人找到</p>
       <div class="hero__search">
-        <Icon name="search" size="18px" color="#9a9a9a" />
+        <Icon name="search" size="18px" />
         <input
           v-model="keyword"
           class="hero__search-input"
           placeholder="搜索项目关键词"
           @keyup.enter="load"
         />
+        <button class="hero__search-btn" @click="load">
+          <Icon name="send" size="14px" color="#ffffff" />
+        </button>
       </div>
     </section>
 
@@ -88,7 +93,7 @@ onMounted(async () => {
 
     <section v-if="recommendations.length" class="recommend-rail">
       <div class="recommend-rail__title">
-        <Icon name="sparkle" size="16px" color="#3B4BC4" />
+        <Icon name="sparkle" size="16px" color="#7c6cff" />
         <span>为你推荐</span>
       </div>
       <div class="recommend-rail__list">
@@ -118,34 +123,79 @@ onMounted(async () => {
 <style scoped lang="scss">
 @import '@/styles/tokens.scss';
 
+// hero 背景用两块模糊的渐变光晕做装饰，纯 CSS radial-gradient + blur，参考案例首屏
+// 那种"暗背景上飘着几团色块光晕"的效果，不是图片素材
 .hero {
-  background: $opc-color-accent-soft;
+  position: relative;
+  overflow: hidden;
+  background: $opc-bg-card;
+  border: 1px solid $opc-border-color;
   border-radius: $opc-radius-card;
   padding: $opc-spacing-xl;
   margin-bottom: $opc-spacing-lg;
 
+  &__glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    pointer-events: none;
+    opacity: 0.35;
+
+    &--a {
+      width: 320px;
+      height: 320px;
+      top: -120px;
+      right: 80px;
+      background: #4f6ef7;
+    }
+
+    &--b {
+      width: 280px;
+      height: 280px;
+      bottom: -140px;
+      right: -60px;
+      background: #9333ea;
+    }
+  }
+
   &__title {
+    position: relative;
     margin: 0 0 $opc-spacing-xs;
     font-size: $opc-font-display;
-    font-weight: 700;
+    font-weight: 800;
+    letter-spacing: -0.02em;
     color: $opc-color-text;
   }
 
+  &__title-accent {
+    background: $opc-gradient-text;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
   &__subtitle {
+    position: relative;
     margin: 0 0 $opc-spacing-md;
     font-size: $opc-font-base;
     color: $opc-color-text-secondary;
   }
 
   &__search {
+    position: relative;
     display: flex;
     align-items: center;
     gap: $opc-spacing-xs;
     max-width: 480px;
-    background: $opc-bg-card;
+    background: $opc-bg-subtle;
     border: 1px solid $opc-border-color;
     border-radius: $opc-radius-tag;
-    padding: 10px 16px;
+    padding: 6px 8px 6px 16px;
+    color: $opc-color-text-secondary;
+
+    &:focus-within {
+      border-color: $opc-color-accent;
+    }
   }
 
   &__search-input {
@@ -154,6 +204,27 @@ onMounted(async () => {
     outline: none;
     font-size: $opc-font-base;
     background: transparent;
+    color: $opc-color-text;
+
+    &::placeholder {
+      color: $opc-color-text-placeholder;
+    }
+  }
+
+  &__search-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: $opc-gradient-primary;
+    flex-shrink: 0;
+    transition: filter 0.15s ease;
+
+    &:hover {
+      filter: brightness(1.1);
+    }
   }
 }
 
@@ -192,8 +263,8 @@ onMounted(async () => {
   }
 
   &.is-active {
-    background: $opc-color-accent;
-    border-color: $opc-color-accent;
+    background: $opc-gradient-primary;
+    border-color: transparent;
     color: #fff;
     font-weight: 600;
   }

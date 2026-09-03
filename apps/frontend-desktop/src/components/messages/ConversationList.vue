@@ -53,7 +53,7 @@ const typeLabel: Record<string, string> = {
       @click="emit('select', c.id)"
     >
       <div class="conversation-item__channel-icon">
-        <Icon :name="c.isVoiceRoom ? 'mic' : 'hash'" size="14px" color="#3B4BC4" />
+        <Icon :name="c.isVoiceRoom ? 'mic' : 'hash'" size="14px" color="#7c6cff" />
       </div>
       <span class="conversation-item__title">{{ c.title }}</span>
       <span v-if="c.unreadCount" class="conversation-item__badge">{{ c.unreadCount }}</span>
@@ -151,7 +151,7 @@ const typeLabel: Record<string, string> = {
 
   &__badge {
     flex-shrink: 0;
-    background: $opc-color-accent;
+    background: $opc-gradient-primary;
     color: #fff;
     font-size: 10px;
     font-weight: 700;
