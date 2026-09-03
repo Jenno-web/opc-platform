@@ -1,43 +1,48 @@
-/* 参考 launchmesh.cn（同类 OPC 协作平台）的桌面视觉语言重做过一版：暗色基调 + 蓝紫渐变
-   品牌色 + 发光边框卡片，这是桌面端独立于移动端的视觉判断——移动端保持浅色克制风格是
-   忠于 Figma 低保真源文件 + 导师那轮"加色彩但别太花"的反馈；桌面端没有对应的低保真源文件
-   约束，参照的是导师实际发的同类产品案例，走的是更有"AI 产品"气质的暗色路线。
-   强调色本身还是从移动端的靛蓝 #3B4BC4 出发（不是另起一套完全无关的颜色，两端还是
-   同一个产品），往紫色方向拉出一个渐变，跟品牌保持一点连续性。 */
+/* 应用内页（发现/任务/发布/信息/我的 + TopNav + 共用组件）用的设计 token，白色基础，
+   参照 launchmesh.cn/platform/community 那个真实产品页——它的营销首页是暗色，但真正
+   的产品内页是白底（bodyBg 实测是纯白 lab(100 0 0)），标题字重压得很重（实测 760），
+   卡片走软阴影而不是暗色主题那种发光边框。桌面首页 LandingPage.vue 对照的是它的
+   暗色营销首页，所以首页故意不吃这份 token，颜色都在自己组件内部写死了一份深色值，
+   不会因为这里改色而被牵连。
+   强调色还是从移动端的靛蓝 #3B4BC4 出发，跟品牌保持连续性；供需类型色/状态色在白底上
+   需要比暗色模式更深的明度才能读清楚（暗色模式那版是为了在近黑背景上够亮特意提亮的，
+   直接搬到白底上对比度不够）。 */
 
-// 强调色：暗色背景下靛蓝原值饱和度不够亮，提亮一档保证可读性；渐变是新加的桌面专属语言
-$opc-color-accent: #6d5ef5;
-$opc-color-accent-bright: #7c6cff;
-$opc-color-accent-soft: rgba(109, 94, 245, 0.16);
-$opc-color-accent-dark: #5648d6;
+// 强调色
+$opc-color-accent: #5b4fe0;
+$opc-color-accent-bright: #6d5ef5;
+$opc-color-accent-soft: rgba(91, 79, 224, 0.08);
+$opc-color-accent-dark: #4a3fc7;
 $opc-color-primary: $opc-color-accent;
 $opc-color-primary-soft: $opc-color-accent-soft;
 $opc-color-ai: $opc-color-accent;
 
-// 品牌渐变：蓝到紫，用在主按钮、CTA、logo 标、hero 装饰上，是这轮视觉重做的核心
+// 品牌渐变：蓝到紫，用在主按钮、CTA、logo 标上，白底黑字场景下渐变本身饱和度够，
+// 不用再额外调亮
 $opc-gradient-primary: linear-gradient(135deg, #4f6ef7 0%, #9333ea 100%);
 $opc-gradient-primary-hover: linear-gradient(135deg, #5d7bff 0%, #a742f5 100%);
-$opc-gradient-text: linear-gradient(135deg, #7c9cff 0%, #c084fc 100%);
+$opc-gradient-text: linear-gradient(135deg, #4f6ef7 0%, #9333ea 100%);
 
-// 供需类型色：暗色背景需要比浅色模式更高的明度才能读清楚，原来的低饱和茶色/墨绿在
-// 近黑背景上会糊成一团，这里整体提亮
+// 供需类型色：白底需要比暗色模式深一档的明度才够对比度，浅色模式下这几个色只用在
+// "深色文字 + 同色 8% 透明度底"的 chip 上，不会用来填大色块
 $opc-color-kind-demand: $opc-color-accent;
-$opc-color-kind-supply: #2dd4bf;
-$opc-color-kind-mutual: #fbbf24;
+$opc-color-kind-supply: #0d9488;
+$opc-color-kind-mutual: #b45309;
 
-// 状态色：同样为暗色背景提亮
-$opc-color-success: #34d399;
-$opc-color-warning: #fbbf24;
-$opc-color-danger: #f87171;
+// 状态色：同样为白底加深一档
+$opc-color-success: #059669;
+$opc-color-warning: #b45309;
+$opc-color-danger: #dc2626;
 
-// 文字/背景/边框：近黑背景 + 分层的卡片面板色阶
-$opc-color-text: #f2f2f7;
-$opc-color-text-secondary: #9a9aad;
-$opc-color-text-placeholder: #5c5c72;
-$opc-bg-page: #0a0a0f;
-$opc-bg-card: #14141c;
-$opc-bg-subtle: #1c1c28;
-$opc-border-color: #2a2a3a;
+// 文字/背景/边框：偏暖的近白背景（不是纯 #fff，带一点点品牌色倾向，"选出来的中性色"
+// 而不是随手用纯白/纯黑），卡片用纯白跟页面背景拉开一个层次
+$opc-color-text: #17171f;
+$opc-color-text-secondary: #6b6b7a;
+$opc-color-text-placeholder: #a3a3b3;
+$opc-bg-page: #f7f7fb;
+$opc-bg-card: #ffffff;
+$opc-bg-subtle: #f1f1f6;
+$opc-border-color: #e5e5ec;
 
 $opc-font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', 'Helvetica Neue', sans-serif;
 
@@ -46,7 +51,7 @@ $opc-radius-card: 16px;
 $opc-radius-card-sm: 10px;
 $opc-radius-tag: 999px;
 
-// 间距刻度（桌面惯例的 4px 基准倍数，不是从 rpx 换算来的）
+// 间距刻度（桌面惯例的 4px 基准倍数）
 $opc-spacing-xxs: 6px;
 $opc-spacing-xs: 8px;
 $opc-spacing-sm: 12px;
@@ -55,7 +60,7 @@ $opc-spacing-md: 20px;
 $opc-spacing-lg: 28px;
 $opc-spacing-xl: 40px;
 
-// 字号刻度：hero 标题这次明显放大，桌面空间足够，参考案例的大字号标题是关键视觉特征之一
+// 字号刻度
 $opc-font-xs: 12px;
 $opc-font-sm: 13px;
 $opc-font-base: 15px;
@@ -63,15 +68,14 @@ $opc-font-lg: 18px;
 $opc-font-xl: 22px;
 $opc-font-display: 52px;
 
-// 阴影：暗色背景下深色投影几乎看不见，改成用强调色的发光替代传统阴影，
-// 具体用法是 box-shadow 配合 $opc-color-accent 的低透明度版本，不是这里定死一个值，
-// 各组件按需要用 rgba($opc-color-accent, 0.15~0.3) 现配
-$opc-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-$opc-shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
-$opc-shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
-$opc-shadow-glow: 0 0 0 1px rgba(109, 94, 245, 0.4), 0 8px 24px rgba(109, 94, 245, 0.15);
+// 阴影：白底上黑色投影就是自然的"抬升"视觉，不用再靠发光模拟——这是跟暗色模式版本
+// 最大的差异点，暗色模式当时是因为深色投影在近黑背景上完全看不见才改用发光
+$opc-shadow-sm: 0 1px 2px rgba(23, 17, 51, 0.06);
+$opc-shadow-md: 0 8px 24px rgba(23, 17, 51, 0.08);
+$opc-shadow-lg: 0 16px 40px rgba(23, 17, 51, 0.12);
+$opc-shadow-glow: 0 0 0 1px rgba(91, 79, 224, 0.18), 0 8px 20px rgba(91, 79, 224, 0.12);
 
-// 桌面专属：内容区最大宽度、顶部导航高度、侧栏宽度——移动端没有这几个概念
+// 桌面专属：内容区最大宽度、顶部导航高度、侧栏宽度
 $opc-content-max-width: 1200px;
 $opc-nav-height: 64px;
 $opc-sidebar-width: 280px;

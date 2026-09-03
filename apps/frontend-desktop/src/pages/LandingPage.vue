@@ -304,7 +304,30 @@ onMounted(async () => {
 <style scoped lang="scss">
 @import '@/styles/tokens.scss';
 
+// landing 首页对照的是 launchmesh.cn 的暗色营销首页，不是它白底的 /platform/community
+// 产品内页——tokens.scss 现在给应用内页（发现/任务/发布/信息/我的）换成白色基础了，
+// 这里把颜色相关的几个 token 在本文件内单独复写回原来那份深色值，不受影响。
+// 参考站自己也是这个分法：营销首页暗色、产品内页白色，两边视觉基调不同是有意为之，
+// 不是遗留不一致。间距/字号/圆角/内容宽度这些结构性 token 还是共用 tokens.scss 的。
+$opc-color-accent: #6d5ef5;
+$opc-color-accent-bright: #7c6cff;
+$opc-color-accent-soft: rgba(109, 94, 245, 0.16);
+$opc-color-kind-demand: $opc-color-accent;
+$opc-color-kind-supply: #2dd4bf;
+$opc-color-kind-mutual: #fbbf24;
+$opc-color-text: #f2f2f7;
+$opc-color-text-secondary: #9a9aad;
+$opc-color-text-placeholder: #5c5c72;
+$opc-bg-page: #0a0a0f;
+$opc-bg-card: #14141c;
+$opc-bg-subtle: #1c1c28;
+$opc-border-color: #2a2a3a;
+$opc-gradient-primary: linear-gradient(135deg, #4f6ef7 0%, #9333ea 100%);
+$opc-gradient-text: linear-gradient(135deg, #7c9cff 0%, #c084fc 100%);
+$opc-shadow-glow: 0 0 0 1px rgba(109, 94, 245, 0.4), 0 8px 24px rgba(109, 94, 245, 0.15);
+
 .landing {
+  min-height: 100vh;
   background: $opc-bg-page;
   color: $opc-color-text;
 }

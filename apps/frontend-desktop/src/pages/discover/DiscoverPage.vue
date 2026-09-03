@@ -141,15 +141,19 @@ onMounted(async () => {
   background: $opc-bg-card;
   border: 1px solid $opc-border-color;
   border-radius: $opc-radius-card;
+  box-shadow: $opc-shadow-sm;
   padding: $opc-spacing-xl;
   margin-bottom: $opc-spacing-lg;
 
+  // 白底上同样饱和度的光晕块会显得很突兀（暗色版本的 0.35 是为了在近黑背景上"发光"），
+  // 这里调淡一档，变成白底上一层很浅的色彩晕染，跟参考产品页 hero 背后那种柔和渐变
+  // 底色的分寸感一致
   &__glow {
     position: absolute;
     border-radius: 50%;
     filter: blur(60px);
     pointer-events: none;
-    opacity: 0.35;
+    opacity: 0.16;
 
     &--a {
       width: 320px;
