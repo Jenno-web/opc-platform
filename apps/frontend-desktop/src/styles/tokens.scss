@@ -1,0 +1,65 @@
+/* 颜色跟移动端 apps/frontend/src/styles/tokens.scss 完全一致，保持同一个品牌视觉——
+   移动端已经验证过的强调色/供需类型色/状态色，直接照搬十六进制值，不重新设计一套。
+   间距/字号/圆角是重新定的：移动端用 rpx（跟屏幕宽度联动的移动端单位），桌面不适用
+   这套比例，改用桌面惯例的 px 刻度。 */
+
+// 强调色
+$opc-color-accent: #3b4bc4;
+$opc-color-accent-soft: #eef0fb;
+$opc-color-accent-dark: #2a3794;
+$opc-color-primary: $opc-color-accent;
+$opc-color-primary-soft: $opc-color-accent-soft;
+$opc-color-ai: $opc-color-accent;
+
+// 供需类型色
+$opc-color-kind-demand: $opc-color-accent;
+$opc-color-kind-supply: #2f8a7f;
+$opc-color-kind-mutual: #a9793a;
+
+// 状态色
+$opc-color-success: #4a7c59;
+$opc-color-warning: #a8763e;
+$opc-color-danger: #b3453f;
+
+// 文字/背景/边框
+$opc-color-text: #111111;
+$opc-color-text-secondary: #777777;
+$opc-color-text-placeholder: #9a9a9a;
+$opc-bg-page: #ffffff;
+$opc-bg-card: #ffffff;
+$opc-bg-subtle: #f5f5f3;
+$opc-border-color: #c7c4bc;
+
+$opc-font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', 'Helvetica Neue', sans-serif;
+
+// 圆角
+$opc-radius-card: 12px;
+$opc-radius-card-sm: 8px;
+$opc-radius-tag: 999px;
+
+// 间距刻度（桌面惯例的 4px 基准倍数，不是从 rpx 换算来的）
+$opc-spacing-xxs: 6px;
+$opc-spacing-xs: 8px;
+$opc-spacing-sm: 12px;
+$opc-spacing: 16px;
+$opc-spacing-md: 20px;
+$opc-spacing-lg: 28px;
+$opc-spacing-xl: 40px;
+
+// 字号刻度
+$opc-font-xs: 12px;
+$opc-font-sm: 13px;
+$opc-font-base: 15px;
+$opc-font-lg: 18px;
+$opc-font-xl: 22px;
+$opc-font-display: 40px;
+
+// 阴影
+$opc-shadow-sm: 0 1px 3px rgba(17, 17, 17, 0.06);
+$opc-shadow-md: 0 4px 12px rgba(17, 17, 17, 0.08);
+$opc-shadow-lg: 0 12px 32px rgba(17, 17, 17, 0.14);
+
+// 桌面专属：内容区最大宽度、顶部导航高度、侧栏宽度——移动端没有这几个概念
+$opc-content-max-width: 1200px;
+$opc-nav-height: 64px;
+$opc-sidebar-width: 280px;
