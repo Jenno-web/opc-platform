@@ -66,12 +66,15 @@ onUnmounted(() => {
         <RouterLink to="/tasks" class="top-nav__link" active-class="is-active">任务</RouterLink>
         <RouterLink to="/messages" class="top-nav__link" active-class="is-active">
           信息
-          <span v-if="unreadCount" class="top-nav__link-badge">{{ unreadCount > 99 ? '99+' : unreadCount }}</span>
+          <span v-if="unreadCount" class="top-nav__link-badge">
+            <span class="top-nav__link-badge-ping" />
+            {{ unreadCount > 99 ? '99+' : unreadCount }}
+          </span>
         </RouterLink>
       </nav>
 
       <div class="top-nav__actions">
-        <RouterLink to="/publish" class="top-nav__publish-btn">
+        <RouterLink to="/publish" class="top-nav__publish-btn opc-pulse-glow">
           <Icon name="plus" size="16px" />
           <span>发布</span>
         </RouterLink>
@@ -177,6 +180,7 @@ onUnmounted(() => {
   }
 
   &__link-badge {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -192,12 +196,24 @@ onUnmounted(() => {
     vertical-align: top;
   }
 
+  // 未读徽标外面套一圈跟着扩散消失的光环，呼应参考站"在线状态点"那个 livePulse 效果，
+  // 提示"这里有新动态"
+  &__link-badge-ping {
+    position: absolute;
+    inset: 0;
+    border-radius: $opc-radius-tag;
+    background: $opc-color-danger;
+    animation: opc-live-ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
   &__actions {
     display: flex;
     align-items: center;
     gap: $opc-spacing-md;
   }
 
+  // box-shadow 交给 .opc-pulse-glow 这个全局呼吸光晕动画掌管（见 global.scss），
+  // 这里不再单独写 box-shadow，不然跟持续运行的关键帧动画打架、hover 时的效果会被盖掉
   &__publish-btn {
     display: flex;
     align-items: center;
@@ -208,12 +224,10 @@ onUnmounted(() => {
     font-weight: 600;
     padding: 8px 16px;
     border-radius: $opc-radius-tag;
-    box-shadow: 0 4px 16px rgba(109, 94, 245, 0.35);
-    transition: box-shadow 0.15s ease, transform 0.15s ease, filter 0.15s ease;
+    transition: transform 0.15s ease, filter 0.15s ease;
 
     &:hover {
       filter: brightness(1.08);
-      box-shadow: 0 6px 20px rgba(109, 94, 245, 0.45);
     }
     &:active {
       transform: scale(0.96);

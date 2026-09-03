@@ -77,3 +77,77 @@ ol {
 ::-webkit-scrollbar-thumb:hover {
   background: $opc-color-text-placeholder;
 }
+
+/* 参考 launchmesh.cn 实测到的动效（用 headless Chrome 量过它页面上真实跑的 CSS animation
+   属性，不是凭印象猜的）：hero 标题/搜索框是进场时的 fadeUp、主 CTA 按钮常驻一个呼吸光晕
+   （ctaPulse）、还有一组不同速度/方向缓慢自转的同心圆装饰环（lmOrbitSpin，26s/42s/62s，
+   部分反向）。这几个是纯 CSS 关键帧，全局定义一遍，各页面按需要挂 class，不引入动画库 */
+
+@keyframes opc-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.opc-fade-up {
+  --opc-stagger: 0;
+  animation: opc-fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  animation-delay: calc(var(--opc-stagger) * 60ms);
+}
+
+@keyframes opc-pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 4px 16px rgba(109, 94, 245, 0.35), 0 0 0 0 rgba(109, 94, 245, 0.35);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(109, 94, 245, 0.5), 0 0 0 8px rgba(109, 94, 245, 0);
+  }
+}
+
+.opc-pulse-glow {
+  animation: opc-pulse-glow 3s ease-in-out infinite;
+}
+
+@keyframes opc-orbit-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes opc-orbit-spin-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes opc-live-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .opc-fade-up,
+  .opc-pulse-glow,
+  .opc-orbit,
+  .opc-live-ping {
+    animation: none !important;
+  }
+}

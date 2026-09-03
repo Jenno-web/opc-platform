@@ -20,7 +20,12 @@ const emit = defineEmits<{
       <span class="status-column__count">{{ projects.length }}</span>
     </div>
     <div class="status-column__list">
-      <div v-for="p in projects" :key="p.id" class="kanban-card">
+      <div
+        v-for="(p, index) in projects"
+        :key="p.id"
+        class="kanban-card opc-fade-up"
+        :style="{ '--opc-stagger': Math.min(index, 6) }"
+      >
         <RouterLink :to="`/discover/${p.id}`" class="kanban-card__link">
           <div class="kanban-card__title">{{ p.title }}</div>
           <div class="kanban-card__meta">

@@ -57,9 +57,12 @@ onMounted(async () => {
     <section class="hero">
       <div class="hero__glow hero__glow--a" />
       <div class="hero__glow hero__glow--b" />
-      <h1 class="hero__title">发现真实的<span class="hero__title-accent">协作机会</span></h1>
-      <p class="hero__subtitle">需求、供给、互助——找到值得投入的项目，或者被值得信任的人找到</p>
-      <div class="hero__search">
+      <div class="hero__orbit hero__orbit--1" />
+      <div class="hero__orbit hero__orbit--2" />
+      <div class="hero__orbit hero__orbit--3" />
+      <h1 class="hero__title opc-fade-up">发现真实的<span class="hero__title-accent">协作机会</span></h1>
+      <p class="hero__subtitle opc-fade-up" style="--opc-stagger: 1">需求、供给、互助——找到值得投入的项目，或者被值得信任的人找到</p>
+      <div class="hero__search opc-fade-up" style="--opc-stagger: 2">
         <Icon name="search" size="18px" />
         <input
           v-model="keyword"
@@ -98,12 +101,13 @@ onMounted(async () => {
       </div>
       <div class="recommend-rail__list">
         <ProjectCard
-          v-for="r in recommendations"
+          v-for="(r, index) in recommendations"
           :key="r.project.id"
           :project="r.project"
           :match-score="r.matchScore"
           :match-reason="r.reason"
-          class="recommend-rail__card"
+          class="recommend-rail__card opc-fade-up"
+          :style="{ '--opc-stagger': Math.min(index, 6) }"
         />
       </div>
     </section>
@@ -113,7 +117,13 @@ onMounted(async () => {
         <SkeletonBlock v-for="i in 6" :key="i" :rows="3" />
       </template>
       <template v-else>
-        <ProjectCard v-for="p in projects" :key="p.id" :project="p" />
+        <ProjectCard
+          v-for="(p, index) in projects"
+          :key="p.id"
+          :project="p"
+          class="opc-fade-up"
+          :style="{ '--opc-stagger': Math.min(index, 8) }"
+        />
         <EmptyState v-if="projects.length === 0" text="没有找到匹配的机会" hint="试试调整筛选条件" />
       </template>
     </section>
@@ -155,6 +165,39 @@ onMounted(async () => {
       bottom: -140px;
       right: -60px;
       background: #9333ea;
+    }
+  }
+
+  // 同心圆装饰环，慢速自转，实测参考站用的是三个不同速度、部分反向的圆环叠在一起——
+  // 这里照同一个思路做三层，圆心对齐在 hero 右上方那团光晕附近
+  // 圆环用 dashed 边框而不是 solid——实心圆环转到哪个角度看起来都一样，
+  // 虚线的间隔感才能让转动这件事真的被看出来
+  &__orbit {
+    position: absolute;
+    top: -60px;
+    right: 40px;
+    border-radius: 50%;
+    border: 1px dashed rgba(124, 108, 255, 0.22);
+    pointer-events: none;
+
+    &--1 {
+      width: 260px;
+      height: 260px;
+      animation: opc-orbit-spin 26s linear infinite;
+    }
+    &--2 {
+      width: 340px;
+      height: 340px;
+      top: -100px;
+      right: 0;
+      animation: opc-orbit-spin-reverse 42s linear infinite;
+    }
+    &--3 {
+      width: 420px;
+      height: 420px;
+      top: -140px;
+      right: -40px;
+      animation: opc-orbit-spin 62s linear infinite;
     }
   }
 
