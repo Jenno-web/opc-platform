@@ -188,7 +188,13 @@ onUnmounted(() => {
 <style scoped lang="scss">
 @import '@/styles/tokens.scss';
 
+// .messages-main 是默认横向的 flex 容器（display:flex 没写 flex-direction），
+// 横向主轴上子元素不会自动拉伸——之前 .chat-pane 没设 flex/width，
+// 实际渲染宽度是内容撑出来的收缩宽度，不是"填满剩余空间"，宽屏下右边
+// 大片空白就是这么来的，不是内边距/限宽的问题，是这里从来没真正占满过
 .chat-pane {
+  flex: 1;
+  min-width: 0;
   height: 100%;
   display: flex;
   flex-direction: column;
