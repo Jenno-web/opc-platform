@@ -10,6 +10,7 @@ const router = createRouter({
     { path: '/publish', name: 'publish', component: () => import('@/pages/publish/PublishPage.vue') },
     { path: '/messages', name: 'messages', component: () => import('@/pages/messages/MessagesPage.vue') },
     { path: '/profile', name: 'profile', component: () => import('@/pages/profile/ProfilePage.vue') },
+    { path: '/profile/settings', name: 'settings', component: () => import('@/pages/profile/SettingsPage.vue') },
   ],
 })
 

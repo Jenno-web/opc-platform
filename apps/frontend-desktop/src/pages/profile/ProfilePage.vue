@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useUserStore } from '@/store/user'
-import { fetchSkillTags } from '@/api/user'
 import { fetchKnowledgeEntries, updateKnowledgeEntry } from '@/api/knowledge'
 import { showToast } from '@/composables/useToast'
-import type { KnowledgeEntryItem, SkillTag } from '@/types'
+import type { KnowledgeEntryItem } from '@/types'
 import PageContainer from '@/components/layout/PageContainer.vue'
 import Avatar from '@/components/Avatar.vue'
 import Icon from '@/components/Icon.vue'
@@ -14,43 +13,11 @@ import SkeletonBlock from '@/components/SkeletonBlock.vue'
 
 const userStore = useUserStore()
 const uploadingAvatar = ref(false)
-const savingProfile = ref(false)
-
-const nickname = ref('')
-const professionalIdentity = ref('')
-const bio = ref('')
-const selectedSkills = ref<string[]>([])
-const skillCatalog = ref<SkillTag[]>([])
-const MAX_SKILLS = 8
-const formInitialized = ref(false)
 
 const knowledgeEntries = ref<KnowledgeEntryItem[]>([])
 const knowledgeLoading = ref(true)
 const editingKnowledgeId = ref('')
 const knowledgeDraft = ref('')
-
-function initForm() {
-  const user = userStore.currentUser
-  if (!user || formInitialized.value) return
-  nickname.value = user.nickname
-  professionalIdentity.value = user.professionalIdentity ?? ''
-  bio.value = user.bio ?? ''
-  selectedSkills.value = user.skillTags.map((t) => t.name)
-  formInitialized.value = true
-}
-
-function toggleSkill(name: string) {
-  const i = selectedSkills.value.indexOf(name)
-  if (i === -1) {
-    if (selectedSkills.value.length >= MAX_SKILLS) {
-      showToast(`最多选 ${MAX_SKILLS} 个技能标签`)
-      return
-    }
-    selectedSkills.value.push(name)
-  } else {
-    selectedSkills.value.splice(i, 1)
-  }
-}
 
 function resizeToDataUrl(src: string, maxSize = 240, quality = 0.82): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -94,25 +61,6 @@ function changeAvatar() {
   input.click()
 }
 
-async function handleSaveProfile() {
-  if (!nickname.value.trim()) {
-    showToast('昵称不能为空')
-    return
-  }
-  savingProfile.value = true
-  try {
-    await userStore.updateProfile({
-      nickname: nickname.value.trim(),
-      professionalIdentity: professionalIdentity.value.trim(),
-      bio: bio.value.trim(),
-      skillTagNames: selectedSkills.value,
-    })
-    showToast('已保存')
-  } finally {
-    savingProfile.value = false
-  }
-}
-
 function startEditKnowledge(entry: KnowledgeEntryItem) {
   editingKnowledgeId.value = entry.id
   knowledgeDraft.value = entry.lessonsLearned
@@ -127,8 +75,6 @@ async function saveKnowledge(entry: KnowledgeEntryItem) {
 
 onMounted(async () => {
   if (!userStore.currentUser) await userStore.loadCurrentUser()
-  initForm()
-  skillCatalog.value = await fetchSkillTags()
   knowledgeLoading.value = true
   try {
     knowledgeEntries.value = await fetchKnowledgeEntries()
@@ -163,6 +109,10 @@ onMounted(async () => {
           </div>
           <span class="profile-header__completeness-label">资料完整度</span>
         </div>
+        <RouterLink to="/profile/settings" class="profile-header__edit">
+          <Icon name="pencil" size="14px" />
+          <span>编辑资料</span>
+        </RouterLink>
       </div>
 
       <div class="stats-row">
@@ -182,39 +132,6 @@ onMounted(async () => {
 
       <div class="profile-grid">
         <div class="profile-main">
-          <section class="panel">
-            <h3 class="panel__title">资料设置</h3>
-            <div class="field">
-              <label>昵称</label>
-              <input v-model="nickname" maxlength="20" />
-            </div>
-            <div class="field">
-              <label>身份介绍</label>
-              <input v-model="professionalIdentity" maxlength="30" />
-            </div>
-            <div class="field">
-              <label>我能提供</label>
-              <textarea v-model="bio" rows="3" maxlength="300" />
-            </div>
-            <div class="field">
-              <label>能力标签（最多 {{ MAX_SKILLS }} 个）</label>
-              <div class="chip-row">
-                <button
-                  v-for="tag in skillCatalog"
-                  :key="tag.id"
-                  class="chip"
-                  :class="{ 'is-active': selectedSkills.includes(tag.name) }"
-                  @click="toggleSkill(tag.name)"
-                >
-                  {{ tag.name }}
-                </button>
-              </div>
-            </div>
-            <button class="btn btn--primary" :disabled="savingProfile" @click="handleSaveProfile">
-              {{ savingProfile ? '保存中…' : '保存资料' }}
-            </button>
-          </section>
-
           <section v-if="userStore.currentUser.portfolio.length" class="panel">
             <h3 class="panel__title">近期案例</h3>
             <div v-for="(item, index) in userStore.currentUser.portfolio" :key="item.id" v-reveal class="case-item" :style="{ '--opc-stagger': Math.min(index, 4) }">
@@ -346,6 +263,29 @@ onMounted(async () => {
     font-size: 11px;
     color: $opc-color-text-secondary;
   }
+
+  // "我的主页"是查看态，"设置"是独立的编辑态页面（/profile/settings）——
+  // 之前两个入口都指向同一个页面、同一份表单混在资料展示里，这里拆开后
+  // 头像旁边留一个明确的"编辑资料"入口
+  &__edit {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    align-self: flex-start;
+    padding: 8px 16px;
+    border-radius: $opc-radius-tag;
+    border: 1px solid $opc-border-color;
+    font-size: $opc-font-sm;
+    font-weight: 600;
+    color: $opc-color-text-secondary;
+    transition: border-color 0.15s ease, color 0.15s ease;
+
+    &:hover {
+      border-color: $opc-color-accent;
+      color: $opc-color-accent;
+    }
+  }
 }
 
 .stats-row {
@@ -405,54 +345,6 @@ onMounted(async () => {
     margin: 0;
     font-size: $opc-font-lg;
     font-weight: 700;
-  }
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: $opc-spacing-xxs;
-
-  label {
-    font-size: $opc-font-xs;
-    color: $opc-color-text-secondary;
-  }
-
-  input,
-  textarea {
-    width: 100%;
-    box-sizing: border-box;
-    border: 1px solid $opc-border-color;
-    border-radius: $opc-radius-card-sm;
-    padding: $opc-spacing-sm;
-    font-size: $opc-font-sm;
-
-    &:focus {
-      outline: none;
-      border-color: $opc-color-accent;
-    }
-  }
-}
-
-.chip-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $opc-spacing-xxs;
-}
-
-.chip {
-  font-size: $opc-font-sm;
-  padding: 6px 16px;
-  border-radius: $opc-radius-tag;
-  background: $opc-bg-card;
-  border: 1px solid $opc-border-color;
-  color: $opc-color-text-secondary;
-
-  &.is-active {
-    background: $opc-gradient-primary;
-    border-color: transparent;
-    color: #fff;
-    font-weight: 600;
   }
 }
 

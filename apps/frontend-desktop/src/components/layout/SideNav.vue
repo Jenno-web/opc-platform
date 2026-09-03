@@ -35,7 +35,7 @@ function closeMenu() {
 
 function goSettings() {
   closeMenu()
-  router.push('/profile')
+  router.push('/profile/settings')
 }
 
 function logout() {
