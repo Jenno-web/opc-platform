@@ -135,6 +135,74 @@ onMounted(async () => {
     </section>
 
     <section id="kinds" class="kinds">
+      <!-- 手画的"协作网络"装饰图：三个大节点对应需求/供给/互助三个色，周围小节点通过
+           曲线互连，配色直接用已有的 kind 颜色 token（不是新配色）。三条主干曲线上各有
+           一个小圆点沿路径循环移动（SVG 原生 animateMotion，不需要 JS/库），暗示"匹配
+           信号在网络里流动"——呼应"协作网络"这个产品概念本身，不是纯装饰性的插画 -->
+      <svg class="kinds__mesh" viewBox="0 0 1200 260" aria-hidden="true">
+        <defs>
+          <linearGradient id="meshEdgeGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#6d5ef5" stop-opacity="0.5" />
+            <stop offset="50%" stop-color="#2dd4bf" stop-opacity="0.35" />
+            <stop offset="100%" stop-color="#fbbf24" stop-opacity="0.5" />
+          </linearGradient>
+        </defs>
+
+        <!-- 主干曲线：三大节点两两相连 -->
+        <path id="meshEdgeA" class="mesh-edge mesh-edge--main" d="M150,170 C320,80 420,60 600,60" />
+        <path id="meshEdgeB" class="mesh-edge mesh-edge--main" d="M600,60 C780,60 880,80 1050,170" />
+        <path
+          id="meshEdgeC"
+          class="mesh-edge mesh-edge--faint"
+          d="M150,170 C450,260 750,260 1050,170"
+        />
+
+        <!-- 卫星节点到主节点的连线 -->
+        <line class="mesh-edge mesh-edge--thin" x1="90" y1="110" x2="150" y2="170" />
+        <line class="mesh-edge mesh-edge--thin" x1="210" y1="90" x2="150" y2="170" />
+        <line class="mesh-edge mesh-edge--thin" x1="110" y1="220" x2="150" y2="170" />
+        <line class="mesh-edge mesh-edge--thin" x1="500" y1="30" x2="600" y2="60" />
+        <line class="mesh-edge mesh-edge--thin" x1="650" y1="140" x2="600" y2="60" />
+        <line class="mesh-edge mesh-edge--thin" x1="720" y1="20" x2="600" y2="60" />
+        <line class="mesh-edge mesh-edge--thin" x1="960" y1="110" x2="1050" y2="170" />
+        <line class="mesh-edge mesh-edge--thin" x1="1110" y1="90" x2="1050" y2="170" />
+        <line class="mesh-edge mesh-edge--thin" x1="990" y1="230" x2="1050" y2="170" />
+        <line class="mesh-edge mesh-edge--thin" x1="350" y1="150" x2="150" y2="170" />
+        <line class="mesh-edge mesh-edge--thin" x1="350" y1="150" x2="600" y2="60" />
+        <line class="mesh-edge mesh-edge--thin" x1="850" y1="150" x2="600" y2="60" />
+        <line class="mesh-edge mesh-edge--thin" x1="850" y1="150" x2="1050" y2="170" />
+
+        <!-- 卫星节点：小圆点，缓慢浮动 -->
+        <circle class="mesh-node mesh-node--sat" style="--d: 0s" cx="90" cy="110" r="4" />
+        <circle class="mesh-node mesh-node--sat" style="--d: 0.4s" cx="210" cy="90" r="3" />
+        <circle class="mesh-node mesh-node--sat" style="--d: 0.8s" cx="110" cy="220" r="3" />
+        <circle class="mesh-node mesh-node--sat" style="--d: 1.2s" cx="500" cy="30" r="4" />
+        <circle class="mesh-node mesh-node--sat" style="--d: 0.2s" cx="650" cy="140" r="3" />
+        <circle class="mesh-node mesh-node--sat" style="--d: 0.6s" cx="720" cy="20" r="3" />
+        <circle class="mesh-node mesh-node--sat" style="--d: 1s" cx="960" cy="110" r="4" />
+        <circle class="mesh-node mesh-node--sat" style="--d: 0.3s" cx="1110" cy="90" r="3" />
+        <circle class="mesh-node mesh-node--sat" style="--d: 0.7s" cx="990" cy="230" r="3" />
+        <circle class="mesh-node mesh-node--sat" style="--d: 1.1s" cx="350" cy="150" r="3" />
+        <circle class="mesh-node mesh-node--sat" style="--d: 0.5s" cx="850" cy="150" r="3" />
+
+        <!-- 三大节点：需求/供给/互助，同一套 kind 颜色，带呼吸缩放 -->
+        <circle class="mesh-node mesh-node--hub is-demand" cx="150" cy="170" r="10" />
+        <circle class="mesh-node mesh-node--hub is-supply" style="--d: 0.6s" cx="600" cy="60" r="10" />
+        <circle class="mesh-node mesh-node--hub is-mutual" style="--d: 1.2s" cx="1050" cy="170" r="10" />
+
+        <!-- 沿主干曲线循环移动的信号点，暗示匹配信号在网络里流动 -->
+        <circle class="mesh-signal" r="3">
+          <animateMotion dur="5.5s" repeatCount="indefinite" rotate="auto">
+            <mpath href="#meshEdgeA" xlink:href="#meshEdgeA" />
+          </animateMotion>
+        </circle>
+        <circle class="mesh-signal" r="3">
+          <animateMotion dur="6.5s" begin="1.4s" repeatCount="indefinite" rotate="auto">
+            <mpath href="#meshEdgeB" xlink:href="#meshEdgeB" />
+          </animateMotion>
+        </circle>
+      </svg>
+
       <div class="section-head">
         <h2 v-reveal>三种协作类型，你在哪一种里</h2>
         <p v-reveal>不是"雇主找乙方"的单一关系——同一个平台里，需求、供给、互助并存。</p>
@@ -167,7 +235,7 @@ onMounted(async () => {
         <div v-for="(s, i) in steps" :key="s.title" v-reveal class="process-card" :style="{ '--opc-stagger': i }">
           <div class="process-card__step">{{ i + 1 }}</div>
           <div class="process-card__icon">
-            <Icon :name="s.icon" size="20px" color="#7c6cff" />
+            <Icon :name="s.icon" size="20px" />
           </div>
           <h3>{{ s.title }}</h3>
           <p>{{ s.desc }}</p>
@@ -513,14 +581,131 @@ onMounted(async () => {
 
 // ---- 三种协作类型 ----
 .kinds {
+  position: relative;
   max-width: $opc-content-max-width;
   margin: 0 auto;
   padding: 88px $opc-spacing-xl;
+  overflow: hidden;
 
   &__grid {
+    position: relative;
+    z-index: 1;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: $opc-spacing-md;
+  }
+
+  // 协作网络装饰图铺在标题正后方，四周用渐变遮罩淡出，不抢文字，
+  // 小屏幕直接隐藏（内容本来就要堆叠显示，装饰图在窄屏没有铺展空间）
+  &__mesh {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1200px;
+    max-width: none;
+    height: auto;
+    opacity: 0.6;
+    pointer-events: none;
+    mask-image: radial-gradient(ellipse 620px 200px at center, black 0%, black 40%, transparent 78%);
+    -webkit-mask-image: radial-gradient(ellipse 620px 200px at center, black 0%, black 40%, transparent 78%);
+
+    @media (max-width: 860px) {
+      display: none;
+    }
+  }
+}
+
+.mesh-edge {
+  fill: none;
+  stroke: url(#meshEdgeGrad);
+
+  &--main {
+    stroke-width: 1.4;
+    animation: opc-edge-pulse 4.5s ease-in-out infinite;
+  }
+  &--faint {
+    stroke-width: 1;
+    opacity: 0.35;
+  }
+  &--thin {
+    stroke-width: 1;
+    opacity: 0.28;
+  }
+}
+
+.mesh-node {
+  transform-box: fill-box;
+  transform-origin: center;
+
+  &--sat {
+    fill: $opc-color-accent-bright;
+    opacity: 0.55;
+    animation: opc-node-float 3.6s ease-in-out infinite;
+    animation-delay: var(--d, 0s);
+  }
+
+  &--hub {
+    stroke: $opc-bg-page;
+    stroke-width: 2;
+    animation: opc-hub-pulse 3.2s ease-in-out infinite;
+    animation-delay: var(--d, 0s);
+
+    &.is-demand {
+      fill: $opc-color-kind-demand;
+    }
+    &.is-supply {
+      fill: $opc-color-kind-supply;
+    }
+    &.is-mutual {
+      fill: $opc-color-kind-mutual;
+    }
+  }
+}
+
+.mesh-signal {
+  fill: #fff;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.9));
+}
+
+@keyframes opc-node-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes opc-hub-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+@keyframes opc-edge-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mesh-edge--main,
+  .mesh-node--sat,
+  .mesh-node--hub {
+    animation: none;
+  }
+  .mesh-signal {
+    display: none;
   }
 }
 
@@ -534,6 +719,10 @@ onMounted(async () => {
   &:hover {
     transform: translateY(-4px);
     box-shadow: $opc-shadow-glow;
+
+    .kind-card__icon {
+      transform: scale(1.1) rotate(-6deg);
+    }
   }
 
   &__icon {
@@ -544,6 +733,7 @@ onMounted(async () => {
     height: 44px;
     border-radius: 12px;
     margin-bottom: $opc-spacing-md;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   &__label {
@@ -619,6 +809,18 @@ onMounted(async () => {
   border: 1px solid $opc-border-color;
   border-radius: $opc-radius-card;
   padding: $opc-spacing-lg;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    border-color: rgba($opc-color-accent, 0.5);
+    box-shadow: $opc-shadow-glow;
+
+    .process-card__icon {
+      transform: scale(1.1);
+      background: $opc-color-accent;
+      color: #fff;
+    }
+  }
 
   &__step {
     position: absolute;
@@ -638,7 +840,9 @@ onMounted(async () => {
     height: 40px;
     border-radius: 10px;
     background: $opc-color-accent-soft;
+    color: $opc-color-accent-bright;
     margin-bottom: $opc-spacing-md;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease, color 0.2s ease;
   }
 
   h3 {
@@ -701,12 +905,21 @@ onMounted(async () => {
   padding: 64px $opc-spacing-xl;
   text-align: center;
 
+  // 渐变角度缓慢漂移，给这块常驻的静态色块加一点不打扰的呼吸感——
+  // 跟 hero 的呼吸光晕/自转轨道是同一个"环境常驻动效"思路
   &__glow {
     position: absolute;
-    inset: 0;
-    background: $opc-gradient-primary;
-    opacity: 0.14;
+    inset: -40%;
+    background: conic-gradient(
+      from 0deg,
+      rgba(79, 110, 247, 0.28),
+      rgba(147, 51, 234, 0.28),
+      rgba(45, 212, 191, 0.2),
+      rgba(79, 110, 247, 0.28)
+    );
+    opacity: 0.5;
     pointer-events: none;
+    animation: opc-cta-drift 16s linear infinite;
   }
 
   &__inner {
@@ -724,6 +937,21 @@ onMounted(async () => {
     align-items: center;
     justify-content: center;
     gap: $opc-spacing-sm;
+  }
+}
+
+@keyframes opc-cta-drift {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta__glow {
+    animation: none;
   }
 }
 
