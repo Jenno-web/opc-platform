@@ -27,6 +27,9 @@ withDefaults(
       | 'log-out'
       | 'pencil'
       | 'check'
+      | 'target'
+      | 'package'
+      | 'users'
     size?: string
     color?: string
     filled?: boolean
@@ -167,6 +170,27 @@ withDefaults(
 
     <template v-else-if="name === 'check'">
       <polyline points="4,12 9,17 20,6" />
+    </template>
+
+    <!-- 首页三种协作类型卡片用的图标：目标靶心(需求)/交付箱子(供给)/两人并肩(互助)，
+         同样是 line/circle 手画基础图形，不引入图标库 -->
+    <template v-else-if="name === 'target'">
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="12" r="5" />
+      <circle cx="12" cy="12" r="1" fill="currentColor" />
+    </template>
+
+    <template v-else-if="name === 'package'">
+      <path d="M3 8 12 4l9 4-9 4-9-4Z" />
+      <path d="M3 8v9l9 4 9-4V8" />
+      <line x1="12" y1="12" x2="12" y2="21" />
+    </template>
+
+    <template v-else-if="name === 'users'">
+      <circle cx="8.5" cy="8" r="3.5" />
+      <path d="M2 20a6.5 6.5 0 0 1 13 0" />
+      <circle cx="17" cy="9" r="3" />
+      <path d="M15.5 12.3A6 6 0 0 1 22 20" />
     </template>
   </svg>
 </template>

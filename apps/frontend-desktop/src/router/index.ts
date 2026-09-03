@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: '/', redirect: '/discover' },
+    { path: '/', name: 'landing', component: () => import('@/pages/LandingPage.vue'), meta: { blank: true } },
     { path: '/discover', name: 'discover', component: () => import('@/pages/discover/DiscoverPage.vue') },
     { path: '/discover/:id', name: 'project-detail', component: () => import('@/pages/project/ProjectDetailPage.vue') },
     { path: '/tasks', name: 'tasks', component: () => import('@/pages/tasks/TasksPage.vue') },
