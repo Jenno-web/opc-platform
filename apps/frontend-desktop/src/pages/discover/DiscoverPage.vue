@@ -120,9 +120,9 @@ onMounted(async () => {
         <ProjectCard
           v-for="(p, index) in projects"
           :key="p.id"
+          v-reveal
           :project="p"
-          class="opc-fade-up"
-          :style="{ '--opc-stagger': Math.min(index, 8) }"
+          :style="{ '--opc-stagger': index % 4 }"
         />
         <EmptyState v-if="projects.length === 0" text="没有找到匹配的机会" hint="试试调整筛选条件" />
       </template>

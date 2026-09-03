@@ -217,7 +217,7 @@ onMounted(async () => {
 
           <section v-if="userStore.currentUser.portfolio.length" class="panel">
             <h3 class="panel__title">近期案例</h3>
-            <div v-for="item in userStore.currentUser.portfolio" :key="item.id" class="case-item">
+            <div v-for="(item, index) in userStore.currentUser.portfolio" :key="item.id" v-reveal class="case-item" :style="{ '--opc-stagger': Math.min(index, 4) }">
               <div class="case-item__title">{{ item.title }}</div>
               <p class="case-item__desc">{{ item.description }}</p>
             </div>
@@ -229,7 +229,7 @@ onMounted(async () => {
               <SkeletonBlock :rows="2" />
             </template>
             <template v-else>
-              <div v-for="entry in knowledgeEntries" :key="entry.id" class="knowledge-item">
+              <div v-for="(entry, index) in knowledgeEntries" :key="entry.id" v-reveal class="knowledge-item" :style="{ '--opc-stagger': Math.min(index, 4) }">
                 <div class="knowledge-item__header">
                   <span>{{ entry.project?.title ?? '通用经验' }}</span>
                   <span v-if="entry.aiGenerated" class="knowledge-item__ai-tag">AI 生成{{ entry.editedByUser ? ' · 已编辑' : '' }}</span>

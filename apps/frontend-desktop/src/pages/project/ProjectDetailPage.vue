@@ -112,7 +112,7 @@ onMounted(() => {
           <p>{{ detail.aiSummary }}</p>
         </div>
 
-        <div class="content-card">
+        <div v-reveal class="content-card">
           <section class="content-section">
             <h3>项目目标</h3>
             <p>{{ detail.goal }}</p>
@@ -131,7 +131,7 @@ onMounted(() => {
           </section>
         </div>
 
-        <div v-if="detail.roles.length" class="content-card">
+        <div v-if="detail.roles.length" v-reveal class="content-card">
           <section class="content-section">
             <h3>正在招募</h3>
             <div v-for="role in detail.roles" :key="role.id" class="role-row">

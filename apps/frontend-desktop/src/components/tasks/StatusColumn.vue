@@ -23,7 +23,8 @@ const emit = defineEmits<{
       <div
         v-for="(p, index) in projects"
         :key="p.id"
-        class="kanban-card opc-fade-up"
+        v-reveal
+        class="kanban-card"
         :style="{ '--opc-stagger': Math.min(index, 6) }"
       >
         <RouterLink :to="`/discover/${p.id}`" class="kanban-card__link">
