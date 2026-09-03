@@ -1,3 +1,7 @@
+export function formatClockTime(iso: string): string {
+  return new Date(iso).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
+}
+
 export function formatRelativeTime(iso: string): string {
   const diffMs = Date.now() - new Date(iso).getTime()
   const minutes = Math.floor(diffMs / 60000)
