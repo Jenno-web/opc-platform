@@ -34,8 +34,10 @@ defineProps<{ publisher: PublisherDetail }>()
 @import '@/styles/tokens.scss';
 
 .publisher-sidebar {
+  // 应用内页现在是左侧侧边栏布局，没有横向的顶部导航条占用垂直空间了，
+  // 吸顶偏移量不用再算 $opc-nav-height 进去
   position: sticky;
-  top: calc($opc-nav-height + $opc-spacing-lg);
+  top: $opc-spacing-lg;
   background: $opc-bg-card;
   border: 1px solid $opc-border-color;
   border-radius: $opc-radius-card;

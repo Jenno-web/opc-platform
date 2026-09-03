@@ -16,7 +16,10 @@ const emit = defineEmits<{
 <template>
   <div class="status-column">
     <div class="status-column__header">
-      <span>{{ label }}</span>
+      <span class="status-column__title">
+        <span class="status-column__dot" :class="`is-${status.toLowerCase()}`" />
+        {{ label }}
+      </span>
       <span class="status-column__count">{{ projects.length }}</span>
     </div>
     <div class="status-column__list">
@@ -48,7 +51,7 @@ const emit = defineEmits<{
 @import '@/styles/tokens.scss';
 
 .status-column {
-  flex: 0 0 260px;
+  flex: 0 0 264px;
   display: flex;
   flex-direction: column;
   gap: $opc-spacing-sm;
@@ -63,6 +66,36 @@ const emit = defineEmits<{
     padding: 0 4px;
   }
 
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  // 每列前面挂一个跟状态对应的小圆点，几列排在一起时不用看文字也能一眼分开
+  // 招募中/进行中/待确认/已完成/已归档——颜色沿用项目状态徽标同一套 token，
+  // 不是新配色
+  &__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: $opc-color-text-placeholder;
+    flex-shrink: 0;
+
+    &.is-recruiting {
+      background: $opc-color-accent;
+    }
+    &.is-in_progress {
+      background: $opc-color-kind-supply;
+    }
+    &.is-pending_confirm {
+      background: $opc-color-warning;
+    }
+    &.is-completed {
+      background: $opc-color-success;
+    }
+  }
+
   &__count {
     background: $opc-bg-subtle;
     border-radius: $opc-radius-tag;
@@ -70,14 +103,17 @@ const emit = defineEmits<{
     font-size: 11px;
   }
 
+  // 列本身就是一张浅底的"泳道"卡片——之前套了一层外框才让看板显得"完整"，
+  // 现在去掉外框，靠每一列自己的底色/圆角/内边距站得住，不需要额外的边界
   &__list {
     display: flex;
     flex-direction: column;
     gap: $opc-spacing-sm;
     background: $opc-bg-subtle;
+    border: 1px solid $opc-border-color;
     border-radius: $opc-radius-card;
     padding: $opc-spacing-sm;
-    min-height: 80px;
+    min-height: 120px;
   }
 
   &__empty {

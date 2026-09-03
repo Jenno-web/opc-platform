@@ -65,10 +65,12 @@ watch(() => route.query.id, () => {
 <style scoped lang="scss">
 @import '@/styles/tokens.scss';
 
+// 应用内页现在是左侧侧边栏布局，没有横向顶部导航条占垂直空间了，
+// 这里直接吃满 100vh
 .messages-layout {
   display: grid;
   grid-template-columns: 320px 1fr;
-  height: calc(100vh - $opc-nav-height);
+  height: 100vh;
 }
 
 .messages-sidebar {
