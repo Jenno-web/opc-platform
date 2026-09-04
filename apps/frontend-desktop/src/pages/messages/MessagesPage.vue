@@ -76,11 +76,15 @@ watch(() => route.query.id, () => {
 .messages-sidebar {
   border-right: 1px solid $opc-border-color;
   min-width: 0;
+  // grid item 默认 min-height:auto，跟 flex 子元素同一个坑——不加这个的话
+  // 一旦内部内容变高，这个格子会被撑高，连带把整个 100vh 的网格容器顶高
+  min-height: 0;
   overflow: hidden;
 }
 
 .messages-main {
   min-width: 0;
+  min-height: 0;
   display: flex;
 }
 </style>
