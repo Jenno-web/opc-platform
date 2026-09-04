@@ -72,7 +72,11 @@ const statusLabel: Record<string, string> = {
   border-radius: $opc-radius-card;
   box-shadow: $opc-shadow-sm;
   padding: $opc-spacing-lg;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  // transition 是单值属性，跟用 v-reveal 时全局 .opc-reveal 的揭示过渡声明
+  // 会互相顶掉，不会合并——之前 opacity 因此完全没有过渡、一进视口瞬间可见，
+  // 看着像"哐"一下弹出来。这里把 opacity/transform 的揭示过渡合并进这条
+  // hover 用的声明里（这个组件在发现页网格、任务列表等多处都配合 v-reveal 用）
+  transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.15s ease, border-color 0.15s ease;
 
   &:hover {
     transform: translateY(-2px);

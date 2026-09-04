@@ -133,7 +133,11 @@ const emit = defineEmits<{
   border-radius: $opc-radius-card-sm;
   box-shadow: $opc-shadow-sm;
   overflow: hidden;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  // transition 是单值属性，跟 v-reveal 用的 .opc-reveal 全局揭示过渡声明会
+  // 互相顶掉——之前 opacity 因此完全没有过渡、一进视口瞬间可见，看着像
+  // "哐"一下弹出来。合并成一条，opacity/transform 的揭示时长跟 hover 用的
+  // box-shadow/border-color 分开各自的时长
+  transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.15s ease, border-color 0.15s ease;
 
   &:hover {
     transform: translateY(-2px);

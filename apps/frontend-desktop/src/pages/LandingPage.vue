@@ -737,7 +737,12 @@ $opc-shadow-glow: 0 0 0 1px rgba(109, 94, 245, 0.4), 0 8px 24px rgba(109, 94, 24
   border: 1px solid $opc-border-color;
   border-radius: $opc-radius-card;
   padding: $opc-spacing-lg;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  // transition 是单值属性，这条声明和 v-reveal 用的 .opc-reveal 全局样式
+  // 会互相顶掉（同一个元素上两条 transition 声明只有一条生效，不会合并）——
+  // 之前 opacity 因此完全没有过渡、一进视口就瞬间可见，看着像"哐"一下弹出来。
+  // 这里把 opacity/transform 的揭示过渡也写进同一条声明里，跟 hover 用的
+  // box-shadow/border-color 合并成一条，不再互相覆盖
+  transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.15s ease, border-color 0.15s ease;
 
   &:hover {
     transform: translateY(-4px);
@@ -832,7 +837,9 @@ $opc-shadow-glow: 0 0 0 1px rgba(109, 94, 245, 0.4), 0 8px 24px rgba(109, 94, 24
   border: 1px solid $opc-border-color;
   border-radius: $opc-radius-card;
   padding: $opc-spacing-lg;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  // 跟 .kind-card 同一个问题：这条 transition 和 .opc-reveal 的揭示过渡
+  // 会互相顶掉，合并成一条才能两边都生效
+  transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94), border-color 0.2s ease, box-shadow 0.2s ease;
 
   &:hover {
     border-color: rgba($opc-color-accent, 0.5);
