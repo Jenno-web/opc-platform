@@ -2,6 +2,22 @@
 <html>
   <head>
     <meta charset="UTF-8" />
+    <!-- 手机版和桌面版（apps/frontend-desktop）是两个独立部署、各自域名的项目，
+         不是同一份响应式代码——所以"根据屏幕大小自适应"没法靠 CSS 媒体查询
+         实现，只能在页面一加载时用 JS 判断视口宽度，宽于等于 768px 就跳转去
+         桌面版域名（跟桌面版那边的判断互为镜像，断点必须完全一致）。
+         ?stay=1 是逃生舱，见桌面版 index.html 里的同一段注释。 -->
+    <script>
+      (function () {
+        // 本地开发（localhost）不跳转，不然放大窗口测桌面布局会直接被弹去线上桌面版
+        if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') return
+        if (new URLSearchParams(location.search).has('stay')) return
+        if (window.innerWidth >= 768) {
+          var target = 'https://opc-platform-frontend-desktop.vercel.app/'
+          location.replace(target + (target.indexOf('?') === -1 ? '?' : '&') + 'stay=1')
+        }
+      })()
+    </script>
     <script>
       var coverSupport = 'CSS' in window && typeof CSS.supports === 'function' && (CSS.supports('top: env(a)') ||
         CSS.supports('top: constant(a)'))
