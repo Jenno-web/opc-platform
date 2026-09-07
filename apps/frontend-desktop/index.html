@@ -4,9 +4,14 @@
     <meta charset="UTF-8" />
     <!-- 手机版（apps/frontend，uni-app）和桌面版（这个项目）是两个独立部署、
          各自域名的项目，不是同一份响应式代码——所以"根据屏幕大小自适应"没法靠
-         CSS 媒体查询实现，只能在页面一加载时用 JS 判断视口宽度，窄于 768px
-         就跳转去手机版域名。放在 <head> 最前面、赶在 Vue 挂载和其他资源加载前
-         执行，尽量减少"先看到桌面版一闪，再跳过去"的闪烁。
+         CSS 媒体查询实现，只能在页面一加载时用 JS 判断宽度，窄于 768px 就跳转
+         去手机版域名。放在 <head> 最前面、赶在 Vue 挂载和其他资源加载前执行，
+         尽量减少"先看到桌面版一闪，再跳过去"的闪烁。
+         用 screen.width 而不是 window.innerWidth 判断——这段脚本在 viewport
+         meta 标签生效之前就执行，手机浏览器这时候 window.innerWidth 会先按
+         默认的桌面模拟视口（通常 980px 左右）算，量出来是"宽屏"，实际测下来
+         真机打开桌面版链接完全不会跳走。screen.width 反映的是设备物理屏幕
+         宽度，不受 viewport meta 有没有生效影响，才是真的可靠。
          用 location.replace 而不是 location.href，跳转记录不进浏览器历史，
          不然用户点"返回"会在两个域名间来回弹。
          ?stay=1 是逃生舱：手动在网址后面加这个参数就不会被自动跳走，跳转到
@@ -16,7 +21,7 @@
         // 本地开发（localhost）不跳转，不然缩小窗口测手机布局会直接被弹去线上手机版
         if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') return
         if (new URLSearchParams(location.search).has('stay')) return
-        if (window.innerWidth < 768) {
+        if (screen.width < 768) {
           var target = 'https://opc-platform-frontend.vercel.app/'
           location.replace(target + (target.indexOf('?') === -1 ? '?' : '&') + 'stay=1')
         }
